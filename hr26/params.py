@@ -107,7 +107,17 @@ COAMING_H = 150.0       # cockpitkarm over dekk
 
 # --------------------------------------------------------- utstyrshull
 MAST_STEP_X = 3480.0    # mastefot fra baugen
-MAST_D = 150.0          # mastens diameter (fullskala) ved foten
+
+# Masten er oval, slik alu-profiler er: dypere for-akter enn paa tvers.
+# Maalene er modell-mm ganget opp til fullskala, saa de foelger SCALE.
+# Anslag ut fra en typisk profil for denne baatstorrelsen (ca. 120 x 90 mm
+# i virkeligheten) - erstatt med maalte tall naar de finnes.
+MAST_SECTION_X = 4.0 * SCALE    # mast, for-akter
+MAST_SECTION_Y = 3.0 * SCALE    # mast, tvers
+MAST_FIT = 0.25 * SCALE         # klaring per side -> hull 4,5 x 3,5 mm
+
+MAST_HOLE_X = MAST_SECTION_X + 2.0 * MAST_FIT
+MAST_HOLE_Y = MAST_SECTION_Y + 2.0 * MAST_FIT
 
 # rekkepåler: stasjon fra baugen, styrbord og babord speiles
 STANCHION_X = [1450.0, 2500.0, 3550.0, 4600.0, 5650.0, 6700.0]
@@ -127,7 +137,6 @@ STRAKE_H = 95.0
 STRAKE_PROUD = 55.0     # hvor langt den stikker ut
 
 # ------------------------------------------------------------------ rigg
-MAST_CORE_D = 4.0 * SCALE     # 4 mm trepinne / karbonrør (fullskala-ekv.)
 BOOM_Z = 1500.0               # bommens høyde over dekk ved masten
 BOOM_LEN = 2900.0
 SPREADER_Z = 6600.0           # saling over dekk

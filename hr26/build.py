@@ -182,7 +182,11 @@ def main():
         parts = build_parts(hollow=not args.no_hollow, n_stations=args.stations)
     print(f"Bygget paa {time.time() - t:.0f}s. Eksporterer:")
     export(parts)
-    print(f"Mastepinne: {R.mast_length_model_mm():.0f} mm x {P.MAST_CORE_D / P.SCALE:.1f} mm")
+    print(
+        f"Masteemne: {R.mast_length_model_mm():.0f} mm, ovalt "
+        f"{P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "
+        f"(hull {P.MAST_HOLE_X / P.SCALE:.1f} x {P.MAST_HOLE_Y / P.SCALE:.1f} mm)"
+    )
     print(f"Ferdig paa {time.time() - t:.0f}s")
 
 

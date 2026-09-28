@@ -1,8 +1,12 @@
 """Riggen som byggesett.
 
-Masten er en 4 mm trepinne eller karbonroer som kappes til lengde. Alt
-annet printes: mastefot, salingbeslag, masttopp, bom med lekter, og en
-boyemal for pulpit og pushpit av 1,5 mm messingtraad.
+Masten er et ovalt emne, 4,0 x 3,0 mm i modellen, som kappes til lengde.
+En alu-mastprofil er dypere for-akter enn paa tvers, og den ovale formen
+laaser samtidig masten mot aa vri seg i beslagene - derfor er alle hull i
+riggdelene ovale, ikke runde.
+
+Alt annet printes: mastefot, salingbeslag, masttopp, bom, og en boyemal
+for pulpit og pushpit av 1,5 mm messingtraad.
 
 Delene modelleres i fullskala som resten, og skaleres ned i build.py.
 """
@@ -15,8 +19,8 @@ import cadquery as cq
 from . import deckhouse as D
 from . import params as P
 
-CORE = P.MAST_CORE_D            # 4 mm i modellen
-FIT = 0.12 * P.SCALE            # passklaring
+HX, HY = P.MAST_HOLE_X, P.MAST_HOLE_Y            # hullet, 4,5 x 3,5 mm
+SX, SY = P.MAST_SECTION_X, P.MAST_SECTION_Y      # masten, 4,0 x 3,0 mm
 
 
 def _try(fn, fallback):
@@ -27,11 +31,14 @@ def _try(fn, fallback):
         return fallback
 
 
+def _oval(wp, ax: float, ay: float):
+    """Ellipse med akser ax (for-akter) og ay (tvers) - ikke radier."""
+    return wp.ellipse(0.5 * ax, 0.5 * ay)
+
+
 def mast_length_model_mm() -> float:
-    """Anbefalt lengde paa mastepinnen, i modell-mm."""
-    top = P.MAST_ABOVE_WL
-    foot = D.coach_roof_z(P.MAST_STEP_X)
-    return (top - foot) / P.SCALE
+    """Anbefalt lengde paa masteemnet, i modell-mm."""
+    return (P.MAST_ABOVE_WL - D.coach_roof_z(P.MAST_STEP_X)) / P.SCALE
 
 
 def boom_length_model_mm() -> float:
@@ -39,98 +46,92 @@ def boom_length_model_mm() -> float:
 
 
 def mast_foot() -> cq.Workplane:
-    """Mastefot: sokkel som limes i ruffen, med hylse for kjernen."""
-    h = 9.0 * P.SCALE
-    return (
-        cq.Workplane("XY")
-        .circle(0.5 * CORE + 1.3 * P.SCALE)
-        .extrude(h)
-        .faces(">Z")
-        .workplane()
-        .circle(0.5 * (CORE + FIT))
-        .cutBlind(-(h - 1.6 * P.SCALE))
+    """Mastefot: lavt, stopt beslag paa ruffen som masten staar nedi.
+
+    HR 26 har dekksmontert mast, og foten er et synlig beslag paa ruffen -
+    derfor er den med, men holdt lav og platelignende slik originalen er.
+    """
+    plate_h = 1.1 * P.SCALE
+    boss_h = 3.4 * P.SCALE
+    plate = _oval(cq.Workplane("XY"), HX + 5.2 * P.SCALE, HY + 4.6 * P.SCALE).extrude(
+        plate_h
     )
+    boss = (
+        _oval(
+            cq.Workplane("XY").workplane(offset=plate_h),
+            HX + 2.4 * P.SCALE,
+            HY + 2.2 * P.SCALE,
+        )
+        .extrude(boss_h)
+    )
+    body = plate.union(boss)
+    body = _try(lambda: body.faces(">Z").edges().fillet(0.5 * P.SCALE), body)
+    return _oval(
+        body.faces(">Z").workplane(), HX, HY
+    ).cutThruAll()
 
 
 def masthead() -> cq.Workplane:
-    """Masttopp med hull for forstag, akterstag og fall."""
-    h = 6.0 * P.SCALE
-    body = (
-        cq.Workplane("XY")
-        .circle(0.5 * CORE + 1.1 * P.SCALE)
-        .extrude(h)
-        .faces(">Z")
-        .workplane()
-        .circle(0.5 * (CORE + FIT))
-        .cutBlind(-(h - 1.4 * P.SCALE))
-    )
+    """Masttopp med hull for forstag og akterstag."""
+    h = 5.5 * P.SCALE
+    body = _oval(cq.Workplane("XY"), HX + 2.2 * P.SCALE, HY + 2.0 * P.SCALE).extrude(h)
+    body = _oval(
+        body.faces(">Z").workplane(), HX, HY
+    ).cutBlind(-(h - 1.4 * P.SCALE))
     d = 0.5 * P.SCALE
+    span = HX + 6.0 * P.SCALE
     for ang in (0.0, 180.0):
-        r = 0.5 * CORE + 0.9 * P.SCALE
         body = body.cut(
             cq.Workplane("XZ")
-            .workplane(offset=-r - 1.0)
+            .workplane(offset=-0.5 * span)
             .circle(0.5 * d)
-            .extrude(2 * r + 2.0)
+            .extrude(span)
             .rotate((0, 0, 0), (0, 0, 1), ang)
-            .translate((0, 0, h * 0.55))
+            .translate((0, 0, h * 0.58))
         )
     return body
 
 
 def spreaders() -> cq.Workplane:
-    """Salingbeslag med tilbakesveipte armer."""
-    hub_h = 3.2 * P.SCALE
-    hub = (
-        cq.Workplane("XY")
-        .circle(0.5 * CORE + 1.2 * P.SCALE)
-        .extrude(hub_h)
-        .faces(">Z")
-        .workplane()
-        .circle(0.5 * (CORE + FIT))
-        .cutThruAll()
+    """Salingbeslag med tilbakesveipte armer.
+
+    Det ovale navet gjor at armene ikke kan snurre rundt masten.
+    """
+    hub_h = 3.0 * P.SCALE
+    hub = _oval(cq.Workplane("XY"), HX + 2.4 * P.SCALE, HY + 2.2 * P.SCALE).extrude(
+        hub_h
     )
-    a = math.radians(P.SPREADER_SWEEP)
     L = P.SPREADER_LEN
     out = hub
     for sign in (1, -1):
         arm = (
             cq.Workplane("XZ")
-            .workplane(offset=0.0)
-            .moveTo(0, 0)
             .rect(1.4 * P.SCALE, 1.1 * P.SCALE)
             .extrude(L)
             .rotate((0, 0, 0), (0, 0, 1), 90 * sign)
+            .rotate((0, 0, 0), (0, 0, 1), -sign * P.SPREADER_SWEEP)
         )
-        arm = arm.rotate((0, 0, 0), (0, 0, 1), -sign * P.SPREADER_SWEEP)
         out = out.union(arm.translate((0, 0, 0.5 * hub_h)))
-    return out
+    return _oval(out.faces(">Z").workplane(), HX, HY).cutThruAll()
 
 
 def boom() -> cq.Workplane:
-    """Bom med gaffel som klemmer om masten."""
+    """Bom med ring som tres om masten."""
     L = P.BOOM_LEN
     b0 = cq.Workplane("YZ").rect(1.9 * P.SCALE, 1.5 * P.SCALE).extrude(L)
     b = _try(lambda: b0.edges("|X").fillet(0.35 * P.SCALE), b0)
-    ring = (
-        cq.Workplane("XY")
-        .circle(0.5 * CORE + 1.1 * P.SCALE)
-        .extrude(2.4 * P.SCALE)
-        .faces(">Z")
-        .workplane()
-        .circle(0.5 * (CORE + FIT))
-        .cutThruAll()
-        .translate((0, 0, -1.2 * P.SCALE))
-    )
+    ring_h = 2.4 * P.SCALE
+    ring = _oval(
+        cq.Workplane("XY").workplane(offset=-0.5 * ring_h),
+        HX + 2.2 * P.SCALE,
+        HY + 2.0 * P.SCALE,
+    ).extrude(ring_h)
+    ring = _oval(ring.faces(">Z").workplane(), HX, HY).cutThruAll()
     return b.union(ring)
 
 
 def wire_jig() -> cq.Workplane:
-    """Boyemal for pulpit og pushpit av 1,5 mm messingtraad.
-
-    Platen har tapper som traaden boyes rundt, og mal-hull som viser
-    hvor beina skal staa i dekket.
-    """
+    """Boyemal for pulpit og pushpit av 1,5 mm messingtraad."""
     t = 3.0 * P.SCALE
     w = 34.0 * P.SCALE
     l = 46.0 * P.SCALE

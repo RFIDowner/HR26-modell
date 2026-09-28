@@ -54,13 +54,17 @@ def pulpit_holes() -> cq.Workplane:
 
 
 def mast_step() -> cq.Workplane:
-    """Utsparing i ruffen for mastefoten: senterhull for kjernen."""
+    """Ovalt hull i ruffen for masten.
+
+    Ovalen staar med den lange aksen for-akter, som paa en virkelig
+    mastprofil, og laaser dermed masten mot aa vri seg.
+    """
     x = P.MAST_STEP_X
     z = D.coach_roof_z(x)
     return (
         cq.Workplane("XY")
         .workplane(offset=z - 11.0 * P.SCALE)
-        .circle(0.5 * (P.MAST_CORE_D + CLEAR))
+        .ellipse(0.5 * P.MAST_HOLE_X, 0.5 * P.MAST_HOLE_Y)
         .extrude(12.0 * P.SCALE + 40.0)
         .translate((x, 0.0, 0.0))
     )
