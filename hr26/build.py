@@ -136,15 +136,17 @@ def export(parts: dict, log=print):
         "rekkepaaler": [("Y", 90.0)],
         "stativ-vugge1": [("Y", 90.0)],
         "stativ-vugge2": [("Y", 90.0)],
-        # masten: lengden langs X, den brede 4 mm-siden ned, 3 mm hoy
-        "mast": [("X", 90.0), ("Z", 90.0)],
     }
+    # mastene: lengden langs X, den brede 4 mm-siden ned, 3 mm hoy
+    for name in parts:
+        if name.startswith("mast-"):
+            ROT[name] = [("X", 90.0), ("Z", 90.0)]
     AXIS = {"X": (1, 0, 0), "Y": (0, 1, 0), "Z": (0, 0, 1)}
 
     order = [
         "skrog",
         "ror",
-        "mast",
+        *sorted(n for n in parts if n.startswith("mast-")),
         "mastefot",
         "masttopp",
         "saling",
@@ -164,9 +166,17 @@ def export(parts: dict, log=print):
         wp = to_model(parts[name])
         for axis, deg in ROT.get(name, []):
             wp = wp.rotate((0, 0, 0), AXIS[axis], deg)
-        ang = best_bed_angle(wp) if name == "skrog" else 0.0
-        wp = lay_flat(wp, ang)
-        ok, dims = fits_bed(wp)
+        # legg delen rett paa platen; passer den ikke slik, prov aa dreie den
+        ang = 0.0
+        flat = lay_flat(wp, 0.0)
+        ok, dims = fits_bed(flat)
+        if not ok or name == "skrog":
+            best = best_bed_angle(wp)
+            turned = lay_flat(wp, best)
+            ok2, dims2 = fits_bed(turned)
+            if ok2 or name == "skrog":
+                ang, flat, ok, dims = best, turned, ok2, dims2
+        wp = flat
         fn = os.path.join(STL_DIR, f"{i:02d}_{name}.stl")
         cq.exporters.export(wp, fn, tolerance=0.018, angularTolerance=0.12)
         report.append((name, dims, ang, ok, fn))
@@ -199,10 +209,11 @@ def main():
     print(f"Bygget paa {time.time() - t:.0f}s. Eksporterer:")
     export(parts)
     print(
-        f"Mast: {R.mast_total_model_mm():.0f} mm i ett stykke "
-        f"({R.mast_length_model_mm():.0f} mm synlig + {P.MAST_SOCKET / P.SCALE:.0f} mm i ruffen), "
-        f"ovalt {P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "
-        f"(hull {P.MAST_HOLE_X / P.SCALE:.1f} x {P.MAST_HOLE_Y / P.SCALE:.1f} mm)"
+        f"Mast: {R.mast_length_model_mm():.0f} mm synlig, ovalt "
+        f"{P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "
+        f"(hull {P.MAST_HOLE_X / P.SCALE:.1f} x {P.MAST_HOLE_Y / P.SCALE:.1f} mm). "
+        f"To varianter: med {P.MAST_SOCKET / P.SCALE:.0f} mm sokkel (trenger storre plate) "
+        f"og uten sokkel (passer A1 diagonalt)."
     )
     print(f"Ferdig paa {time.time() - t:.0f}s")
 
