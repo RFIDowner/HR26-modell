@@ -168,3 +168,42 @@ def fore_hatch() -> cq.Workplane:
         .fillet(70.0)
         .translate((x, 0.0, 0.0))
     )
+
+
+# ------------------------------------------------------------- sprayhood
+def sprayhood() -> cq.Workplane:
+    """Sprayhood foran nedgangen.
+
+    Modellert massiv. En ekte kalesje er aapen bakover, men i 1:30 ville
+    veggene blitt under en halv millimeter og knekt ved forste beroring.
+    Formen leser som kalesje uansett.
+    """
+    x0, x1 = P.SPRAY_X0, P.SPRAY_X1
+    wires = []
+    steps = 9
+    for i in range(steps + 1):
+        t = i / steps
+        x = x0 + (x1 - x0) * t
+        w = coach_half_width(x) + P.SPRAY_OVERHANG * (0.45 + 0.55 * t)
+        base = coach_roof_z(x) - 60.0
+        # buen vokser bakover, slik en kalesje gjor
+        h = P.SPRAY_H * (0.55 + 0.45 * t ** 0.8)
+        pts = []
+        n = 12
+        for j in range(n + 1):
+            a = -1.0 + 2.0 * j / n
+            # flat topp, bratte sider
+            pts.append(cq.Vector(x, a * w, base + h * (1.0 - abs(a) ** 3.2)))
+        # buen starter og slutter allerede paa dekket, saa den lukkes
+        # med en rett linje tvers over bunnen
+        edges = [
+            cq.Edge.makeSpline(pts),
+            cq.Edge.makeLine(pts[-1], pts[0]),
+        ]
+        wires.append(cq.Wire.assembleEdges(edges))
+    body = cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=False)])
+
+    # Frontvindu er bevisst utelatt: i 1:30 blir det enten usynlig eller,
+    # om det skjaeres dypt nok til aa synes, en tunnel tvers gjennom hetten.
+    # Males heller inn.
+    return body

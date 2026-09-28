@@ -113,17 +113,19 @@ diametre, som er definert i modell-millimeter og ganget opp.
 
 | # | Del | Mål (mm) | Merknad |
 |---|---|---|---|
-| 01 | Skrog | 202,8 × 202,8 × 93,2 | diagonalt på platen, 45° |
+| 01 | Skrog | 202,8 × 202,8 × 109,4 | diagonalt på platen, 45°. Sprayhood er med |
 | 02 | Ror | 34,5 × 3,2 × 18,1 | printes liggende, to tapper |
 | 03 | Mastefot | 9,7 × 8,1 × 4,5 | støpt beslag på ruffen |
 | 04 | Masttopp | 6,7 × 5,5 × 5,5 | hull for for- og akterstag |
 | 05 | Saling | 56,2 × 14,7 × 3,0 | 22° tilbakesveip |
-| 06 | Bom | 100,0 × 5,5 × 2,4 | med ring om masten |
-| 07 | Bøyemal | 46,0 × 34,0 × 9,0 | for pulpit og pushpit i messingtråd |
-| 08–09 | Stativvugger | ~77 × 100 × 6,0 | freset etter skrogets egne spant |
-| 10 | Stativbjelke | 140,7 × 70,0 × 14,0 | vuggene tres ned på tappene |
+| 06 | Bom | 100,0 × 5,5 × 2,4 | bar bom |
+| 07 | Bom med seil | 100,0 × 10,0 × 8,6 | surret storseil — **print 06 *eller* 07** |
+| 08 | Rekkepåler | 24,9 × 54,4 × 1,6 | 16 stk (12 + 4 ekstra) på sprue |
+| 09 | Bøyemal | 46,0 × 34,0 × 9,0 | for pulpit og pushpit i messingtråd |
+| 10–11 | Stativvugger | ~77 × 100 × 6,0 | freset etter skrogets egne spant |
+| 12 | Stativbjelke | 140,7 × 70,0 × 14,0 | vuggene tres ned på tappene |
 
-Plastforbruk for skroget: ca. **164 cm³**, altså rundt 205 g PLA.
+Plastforbruk for skroget: ca. **175 cm³**, altså rundt 220 g PLA.
 
 ### Deler du må skaffe selv
 
@@ -131,9 +133,11 @@ Plastforbruk for skroget: ca. **164 cm³**, altså rundt 205 g PLA.
   lange aksen for-akter. Alle fem riggbeslag har ovalt hull på 4,5 × 3,5 mm, så
   masten kan ikke vri seg i dem — se «Om masten» under.
 * **Bom:** samme materiale, 97 mm — eller bruk den printede bommen.
-* **Rekkepåler, pulpit og pushpit:** **1,5 mm messingtråd**. Alle hull i dekket
-  er 1,6 mm, altså 0,1 mm klaring.
-* **Rekkverk (livliner):** tynn tråd eller 0,3 mm messing.
+* **Pulpit og pushpit:** **1,0 mm messingtråd**, bøyd rundt tappene på bøyemalen.
+* **Livliner:** tynt tauverk eller tråd, opptil 0,4 mm. Tres gjennom øynene på
+  rekkepålene — se under.
+
+Rekkepålene printes (del 08) og trenger ikke messingtråd.
 
 ---
 
@@ -177,6 +181,30 @@ platelignende slik originalen er, i stedet for en høy hylse.
 
 ---
 
+## Rekkverket
+
+Rekkepålene printes med **ekte øyer**: hver påle har to gjennomgående hull på
+0,5 mm, i 10 og 20 mm høyde, som livlinene tres gjennom. Arket har 16 påler —
+12 til båten og 4 i reserve — på en sprue under tappene, så øynene står fritt
+og pålene kan klippes av uten å korte inn tappen.
+
+Pålene er 1,1 mm tykke, som svarer til 33 mm i virkeligheten. En ekte rekkepåle
+er ca. 25 mm, så de er fortsatt litt grove, men de er nå tynne nok til å lese
+riktig — og tykke nok til å tåle å bli håndtert.
+
+De printes **liggende**. Det gir to fordeler: øyehullene står loddrett og
+kommer rene ut av printeren, og lagene løper langs pålen, som er den sterke
+retningen i bøyning. Står de derimot oppreist, knekker de ved første berøring.
+
+Et 0,5 mm hull kommer typisk ut 0,35–0,40 mm med en 0,4 mm dyse. Det holder til
+tråd opp til ca. 0,3 mm. Vil du ha tykkere tauverk, kjør et 0,5 mm bor gjennom
+for hånd, eller øk `LIFELINE_EYE_D` i `params.py` og bygg på nytt.
+
+Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
+1,0 mm rett i.
+
+---
+
 ## Print
 
 **Skroget**
@@ -206,20 +234,27 @@ ned på tappene; ingen lim nødvendig om passformen blir stram.
 ## Montering
 
 1. Rens hullene i dekket med et 1,6 mm bor for hånd.
-2. Kapp rekkepåler av 1,5 mm messingtråd, ca. 20 mm, og lim dem i hullene.
-3. Bøy pulpit og pushpit rundt tappene på bøyemalen (del 07) og lim dem i.
+2. Klipp rekkepålene av sprua (del 08), puss tappen flat, og lim dem i hullene.
+   Sørg for at øynene peker for-akter, ellers går ikke livlinene gjennom.
+3. Bøy pulpit og pushpit av 1,0 mm messingtråd rundt tappene på bøyemalen
+   (del 09) og lim dem i.
 4. Lim mastefoten i utsparingen i ruffen.
 5. Tre salingen på masten ca. 220 mm over foten, og masttoppen i enden. Alle
    beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
 6. Sett masten i foten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
 7. Roret: tappene passer i de to hullene i akterspeilet.
+8. Tre livlinene gjennom øynene, stram lett, og lim endene i pulpit og pushpit.
 
 ---
 
 ## Videre arbeid
 
 * Cockpiten er forenklet — ingen brodekk, benker eller luker.
+* Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
+  veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
+  grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
+  Males heller inn.
 * Ruffens forkant er noe kantet mot originalen.
 * Ingen innredning. Skroget er uthult, så den kan legges til senere.
 * Skroget har 11 ikke-manifolde kanter av 169 000 — rester etter boolske

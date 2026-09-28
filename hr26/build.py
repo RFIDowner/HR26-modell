@@ -52,6 +52,8 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
     step("cockpitkarm", w)
     w = w.union(D.coachroof())
     step("ruff", w)
+    w = w.union(D.sprayhood())
+    step("sprayhood", w)
     w = w.union(F.additions())
     step("dekksbeslag", w)
 
@@ -121,10 +123,15 @@ def fits_bed(wp: cq.Workplane):
 def export(parts: dict, log=print):
     os.makedirs(STL_DIR, exist_ok=True)
     os.makedirs(STEP_DIR, exist_ok=True)
+    # rydd bort STL-er fra forrige bygg, ellers blir gammel nummerering staaende
+    for f in os.listdir(STL_DIR):
+        if f.endswith(".stl"):
+            os.remove(os.path.join(STL_DIR, f))
 
     # rotasjon (om Y) som legger delen gunstig paa platen
     ROT_Y = {
         "ror": 90.0,
+        "rekkepaaler": 90.0,
         "stativ-vugge1": 90.0,
         "stativ-vugge2": 90.0,
     }
@@ -136,6 +143,8 @@ def export(parts: dict, log=print):
         "masttopp",
         "saling",
         "bom",
+        "bom-med-seil",
+        "rekkepaaler",
         "boyemal",
         "stativ-vugge1",
         "stativ-vugge2",
