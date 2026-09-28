@@ -50,20 +50,37 @@ def mast_total_model_mm() -> float:
     return mast_length_model_mm() + P.MAST_SOCKET / P.SCALE
 
 
-def mast() -> cq.Workplane:
+def mast(socket: float | None = None) -> cq.Workplane:
     """Masten, printet i ett stykke.
 
     Rett oval profil 4,0 x 3,0 mm hele veien - en 26-fots cruiser fra rundt
-    1980 har en jevntykk alu-profil uten avsmalning. Nederste MAST_SOCKET
-    staar nede i ruffen, resten er synlig. Begge ender er faset, saa den
-    gaar lett inn i sokkelen og i masttoppen.
+    1980 har en jevntykk alu-profil uten avsmalning. Begge ender er faset,
+    saa den gaar lett inn i sokkelen og i masttoppen.
+
+    `socket` er hvor mye som skal staa nede i ruffen (fullskala-mm):
+      * P.MAST_SOCKET (11 mm i modellen) gir 366 mm - full sokkel, men for
+        lang for en 256 mm plate, ogsaa diagonalt.
+      * 0 gir 355 mm - passer diagonalt paa A1 med 1 mm margin, uten brim,
+        og limes bare i mastefot-beslaget.
 
     Bygges langs Z; build.py legger den ned paa platen med den brede
     siden (4 mm) vannrett, saa den blir bare 3 mm hoy.
     """
-    L = mast_total_model_mm() * P.SCALE
+    socket = P.MAST_SOCKET if socket is None else socket
+    L = mast_length_model_mm() * P.SCALE + socket
     m = cq.Workplane("XY").ellipse(0.5 * SX, 0.5 * SY).extrude(L)
     return _try(lambda: m.faces(">Z or <Z").chamfer(P.MAST_CHAMFER), m)
+
+
+def mast_variants() -> dict:
+    """Begge mastene, med lengde og plate-egnethet i navnet."""
+    out = {}
+    for socket in (P.MAST_SOCKET, 0.0):
+        L = mast_length_model_mm() + socket / P.SCALE
+        fits = (L + P.MAST_SECTION_X / P.SCALE) / math.sqrt(2.0) <= 256.0 - 1.0
+        tag = "A1" if fits else "ikke-A1"
+        out[f"mast-{L:.0f}mm-{tag}"] = mast(socket)
+    return out
 
 
 def mast_foot() -> cq.Workplane:
@@ -180,7 +197,7 @@ def wire_jig() -> cq.Workplane:
 
 def parts() -> dict:
     return {
-        "mast": mast(),
+        **mast_variants(),
         "mastefot": mast_foot(),
         "masttopp": masthead(),
         "saling": spreaders(),
