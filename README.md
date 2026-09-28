@@ -103,6 +103,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | `rig.py` | riggen som byggesett |
 | `shell.py` | uthuling med innvendige spant |
 | `stand.py` | stativ |
+| `plaque.py` | skiltplate |
 | `build.py` | setter sammen, orienterer for print, eksporterer |
 | `tools/render.py` | kontrollbilder av STL |
 | `tools/meshcheck.py` | sjekker at STL-ene er lukkede |
@@ -124,6 +125,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | 09 | Bøyemal | 46,0 × 34,0 × 9,0 | for pulpit og pushpit i messingtråd |
 | 10–11 | Stativvugger | ~77 × 100 × 6,0 | freset etter skrogets egne spant |
 | 12 | Stativbjelke | 140,7 × 70,0 × 14,0 | vuggene tres ned på tappene |
+| 13 | Skilt | 104,0 × 34,0 × 3,7 | opphøyd tekst, står ved stativet |
 
 Plastforbruk for skroget: ca. **175 cm³**, altså rundt 220 g PLA.
 
@@ -228,6 +230,30 @@ print dem med 4 vegger og 25 % infill.
 
 Vuggene printes liggende (6 mm tykke). Bjelken har lettelseshull. Tre vuggene
 ned på tappene; ingen lim nødvendig om passformen blir stram.
+
+---
+
+## Skiltet
+
+Del 13 er en liten plate med opphøyd tekst, ment å stå foran eller ved siden
+av stativet:
+
+```
+              HALLBERG-RASSY 26
+  Konstruktør Olle Enderlein · bygget 1978–1985
+ Lengde 7,95 m · Bredde 2,68 m · Dypgang 1,40 m
+       Deplasement 2,5 t · Seilareal 32 m²
+                 Skala 1:30
+```
+
+Teksten står 0,7 mm over platen, altså rundt seks lag med 0,12 mm laghøyde.
+Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
+en annen farge enn platen — svart tekst på hvit plate ser bra ut, og på A1
+er det bare å bytte rull manuelt når printeren stopper.
+
+Vil du endre teksten, ligger den øverst i `hr26/plaque.py` som `TITLE`,
+`LINES` og `SCALE_LINE`. Skal modellen gis bort, kan det for eksempel være
+naturlig å legge til båtens navn eller en dato.
 
 ---
 
