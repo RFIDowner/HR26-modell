@@ -45,6 +45,27 @@ def boom_length_model_mm() -> float:
     return P.BOOM_LEN / P.SCALE
 
 
+def mast_total_model_mm() -> float:
+    """Hele mastens lengde: synlig del pluss det som staar nede i ruffen."""
+    return mast_length_model_mm() + P.MAST_SOCKET / P.SCALE
+
+
+def mast() -> cq.Workplane:
+    """Masten, printet i ett stykke.
+
+    Rett oval profil 4,0 x 3,0 mm hele veien - en 26-fots cruiser fra rundt
+    1980 har en jevntykk alu-profil uten avsmalning. Nederste MAST_SOCKET
+    staar nede i ruffen, resten er synlig. Begge ender er faset, saa den
+    gaar lett inn i sokkelen og i masttoppen.
+
+    Bygges langs Z; build.py legger den ned paa platen med den brede
+    siden (4 mm) vannrett, saa den blir bare 3 mm hoy.
+    """
+    L = mast_total_model_mm() * P.SCALE
+    m = cq.Workplane("XY").ellipse(0.5 * SX, 0.5 * SY).extrude(L)
+    return _try(lambda: m.faces(">Z or <Z").chamfer(P.MAST_CHAMFER), m)
+
+
 def mast_foot() -> cq.Workplane:
     """Mastefot: lavt, stopt beslag paa ruffen som masten staar nedi.
 
@@ -159,6 +180,7 @@ def wire_jig() -> cq.Workplane:
 
 def parts() -> dict:
     return {
+        "mast": mast(),
         "mastefot": mast_foot(),
         "masttopp": masthead(),
         "saling": spreaders(),

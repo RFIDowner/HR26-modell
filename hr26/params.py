@@ -118,6 +118,8 @@ MAST_FIT = 0.25 * SCALE         # klaring per side -> hull 4,5 x 3,5 mm
 
 MAST_HOLE_X = MAST_SECTION_X + 2.0 * MAST_FIT
 MAST_HOLE_Y = MAST_SECTION_Y + 2.0 * MAST_FIT
+MAST_SOCKET = 11.0 * SCALE      # hvor dypt masten staar i ruffen
+MAST_CHAMFER = 0.3 * SCALE      # fas i begge ender av masten
 
 # rekkepåler: stasjon fra baugen, styrbord og babord speiles
 STANCHION_X = [1450.0, 2500.0, 3550.0, 4600.0, 5650.0, 6700.0]
