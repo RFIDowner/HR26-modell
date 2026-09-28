@@ -121,8 +121,19 @@ MAST_HOLE_Y = MAST_SECTION_Y + 2.0 * MAST_FIT
 
 # rekkepåler: stasjon fra baugen, styrbord og babord speiles
 STANCHION_X = [1450.0, 2500.0, 3550.0, 4600.0, 5650.0, 6700.0]
-STANCHION_D = 1.5 * SCALE     # hull for 1,5 mm messingtråd
+STANCHION_D = 1.1 * SCALE     # hull for 1,0 mm tråd / printet rekkepåle
 STANCHION_INSET = 70.0        # inn fra dekkskanten
+
+# rekkepaaler: hoyde og livline-oyer (fullskala)
+STANCHION_H = 600.0           # 20 mm i modellen
+STANCHION_SHAFT = 1.1 * SCALE
+STANCHION_PIN = 2.2 * SCALE   # tapp ned i dekket
+LIFELINE_Z = (300.0, 600.0)   # to livliner over dekket
+LIFELINE_EYE_D = 0.5 * SCALE  # hull for tauverket
+LIFELINE_EYE_L = 1.6 * SCALE  # oyets lengde langs hullet (for-akter)
+LIFELINE_EYE_W = 1.3 * SCALE  # oyets bredde
+LIFELINE_EYE_H = 1.3 * SCALE  # oyets hoyde
+STANCHION_SPARES = 4          # ekstra paaler paa arket
 
 PULPIT_X = [520.0, 900.0]     # pulpit-bein (baug)
 PUSHPIT_X = [7250.0, 7680.0]  # pushpit-bein (akter)
@@ -159,3 +170,14 @@ VOID_AFT = 470.0            # og slutter saa langt fra hekken
 RUDDER_PIN_D = 1.3 * SCALE
 RUDDER_PIN_L = 2.2 * SCALE
 RUDDER_PIN_Z = (-210.0, -830.0)
+
+# ------------------------------------------------------------- sprayhood
+SPRAY_X0 = 4280.0       # forkant kalesje (fra baugen)
+SPRAY_X1 = 5190.0       # bakkant, mot nedgangen
+SPRAY_H = 560.0         # hoyde over ruffen
+SPRAY_OVERHANG = 30.0   # stikker saa vidt ut til side for ruffen
+
+# ------------------------------------------------- surret storseil paa bom
+SAIL_D0 = 300.0         # diameter ved masten
+SAIL_D1 = 175.0         # diameter ved nokken
+SAIL_START = 260.0      # starter saa langt akter for masten

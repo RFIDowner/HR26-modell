@@ -163,5 +163,113 @@ def parts() -> dict:
         "masttopp": masthead(),
         "saling": spreaders(),
         "bom": boom(),
+        "bom-med-seil": boom_with_sail(),
+        "rekkepaaler": stanchions(),
         "boyemal": wire_jig(),
     }
+
+
+def furled_sail() -> cq.Workplane:
+    """Surret storseil med kalesje, slik baaten ligger fortoyd.
+
+    Limes oppa bommen. Vil du ha bar bom, er det bare aa la vaere aa
+    printe denne delen.
+    """
+    L = P.BOOM_LEN - P.SAIL_START
+    wires = []
+    steps = 8
+    for i in range(steps + 1):
+        t = i / steps
+        x = P.SAIL_START + L * t
+        d = P.SAIL_D0 + (P.SAIL_D1 - P.SAIL_D0) * (t ** 0.85)
+        if i == steps:
+            d *= 0.55                      # nokken smalner av
+        wires.append(
+            cq.Workplane("YZ")
+            .workplane(offset=x)
+            .ellipse(0.5 * d, 0.5 * d * 0.86)
+            .val()
+        )
+    solid = cq.Solid.makeLoft(wires, ruled=False)
+    sail = cq.Workplane("XY").newObject([solid])
+    # antydede surringer rundt seilet
+    for k in range(1, 5):
+        x = P.SAIL_START + L * k / 5.0
+        t = (x - P.SAIL_START) / L
+        d = P.SAIL_D0 + (P.SAIL_D1 - P.SAIL_D0) * (t ** 0.85)
+        sail = sail.cut(
+            cq.Workplane("YZ")
+            .workplane(offset=x - 0.10 * P.SCALE)
+            .ellipse(0.5 * d + 30.0, 0.5 * d * 0.86 + 30.0)
+            .extrude(0.20 * P.SCALE)
+            .cut(
+                cq.Workplane("YZ")
+                .workplane(offset=x - 0.15 * P.SCALE)
+                .ellipse(0.5 * d - 0.35 * P.SCALE, 0.5 * d * 0.86 - 0.35 * P.SCALE)
+                .extrude(0.30 * P.SCALE)
+            )
+        )
+    return sail
+
+
+def boom_with_sail() -> cq.Workplane:
+    """Bom med surret storseil paa - alternativ til den bare bommen.
+
+    Print enten denne eller `bom`, ikke begge.
+    """
+    return boom().union(furled_sail().translate((0.0, 0.0, 0.30 * P.SCALE)))
+
+
+def stanchions() -> cq.Workplane:
+    """Ark med rekkepaaler som har ekte oyer for livlinene.
+
+    Hvert oye har et gjennomgaaende hull paa 0,5 mm som tauverket tres
+    gjennom. Hullaksen ligger langs X, og delen printes liggende (rotert
+    90 grader om Y i build.py) - da staar hullene loddrett og kommer rene
+    ut, og lagene loper langs paalen, som er den sterke retningen.
+    """
+    n = len(P.STANCHION_X) * 2 + P.STANCHION_SPARES
+    pitch = 3.4 * P.SCALE
+    sprue_t = 0.9 * P.SCALE
+    sprue_w = 2.0 * P.SCALE
+
+    out = None
+    for i in range(n):
+        y = (i - (n - 1) / 2.0) * pitch
+        part = (
+            cq.Workplane("XY")
+            .circle(0.5 * P.STANCHION_SHAFT)
+            .extrude(P.STANCHION_H)
+            .union(
+                cq.Workplane("XY")
+                .circle(0.5 * P.STANCHION_SHAFT * 0.92)
+                .extrude(-P.STANCHION_PIN)
+            )
+        )
+        for z in P.LIFELINE_Z:
+            part = part.union(
+                cq.Workplane("XY")
+                .workplane(offset=z - 0.5 * P.LIFELINE_EYE_H)
+                .rect(P.LIFELINE_EYE_L, P.LIFELINE_EYE_W)
+                .extrude(P.LIFELINE_EYE_H)
+            )
+            part = part.cut(
+                cq.Workplane("YZ")
+                .workplane(offset=-P.LIFELINE_EYE_L)
+                .circle(0.5 * P.LIFELINE_EYE_D)
+                .extrude(2.0 * P.LIFELINE_EYE_L)
+                .translate((0.0, 0.0, z))
+            )
+        out = part.translate((0.0, y, 0.0)) if out is None else out.union(
+            part.translate((0.0, y, 0.0))
+        )
+
+    # sprua ligger under tappene, saa oyene staar fritt og paalene kan
+    # klippes av uten aa korte inn tappen mer enn noen tideler
+    sprue_top = -P.STANCHION_PIN
+    sprue = (
+        cq.Workplane("XY")
+        .workplane(offset=sprue_top - sprue_w)
+        .box(sprue_t, n * pitch, sprue_w, centered=(True, True, False))
+    )
+    return out.union(sprue)
