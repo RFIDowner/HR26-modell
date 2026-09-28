@@ -64,6 +64,12 @@ De uttrukne kurvene ligger i `data/`:
 | `deck_halfbreadth.csv` | rå dekkslinje fra dekksplanen |
 | `uw_station.csv` | rå undervannsprofil med kjøl og ror |
 
+**Merk om akterspeilet:** i dekksplanen møtes de to sidelinjene i akterspeilets
+hjørner, og sporingen tolket det som at skroget smalner av til en spiss.
+Halvbredden holdes derfor fast fra `TRANSOM_X` og akterover (`curves.py`), slik
+at hekken får den flate akterspeilflaten den skal ha — 1 331 mm bred, altså
+50 % av største bredde.
+
 **Merk om deplasementet:** modellen har et beregnet undervannsvolum på ca. 3,9 m³,
 mens brosjyren oppgir 2,5 tonn. Avviket kommer av at profiltegningen gir en
 forholdsvis dyp og flat kanobunn. For en utstillingsmodell betyr det ingenting —
@@ -114,7 +120,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 
 | # | Del | Mål (mm) | Merknad |
 |---|---|---|---|
-| 01 | Skrog | 202,8 × 202,8 × 109,4 | diagonalt på platen, 45°. Sprayhood er med |
+| 01 | Skrog | 205,1 × 205,1 × 109,4 | diagonalt på platen, 45°. Sprayhood og navn er med |
 | 02 | Ror | 34,5 × 3,2 × 18,1 | printes liggende, to tapper |
 | 03 | Mastefot | 9,7 × 8,1 × 4,5 | støpt beslag på ruffen |
 | 04 | Masttopp | 6,7 × 5,5 × 5,5 | hull for for- og akterstag |
@@ -125,9 +131,9 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | 09 | Bøyemal | 46,0 × 34,0 × 9,0 | for pulpit og pushpit i messingtråd |
 | 10–11 | Stativvugger | ~77 × 100 × 6,0 | freset etter skrogets egne spant |
 | 12 | Stativbjelke | 140,7 × 70,0 × 14,0 | vuggene tres ned på tappene |
-| 13 | Skilt | 104,0 × 34,0 × 3,7 | opphøyd tekst, står ved stativet |
+| 13 | Skilt | 104,0 × 46,0 × 3,7 | opphøyd tekst, står ved stativet |
 
-Plastforbruk for skroget: ca. **175 cm³**, altså rundt 220 g PLA.
+Plastforbruk for skroget: ca. **177 cm³**, altså rundt 220 g PLA.
 
 ### Deler du må skaffe selv
 
@@ -239,7 +245,8 @@ Del 13 er en liten plate med opphøyd tekst, ment å stå foran eller ved siden
 av stativet:
 
 ```
-              HALLBERG-RASSY 26
+                     HUGO
+              Hallberg-Rassy 26
   Konstruktør Olle Enderlein · bygget 1978–1985
  Lengde 7,95 m · Bredde 2,68 m · Dypgang 1,40 m
        Deplasement 2,5 t · Seilareal 32 m²
@@ -251,9 +258,13 @@ Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
 en annen farge enn platen — svart tekst på hvit plate ser bra ut, og på A1
 er det bare å bytte rull manuelt når printeren stopper.
 
-Vil du endre teksten, ligger den øverst i `hr26/plaque.py` som `TITLE`,
-`LINES` og `SCALE_LINE`. Skal modellen gis bort, kan det for eksempel være
-naturlig å legge til båtens navn eller en dato.
+Båtens navn står også **i relieff på akterspeilet**, 0,35 mm opphøyd, slik
+en Hallberg-Rassy bærer navnet sitt. Akterspeilet er en loddrett flate, så
+bokstavene printes uten utheng.
+
+Navnet ligger i `BOAT_NAME` i `hr26/params.py` og brukes begge steder. Sett
+det til `""` for å droppe det. Resten av skiltteksten ligger i
+`hr26/plaque.py` som `TYPE_LINE`, `LINES` og `SCALE_LINE`.
 
 ---
 

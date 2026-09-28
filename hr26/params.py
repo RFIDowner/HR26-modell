@@ -181,3 +181,9 @@ SPRAY_OVERHANG = 30.0   # stikker saa vidt ut til side for ruffen
 SAIL_D0 = 300.0         # diameter ved masten
 SAIL_D1 = 175.0         # diameter ved nokken
 SAIL_START = 260.0      # starter saa langt akter for masten
+
+# ------------------------------------------------------------- baatens navn
+BOAT_NAME = "HUGO"          # settes i relieff paa akterspeilet og paa skiltet
+NAME_SIZE = 5.0 * SCALE     # bokstavhoyde i modell-mm
+NAME_RAISE = 0.35 * SCALE   # hoyde over akterspeilet
+NAME_Z = 640.0              # senterhoyde over DWL
