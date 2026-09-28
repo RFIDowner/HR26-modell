@@ -44,8 +44,21 @@ _ZS = _fair(_ZS, passes=2)
 _ZB = _fair(_ZB, passes=8)
 
 
+# Akterspeilet er en rett, tverrgaaende kant. I dekksplanen moetes derfor
+# de to sidelinjene i hjornene, og sporingen tolker det som at skroget
+# smalner av til en spiss. Halvbredden holdes derfor fast fra TRANSOM_X og
+# akterover, med en svak innsmalning, slik at hekken faar den flate
+# akterspeilflaten den skal ha.
+TRANSOM_X = 7680.0
+TRANSOM_TAPER = 0.95
+
+
 def deck_half_breadth(x: float) -> float:
     """Halvbredde ved dekkskanten."""
+    if x > TRANSOM_X:
+        hb = float(np.interp(TRANSOM_X, _X, _HB))
+        t = (x - TRANSOM_X) / (P.LOA - TRANSOM_X)
+        return hb * (1.0 - (1.0 - TRANSOM_TAPER) * t)
     return float(np.interp(x, _X, _HB))
 
 

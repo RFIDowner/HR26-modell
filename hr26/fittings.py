@@ -128,6 +128,9 @@ def anchor_roller() -> cq.Workplane:
 def additions() -> cq.Workplane:
     """Alt som skal unioneres inn i skroget."""
     out = winch_pads().union(cleats()).union(anchor_roller())
+    name = transom_name()
+    if name is not None:
+        out = out.union(name)
     return out
 
 
@@ -145,4 +148,28 @@ def cuts() -> cq.Workplane:
         .union(pulpit_holes())
         .union(mast_step())
         .union(rudder_pin_holes())
+    )
+
+
+def transom_name() -> cq.Workplane:
+    """Baatens navn i relieff paa akterspeilet.
+
+    Akterspeilet er en loddrett flate, saa opphoyde bokstaver printes uten
+    utheng. Sett P.BOAT_NAME til "" for aa droppe det.
+    """
+    if not P.BOAT_NAME:
+        return None
+    x = P.LOA - 2.0
+    return (
+        cq.Workplane("YZ")
+        .workplane(offset=x - P.NAME_RAISE)
+        .text(
+            P.BOAT_NAME,
+            P.NAME_SIZE,
+            P.NAME_RAISE * 2.0,
+            fontPath="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            halign="center",
+            valign="center",
+        )
+        .translate((0.0, 0.0, P.NAME_Z))
     )

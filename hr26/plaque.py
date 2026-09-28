@@ -19,16 +19,17 @@ FONT = "DejaVu Sans"
 
 # plate i modell-mm
 W = 104.0
-H = 34.0
+H = 46.0
 T = 3.0
 EDGE = 2.2
 RAISE = 0.7          # tekstens hoyde over platen
 
-TITLE = "HALLBERG-RASSY 26"
+NAME = P.BOAT_NAME                       # baatens navn, storst
+TYPE_LINE = "Hallberg-Rassy 26"
 LINES = [
-    "Konstrukt\u00f8r Olle Enderlein  ·  bygget 1978–1985",
-    "Lengde 7,95 m  ·  Bredde 2,68 m  ·  Dypgang 1,40 m",
-    "Deplasement 2,5 t  ·  Seilareal 32 m²",
+    "Konstrukt\u00f8r Olle Enderlein  \u00b7  bygget 1978\u20131985",
+    "Lengde 7,95 m  \u00b7  Bredde 2,68 m  \u00b7  Dypgang 1,40 m",
+    "Deplasement 2,5 t  \u00b7  Seilareal 32 m\u00b2",
 ]
 SCALE_LINE = "Skala 1:30"
 
@@ -76,10 +77,14 @@ def plaque_model_mm() -> cq.Workplane:
     )
 
     body = plate
-    body = body.union(_text(TITLE, 6.4, 10.4, bold=True))
+    if NAME:
+        body = body.union(_text(NAME, 10.5, 14.2, bold=True))
+        body = body.union(_text(TYPE_LINE, 4.6, 5.6))
+    else:
+        body = body.union(_text(TYPE_LINE.upper(), 6.4, 10.0, bold=True))
     for i, line in enumerate(LINES):
-        body = body.union(_text(line, 3.1, 3.0 - i * 4.4))
-    body = body.union(_text(SCALE_LINE, 4.0, -12.6, bold=True))
+        body = body.union(_text(line, 3.1, -1.2 - i * 4.4))
+    body = body.union(_text(SCALE_LINE, 4.0, -17.6, bold=True))
     return body
 
 
