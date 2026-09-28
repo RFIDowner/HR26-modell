@@ -143,10 +143,24 @@ En alu-mastprofil er ikke rund. Den er tydelig dypere for-akter enn på tvers,
 med likespor i bakkant. Anslått for en HR 26 blir det i størrelsesorden
 120 × 90 mm i virkeligheten, altså **4,0 × 3,0 mm** i 1:30.
 
-Alle fem hull i riggen — mastefot, masttopp, saling, bom og selve hullet i
-ruffen — er derfor ovale, **4,5 × 3,5 mm**. Det gir 0,25 mm klaring per side,
-som er rikelig: hull i PLA kommer typisk ut 0,1–0,2 mm trangere enn nominelt,
-og det er lettere å fylle med lim enn å file ut et for trangt hull.
+Det er **én mast**, men fem separate deler sitter på den, hver med sitt eget
+hull — som fem perler på samme snor:
+
+| Høyde over ruffen | Del | Hullets rolle |
+|---|---|---|
+| −11 mm | hullet i ruffen | masten stikker ned i dekket |
+| 0 mm | mastefot | beslaget limes rundt masten |
+| ca. 220 mm | saling | tres på og skyves opp |
+| ca. 355 mm | masttopp | hetten helt øverst |
+| ca. 50 mm | bom | ringen i enden går rundt masten |
+
+Alle fem er derfor ovale, **4,5 × 3,5 mm**. Var bare hullet i ruffen ovalt,
+ville masten sitte riktig nede ved dekket, men slingre i de fire beslagene
+lenger oppe.
+
+Klaringen på 0,25 mm per side er rikelig: hull i PLA kommer typisk ut 0,1–0,2 mm
+trangere enn nominelt, og det er lettere å fylle med lim enn å file ut et for
+trangt hull i en ferdig printet del.
 
 Den ovale formen låser samtidig masten mot å vri seg. Salingarmene kan altså
 ikke snurre rundt og peke feil vei, slik de ville gjort med et rundt hull.
