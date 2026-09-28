@@ -130,17 +130,21 @@ def export(parts: dict, log=print):
         if f.endswith(".stl"):
             os.remove(os.path.join(STL_DIR, f))
 
-    # rotasjon (om Y) som legger delen gunstig paa platen
-    ROT_Y = {
-        "ror": 90.0,
-        "rekkepaaler": 90.0,
-        "stativ-vugge1": 90.0,
-        "stativ-vugge2": 90.0,
+    # rotasjoner som legger delen gunstig paa platen: liste av (akse, grader)
+    ROT = {
+        "ror": [("Y", 90.0)],
+        "rekkepaaler": [("Y", 90.0)],
+        "stativ-vugge1": [("Y", 90.0)],
+        "stativ-vugge2": [("Y", 90.0)],
+        # masten: lengden langs X, den brede 4 mm-siden ned, 3 mm hoy
+        "mast": [("X", 90.0), ("Z", 90.0)],
     }
+    AXIS = {"X": (1, 0, 0), "Y": (0, 1, 0), "Z": (0, 0, 1)}
 
     order = [
         "skrog",
         "ror",
+        "mast",
         "mastefot",
         "masttopp",
         "saling",
@@ -158,8 +162,8 @@ def export(parts: dict, log=print):
     report = []
     for i, name in enumerate(names, start=1):
         wp = to_model(parts[name])
-        if name in ROT_Y:
-            wp = wp.rotate((0, 0, 0), (0, 1, 0), ROT_Y[name])
+        for axis, deg in ROT.get(name, []):
+            wp = wp.rotate((0, 0, 0), AXIS[axis], deg)
         ang = best_bed_angle(wp) if name == "skrog" else 0.0
         wp = lay_flat(wp, ang)
         ok, dims = fits_bed(wp)
@@ -168,7 +172,7 @@ def export(parts: dict, log=print):
         report.append((name, dims, ang, ok, fn))
         log(
             f"  {name:<16s} {dims[0]:6.1f} x {dims[1]:6.1f} x {dims[2]:6.1f} mm"
-            f"  rot {ang:4.0f} gr  {'OK' if ok else 'FOR STOR'}"
+            f"  rot {ang:4.0f} gr  {'OK' if ok else 'trenger storre plate enn A1'}"
         )
 
     asm = cq.Assembly()
@@ -195,8 +199,9 @@ def main():
     print(f"Bygget paa {time.time() - t:.0f}s. Eksporterer:")
     export(parts)
     print(
-        f"Masteemne: {R.mast_length_model_mm():.0f} mm, ovalt "
-        f"{P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "
+        f"Mast: {R.mast_total_model_mm():.0f} mm i ett stykke "
+        f"({R.mast_length_model_mm():.0f} mm synlig + {P.MAST_SOCKET / P.SCALE:.0f} mm i ruffen), "
+        f"ovalt {P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "
         f"(hull {P.MAST_HOLE_X / P.SCALE:.1f} x {P.MAST_HOLE_Y / P.SCALE:.1f} mm)"
     )
     print(f"Ferdig paa {time.time() - t:.0f}s")

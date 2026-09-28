@@ -63,9 +63,9 @@ def mast_step() -> cq.Workplane:
     z = D.coach_roof_z(x)
     return (
         cq.Workplane("XY")
-        .workplane(offset=z - 11.0 * P.SCALE)
+        .workplane(offset=z - P.MAST_SOCKET)
         .ellipse(0.5 * P.MAST_HOLE_X, 0.5 * P.MAST_HOLE_Y)
-        .extrude(12.0 * P.SCALE + 40.0)
+        .extrude(P.MAST_SOCKET + 1.0 * P.SCALE + 40.0)
         .translate((x, 0.0, 0.0))
     )
 

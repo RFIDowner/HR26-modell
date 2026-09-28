@@ -118,28 +118,29 @@ diametre, som er definert i modell-millimeter og ganget opp.
 
 ## Delene
 
-Tolv filer i `export/stl/`. Materialtallene er reell geometri ganget med
+Fjorten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 1,24 g/cm³ — legg til litt for støtte og skjørt.
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
 | 01 | `01_skrog.stl` | 205,1 × 205,1 × 109,4 | 174 cm³ / 216 g |
 | 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
-| 03 | `03_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
-| 04 | `04_masttopp.stl` | 6,7 × 5,5 × 5,5 | 0,1 cm³ |
-| 05 | `05_saling.stl` | 56,2 × 14,7 × 3,0 | 0,1 cm³ |
-| 06 | `06_bom.stl` | 100,0 × 5,5 × 2,4 | 0,3 cm³ |
-| 07 | `07_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
-| 08 | `08_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
-| 09 | `09_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
-| 10 | `10_stativ-vugge1.stl` | 77,4 × 94,6 × 6,0 | 35,4 cm³ / 44 g |
-| 11 | `11_stativ-vugge2.stl` | 74,2 × 106,4 × 6,0 | 36,5 cm³ / 45 g |
-| 12 | `12_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
-| 13 | `13_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
+| 03 | `03_mast.stl` | 365,5 × 4,0 × 3,0 | 3,4 cm³ / 4 g — **passer ikke på A1** |
+| 04 | `04_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
+| 05 | `05_masttopp.stl` | 6,7 × 5,5 × 5,5 | 0,1 cm³ |
+| 06 | `06_saling.stl` | 56,2 × 14,7 × 3,0 | 0,1 cm³ |
+| 07 | `07_bom.stl` | 100,0 × 5,5 × 2,4 | 0,3 cm³ |
+| 08 | `08_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
+| 09 | `09_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
+| 10 | `10_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
+| 11 | `11_stativ-vugge1.stl` | 77,4 × 94,6 × 6,0 | 35,4 cm³ / 44 g |
+| 12 | `12_stativ-vugge2.stl` | 74,2 × 106,4 × 6,0 | 36,5 cm³ / 45 g |
+| 13 | `13_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
+| 14 | `14_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
 
-**06 og 07 er alternativer** — print den ene. Til sammen blir det rundt
-**320 cm³, altså ca. 395 g PLA**: skroget 216 g, stativet 151 g, resten under
-30 g. Én rull på 1 kg holder med god margin.
+**07 og 08 er alternativer** — print den ene. Til sammen blir det rundt
+**325 cm³, altså ca. 400 g PLA**: skroget 216 g, stativet 151 g, resten under
+35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
@@ -155,32 +156,36 @@ Tolv filer i `export/stl/`. Materialtallene er reell geometri ganget med
 **02 Ror** — printes liggende, 3,2 mm tykt. Støtte av. De to tappene på
 forkanten passer i hullene i akterspeilet.
 
-**03–06 Riggbeslag** — små, flate, ligger rett på platen. Ingen støtte.
+**03 Mast** — 365,5 mm i ett stykke. Se eget avsnitt «Masten» under. Den er
+for lang for A1-en, også diagonalt (261 mm mot 256), og må printes på en
+printer med minst 366 mm langs én akse eller 262 × 262 mm for diagonal
+plassering.
+
+**04–07 Riggbeslag** — små, flate, ligger rett på platen. Ingen støtte.
 4 vegger og 25 % infill, ellers blir salingarmene skjøre. Alle har ovalt
 4,5 × 3,5 mm hull og kan bare tres på masten én vei.
 
-**07 Bom med seil** — alternativ til 06. Har det surrede storseilet med
+**08 Bom med seil** — alternativ til 07. Har det surrede storseilet med
 kalesje på, slik båten ligger fortøyd.
 
-**08 Rekkepåler** — 16 stk på sprue, ligger flatt. **Ikke roter dem opp.**
+**09 Rekkepåler** — 16 stk på sprue, ligger flatt. **Ikke roter dem opp.**
 Liggende blir øyehullene loddrette og kommer rene ut, og lagene løper langs
 pålen, som er den sterke retningen. Bruk brim — delene er små og lette.
 
-**09 Bøyemal** — hjelpeverktøy, ikke en del av modellen. Til å bøye pulpit og
+**10 Bøyemal** — hjelpeverktøy, ikke en del av modellen. Til å bøye pulpit og
 pushpit av 1,0 mm messingtråd rundt.
 
-**10–12 Stativ** — vuggene liggende, 6 mm tykke, ingen støtte. Bjelken har
+**11–13 Stativ** — vuggene liggende, 6 mm tykke, ingen støtte. Bjelken har
 lettelseshull. 15 % infill holder. Tre vuggene ned på tappene.
 
-**13 Skilt** — flatt, ingen støtte. Teksten står 0,7 mm opphøyd. Legg inn
+**14 Skilt** — flatt, ingen støtte. Teksten står 0,7 mm opphøyd. Legg inn
 **fargeskift på 3,0 mm**, så kommer HUGO og resten ut i egen farge.
 
 ### Deler du må skaffe selv
 
-* **Mast:** **ovalt** emne, **4,0 × 3,0 mm × 355 mm**. Ovalen skal stå med den
-  lange aksen for-akter. Alle fem riggbeslag har ovalt hull på 4,5 × 3,5 mm, så
-  masten kan ikke vri seg i dem — se «Om masten» under.
-* **Bom:** samme materiale, 97 mm — eller bruk den printede bommen.
+* **Masten printes** (del 03), men trenger en større printer enn A1 — se
+  «Masten». Vil du heller lage den av et ovalt 4,0 × 3,0 mm emne på 366 mm,
+  passer det i de samme hullene.
 * **Pulpit og pushpit:** **1,0 mm messingtråd**, bøyd rundt tappene på bøyemalen.
 * **Livliner:** tynt tauverk eller tråd, opptil 0,4 mm. Tres gjennom øynene på
   rekkepålene — se under.
@@ -189,7 +194,50 @@ Rekkepålene printes (del 08) og trenger ikke messingtråd.
 
 ---
 
-## Om masten
+## Masten
+
+Del 03 er masten i ett stykke: **365,5 mm** lang, rett oval profil
+**4,0 × 3,0 mm** hele veien, faset i begge ender. De nederste 11 mm står nede i
+det ovale hullet i ruffen; 355 mm er synlig. Salingen og masttoppen tres på
+ovenfra før masten settes i ruffen, bommen til slutt.
+
+Profilen er jevntykk med vilje. En 26-fots cruiser fra rundt 1980 har en rett
+alu-profil uten avsmalning, og en eventuell avsmalning i toppen ville uansett
+vært under en halv millimeter i 1:30.
+
+### Den passer ikke på A1-en
+
+Liggende trenger den 366 mm. Diagonalt på en 256 × 256 mm plate blir det
+261 mm — 5 mm for mye. Den må printes på en printer med **minst 366 mm langs
+én akse, eller 262 × 262 mm** for diagonal plassering. En Bambu X1 eller P1 har
+samme plate som A1 og går heller ikke; en 300 × 300 mm plate gjør det.
+
+### Slik printes den
+
+Det er en 366 mm lang strek på 4 × 3 mm. Alt handler om å holde den rett.
+
+* **Liggende med den brede siden ned** — STL-en ligger allerede slik. Da er den
+  bare 3 mm høy, og lagene løper langs masten, som er den sterke retningen.
+  Ingen støtte trengs; ingenting henger i lufta.
+* **Brim, 6–8 mm.** Fotavtrykket er bare 15 cm², og uten brim løsner enden
+  halvveis ut i printen.
+* **Bare vegger, ingen infill.** Sett veggantallet til 6, så fylles hele
+  tverrsnittet av sammenhengende perimetre. Det gir maksimal stivhet.
+* **Sakte og kaldt.** Ytre vegg 40–50 mm/s, vifte 100 %. PLA, ikke PETG eller
+  ASA: PLA er stivest og krymper minst, og det er nettopp stivhet og rettlinjethet
+  som betyr noe her. ASA krøller seg opp fra platen på en åpen printer.
+* **Print to eller tre samtidig** og bruk den retteste. Det koster 4 gram.
+* **La platen bli helt kald** før du tar den løs. Trekker du i en varm, tynn del
+  bøyer du den.
+* Legg den ferdige masten på et flatt bord og se etter bue. En svak bue rettes
+  ved å holde den i 60 °C vann i et halvt minutt og legge den under en bok
+  til den er kald.
+
+Stående i ruffen bærer masten seg selv med god margin: den veier 4 gram, og
+knekklasten for en 366 mm PLA-stav med dette tverrsnittet er rundt 60 gram.
+Det som kan knekke den, er å miste den på gulvet før den er limt.
+
+## Om mastprofilen
 
 En alu-mastprofil er ikke rund. Den er tydelig dypere for-akter enn på tvers,
 med likespor i bakkant. Anslått for en HR 26 blir det i størrelsesorden
@@ -316,8 +364,8 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 3. Bøy pulpit og pushpit av 1,0 mm messingtråd rundt tappene på bøyemalen
    (del 09) og lim dem i.
 4. Lim mastefoten i utsparingen i ruffen.
-5. Tre salingen på masten ca. 220 mm over foten, og masttoppen i enden. Alle
-   beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
+5. Tre salingen på masten til ca. 213 mm over foten, og masttoppen i enden.
+   Alle beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
 6. Sett masten i foten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
 7. Roret: tappene passer i de to hullene i akterspeilet.
