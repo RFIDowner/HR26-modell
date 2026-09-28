@@ -115,10 +115,10 @@ diametre, som er definert i modell-millimeter og ganget opp.
 |---|---|---|---|
 | 01 | Skrog | 202,8 × 202,8 × 93,2 | diagonalt på platen, 45° |
 | 02 | Ror | 34,5 × 3,2 × 18,1 | printes liggende, to tapper |
-| 03 | Mastefot | 6,6 × 6,6 × 9,0 | limes i ruffen |
-| 04 | Masttopp | 6,2 × 6,2 × 6,0 | hull for for- og akterstag |
-| 05 | Saling | 56,2 × 15,1 × 3,2 | 22° tilbakesveip |
-| 06 | Bom | 99,8 × 6,2 × 2,4 | med ring om masten |
+| 03 | Mastefot | 9,7 × 8,1 × 4,5 | støpt beslag på ruffen |
+| 04 | Masttopp | 6,7 × 5,5 × 5,5 | hull for for- og akterstag |
+| 05 | Saling | 56,2 × 14,7 × 3,0 | 22° tilbakesveip |
+| 06 | Bom | 100,0 × 5,5 × 2,4 | med ring om masten |
 | 07 | Bøyemal | 46,0 × 34,0 × 9,0 | for pulpit og pushpit i messingtråd |
 | 08–09 | Stativvugger | ~77 × 100 × 6,0 | freset etter skrogets egne spant |
 | 10 | Stativbjelke | 140,7 × 70,0 × 14,0 | vuggene tres ned på tappene |
@@ -127,11 +127,39 @@ Plastforbruk for skroget: ca. **164 cm³**, altså rundt 205 g PLA.
 
 ### Deler du må skaffe selv
 
-* **Mast:** trepinne eller karbonrør, **4 mm × 355 mm**.
+* **Mast:** **ovalt** emne, **4,0 × 3,0 mm × 355 mm**. Ovalen skal stå med den
+  lange aksen for-akter. Alle fem riggbeslag har ovalt hull på 4,5 × 3,5 mm, så
+  masten kan ikke vri seg i dem — se «Om masten» under.
 * **Bom:** samme materiale, 97 mm — eller bruk den printede bommen.
 * **Rekkepåler, pulpit og pushpit:** **1,5 mm messingtråd**. Alle hull i dekket
   er 1,6 mm, altså 0,1 mm klaring.
 * **Rekkverk (livliner):** tynn tråd eller 0,3 mm messing.
+
+---
+
+## Om masten
+
+En alu-mastprofil er ikke rund. Den er tydelig dypere for-akter enn på tvers,
+med likespor i bakkant. Anslått for en HR 26 blir det i størrelsesorden
+120 × 90 mm i virkeligheten, altså **4,0 × 3,0 mm** i 1:30.
+
+Alle fem hull i riggen — mastefot, masttopp, saling, bom og selve hullet i
+ruffen — er derfor ovale, **4,5 × 3,5 mm**. Det gir 0,25 mm klaring per side,
+som er rikelig: hull i PLA kommer typisk ut 0,1–0,2 mm trangere enn nominelt,
+og det er lettere å fylle med lim enn å file ut et for trangt hull.
+
+Den ovale formen låser samtidig masten mot å vri seg. Salingarmene kan altså
+ikke snurre rundt og peke feil vei, slik de ville gjort med et rundt hull.
+
+Målene er et **anslag**. Har du skyvelær på den virkelige masten, eller et
+nærbilde av masten ved foten med noe av kjent størrelse inntil, sett de målte
+tallene inn i `MAST_SECTION_X` og `MAST_SECTION_Y` i `hr26/params.py` og bygg
+på nytt — alle fem hullene følger med. Mastens *lengde* trenger du ikke måle;
+katalogens 12 m over vannlinjen er verftets eget tall.
+
+Mastefoten er beholdt selv om hullet i ruffen kunne tatt masten alene: HR 26 har
+dekksmontert mast, og fotbeslaget er godt synlig på ruffen. Den er gjort lav og
+platelignende slik originalen er, i stedet for en høy hylse.
 
 ---
 
@@ -167,7 +195,8 @@ ned på tappene; ingen lim nødvendig om passformen blir stram.
 2. Kapp rekkepåler av 1,5 mm messingtråd, ca. 20 mm, og lim dem i hullene.
 3. Bøy pulpit og pushpit rundt tappene på bøyemalen (del 07) og lim dem i.
 4. Lim mastefoten i utsparingen i ruffen.
-5. Tre salingen på masten ca. 220 mm over foten, og masttoppen i enden.
+5. Tre salingen på masten ca. 220 mm over foten, og masttoppen i enden. Alle
+   beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
 6. Sett masten i foten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
 7. Roret: tappene passer i de to hullene i akterspeilet.
