@@ -118,22 +118,62 @@ diametre, som er definert i modell-millimeter og ganget opp.
 
 ## Delene
 
-| # | Del | Mål (mm) | Merknad |
-|---|---|---|---|
-| 01 | Skrog | 205,1 × 205,1 × 109,4 | diagonalt på platen, 45°. Sprayhood og navn er med |
-| 02 | Ror | 34,5 × 3,2 × 18,1 | printes liggende, to tapper |
-| 03 | Mastefot | 9,7 × 8,1 × 4,5 | støpt beslag på ruffen |
-| 04 | Masttopp | 6,7 × 5,5 × 5,5 | hull for for- og akterstag |
-| 05 | Saling | 56,2 × 14,7 × 3,0 | 22° tilbakesveip |
-| 06 | Bom | 100,0 × 5,5 × 2,4 | bar bom |
-| 07 | Bom med seil | 100,0 × 10,0 × 8,6 | surret storseil — **print 06 *eller* 07** |
-| 08 | Rekkepåler | 24,9 × 54,4 × 1,6 | 16 stk (12 + 4 ekstra) på sprue |
-| 09 | Bøyemal | 46,0 × 34,0 × 9,0 | for pulpit og pushpit i messingtråd |
-| 10–11 | Stativvugger | ~77 × 100 × 6,0 | freset etter skrogets egne spant |
-| 12 | Stativbjelke | 140,7 × 70,0 × 14,0 | vuggene tres ned på tappene |
-| 13 | Skilt | 104,0 × 46,0 × 3,7 | opphøyd tekst, står ved stativet |
+Tolv filer i `export/stl/`. Materialtallene er reell geometri ganget med
+1,24 g/cm³ — legg til litt for støtte og skjørt.
 
-Plastforbruk for skroget: ca. **177 cm³**, altså rundt 220 g PLA.
+| # | Fil | Mål (mm) | PLA |
+|---|---|---|---|
+| 01 | `01_skrog.stl` | 205,1 × 205,1 × 109,4 | 174 cm³ / 216 g |
+| 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
+| 03 | `03_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
+| 04 | `04_masttopp.stl` | 6,7 × 5,5 × 5,5 | 0,1 cm³ |
+| 05 | `05_saling.stl` | 56,2 × 14,7 × 3,0 | 0,1 cm³ |
+| 06 | `06_bom.stl` | 100,0 × 5,5 × 2,4 | 0,3 cm³ |
+| 07 | `07_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
+| 08 | `08_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
+| 09 | `09_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
+| 10 | `10_stativ-vugge1.stl` | 77,4 × 94,6 × 6,0 | 35,4 cm³ / 44 g |
+| 11 | `11_stativ-vugge2.stl` | 74,2 × 106,4 × 6,0 | 36,5 cm³ / 45 g |
+| 12 | `12_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
+| 13 | `13_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
+
+**06 og 07 er alternativer** — print den ene. Til sammen blir det rundt
+**320 cm³, altså ca. 395 g PLA**: skroget 216 g, stativet 151 g, resten under
+30 g. Én rull på 1 kg holder med god margin.
+
+### Slik printes hver del
+
+**01 Skrog** — den store jobben, 12–16 timer.
+* Ligger ferdig orientert: kjølen ned, rotert 45°, 205 × 205 mm av platen.
+* **Infill 0 %.** Skroget er uthult med 1,5 mm vegg, og innvendige spant hver
+  26 mm bærer dekket. Setter du infill blir det bare tyngre og tregere.
+* Støtte på, bare under skroget ved baug og hekk. Ingen støtte trengs oppe.
+* Lag 0,12–0,16 mm. Ingen brim — kjølen gir god vedheft, og det er plass til
+  brim om du vil ha det.
+* Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
+
+**02 Ror** — printes liggende, 3,2 mm tykt. Støtte av. De to tappene på
+forkanten passer i hullene i akterspeilet.
+
+**03–06 Riggbeslag** — små, flate, ligger rett på platen. Ingen støtte.
+4 vegger og 25 % infill, ellers blir salingarmene skjøre. Alle har ovalt
+4,5 × 3,5 mm hull og kan bare tres på masten én vei.
+
+**07 Bom med seil** — alternativ til 06. Har det surrede storseilet med
+kalesje på, slik båten ligger fortøyd.
+
+**08 Rekkepåler** — 16 stk på sprue, ligger flatt. **Ikke roter dem opp.**
+Liggende blir øyehullene loddrette og kommer rene ut, og lagene løper langs
+pålen, som er den sterke retningen. Bruk brim — delene er små og lette.
+
+**09 Bøyemal** — hjelpeverktøy, ikke en del av modellen. Til å bøye pulpit og
+pushpit av 1,0 mm messingtråd rundt.
+
+**10–12 Stativ** — vuggene liggende, 6 mm tykke, ingen støtte. Bjelken har
+lettelseshull. 15 % infill holder. Tre vuggene ned på tappene.
+
+**13 Skilt** — flatt, ingen støtte. Teksten står 0,7 mm opphøyd. Legg inn
+**fargeskift på 3,0 mm**, så kommer HUGO og resten ut i egen farge.
 
 ### Deler du må skaffe selv
 
