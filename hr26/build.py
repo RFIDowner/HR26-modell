@@ -23,6 +23,7 @@ from . import deckhouse as D
 from . import fittings as F
 from . import hull as H
 from . import params as P
+from . import plaque as PL
 from . import rig as R
 from . import shell as S
 from . import stand as ST
@@ -79,6 +80,7 @@ def build_parts(hollow: bool = True, **kw):
     parts["ror"] = A.rudder()
     parts.update(R.parts())
     parts.update(ST.parts())
+    parts.update(PL.parts())
     return parts
 
 
@@ -149,6 +151,7 @@ def export(parts: dict, log=print):
         "stativ-vugge1",
         "stativ-vugge2",
         "stativ-bjelke",
+        "skilt",
     ]
     names = [n for n in order if n in parts] + [n for n in parts if n not in order]
 
