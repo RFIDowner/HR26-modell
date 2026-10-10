@@ -75,12 +75,12 @@ def winch_pads() -> cq.Workplane:
     out = None
     for sign in (1, -1):
         y = sign * (C.deck_half_breadth(P.WINCH_X) - P.WINCH_INSET)
-        z = D.deck_z(P.WINCH_X, y)
+        z = D.coaming_top_z(P.WINCH_X)
         pad = (
             cq.Workplane("XY")
-            .workplane(offset=z - 260.0)
+            .workplane(offset=z - 160.0)
             .circle(150.0)
-            .extrude(450.0)
+            .extrude(350.0)
             .faces(">Z")
             .chamfer(35.0)
             .translate((P.WINCH_X, y, 0.0))
