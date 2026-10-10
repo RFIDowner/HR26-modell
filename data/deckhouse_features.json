@@ -1,0 +1,170 @@
+{
+ "_om": "Ruff, luker, cockpit og sprayhood maalt for trinn 3. Alle maal i fullskala mm; x fra baugen, z over DWL. kilde: 'profil' = HR 26-brosjyrens profiltegning 1:50 (kalibrert, se README); 'scan' = fotogrammetri-scan, bredder via andel av lokal dekksbredde; 'foto' = fotografier, bare form/plassering. sikkerhet: hoy = maalt direkte, middels = maalt med stoy, lav = anslag fra bilde.",
+ "lav_forruff": {
+  "beskrivelse": "Lav, flat forruff som gaar fra trinnet og helt fram til stevnen og fairer inn i fordekket.",
+  "topp_z": 1216,
+  "x_fra": 900,
+  "x_til": 2200,
+  "kilde": "profil",
+  "sikkerhet": "hoy",
+  "merknad": "Toppen er vannrett (1209-1226 hele veien). Hoyde over dekkskanten: ca 100 mm ved x=2000, 75 ved 1500, 30 ved 1000, 0 naer stevnen.",
+  "halvbredde": {
+   "verdi": "0.78 x lokal dekkshalvbredde",
+   "kilde": "foto",
+   "sikkerhet": "lav"
+  },
+  "ventil": {
+   "x": 1900,
+   "topp_z": 1262,
+   "kilde": "profil",
+   "sikkerhet": "hoy"
+  }
+ },
+ "trinn": {
+  "x_fra": 2200,
+  "x_til": 2330,
+  "z_fra": 1216,
+  "z_til": 1350,
+  "kilde": "profil",
+  "sikkerhet": "hoy",
+  "merknad": "Skraa front, ca 45 grader."
+ },
+ "hoy_ruff": {
+  "x_fra": 2330,
+  "x_til": 5625,
+  "kilde": "profil",
+  "sikkerhet": "hoy",
+  "topp_z": [
+   [
+    2330,
+    1350
+   ],
+   [
+    3000,
+    1375
+   ],
+   [
+    4200,
+    1385
+   ],
+   [
+    5625,
+    1375
+   ]
+  ],
+  "merknad": "I praksis flat, 1350-1390. Tidligere modell: 2680-5180, topp ca 1310 etter spring-rettingen.",
+  "halvbredde": [
+   {
+    "x": 2330,
+    "verdi": 720,
+    "kilde": "foto",
+    "sikkerhet": "lav"
+   },
+   {
+    "x": 3800,
+    "verdi": 850,
+    "kilde": "scan",
+    "sikkerhet": "middels"
+   },
+   {
+    "x": 5600,
+    "verdi": 850,
+    "kilde": "scan",
+    "sikkerhet": "middels"
+   }
+  ],
+  "sidedekk_midtskips_mm": {
+   "verdi": 465,
+   "kilde": "scan",
+   "sikkerhet": "middels"
+  }
+ },
+ "forluke": {
+  "x_fra": 2490,
+  "x_til": 2980,
+  "topp_z": 1415,
+  "hoyde_over_tak": 40,
+  "bredde": 500,
+  "kilde": "profil (x,z) / anslag (bredde)",
+  "sikkerhet": "hoy for x og z, lav for bredde",
+  "merknad": "Paa rufftaket foran masten - ikke paa fordekket som i tidligere modell."
+ },
+ "ventil_hoy_ruff": {
+  "x": 3894,
+  "topp_z": 1446,
+  "kilde": "profil",
+  "sikkerhet": "hoy"
+ },
+ "mastefot": {
+  "x_fra": 3324,
+  "x_til": 3471,
+  "x_senter": 3400,
+  "kilde": "profil",
+  "sikkerhet": "hoy",
+  "merknad": "Modellen har 3480; 80 mm for langt akter."
+ },
+ "skyveluke_nedgang": {
+  "x_fra": 4352,
+  "x_til": 4940,
+  "topp_z": 1446,
+  "hoyde_over_tak": 60,
+  "bredde": 620,
+  "kilde": "profil (x,z) / anslag (bredde)",
+  "sikkerhet": "hoy for x og z, lav for bredde"
+ },
+ "nedgang_skott": {
+  "x": 5625,
+  "kilde": "profil",
+  "sikkerhet": "hoy",
+  "merknad": "Ruffens bakkant og cockpitens forkant. Modellen hadde 5180."
+ },
+ "sprayhood": {
+  "x_fra": 5135,
+  "x_til": 6150,
+  "topp_z": 1745,
+  "kilde": "profil (stiplet)",
+  "sikkerhet": "hoy",
+  "merknad": "Staar over nedgangen og henger ut over cockpiten. Modellen hadde 4280-5190."
+ },
+ "cockpit": {
+  "x_fra": 5660,
+  "x_til": 7300,
+  "kilde": "profil/plan",
+  "sikkerhet": "middels",
+  "karm_topp_z": [
+   [
+    6000,
+    1147
+   ],
+   [
+    6200,
+    1121
+   ],
+   [
+    6400,
+    1111
+   ]
+  ],
+  "karm_ytterkant_halvbredde": {
+   "verdi": 980,
+   "kilde": "plan",
+   "sikkerhet": "middels"
+  },
+  "bronn_halvbredde": {
+   "verdi": 850,
+   "kilde": "plan",
+   "sikkerhet": "middels"
+  }
+ },
+ "vindu": {
+  "x_fra": 3666,
+  "x_til": 4841,
+  "andel_av_sidehoyde": [
+   0.11,
+   0.5
+  ],
+  "kilde": "profil",
+  "sikkerhet": "hoy",
+  "merknad": "Allerede lagt inn som WIN_*_FRAC."
+ }
+}

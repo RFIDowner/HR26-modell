@@ -64,6 +64,19 @@ De uttrukne kurvene ligger i `data/`:
 | `hull_stations.csv` | fairet tabell: dekkshalvbredde, fenderlistens senterlinje, kanobunn |
 | `deck_halfbreadth.csv` | rå dekkslinje fra dekksplanen |
 | `uw_station.csv` | rå undervannsprofil med kjøl og ror |
+| `profile_top_silhouette.csv` | rå topp-silhuett av profiltegningen (ruff, luker, sprayhood) |
+| `scan_roof_outline.csv` | ruffens halvbredde per stasjon fra scannet — pålitelig bare midtskips |
+| `deckhouse_features.json` | ruff, trinn, luker, nedgang, sprayhood og cockpit med kilde og sikkerhet per verdi |
+
+**Merk om ruffen (trinn 3, måling — ennå ikke bygget):** profiltegningen viser
+en ruff i to nivåer: en lav, flat forruff på z ≈ 1 216 fra ca. 900 mm fram til et
+trinn ved 2 200–2 330 mm, og en høy ruff på z ≈ 1 380 fra trinnet til nedgangs-
+skottet ved 5 625 mm. Forluken sitter på det høye taket foran masten
+(2 490–2 980), skyveluken over nedgangen (4 352–4 940), sprayhooden over
+nedgangen og ut over cockpiten (5 135–6 150). Bredden i plan finnes ikke i
+tegningene; fra scannet er ruffens halvbredde ca. 850 mm midtskips. Alt ligger
+i `data/deckhouse_features.json` med kilde og sikkerhet per verdi. Modellen
+har fortsatt den gamle, for korte ruffen (2 680–5 180) til trinn 4 er gjort.
 
 **Merk om ruffvinduet:** vinduet sitter i **nedre halvdel** av ruffsiden, med en
 smal stripe ruff under seg — slik både profiltegningen og fotografiene viser.
