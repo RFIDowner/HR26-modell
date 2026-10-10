@@ -93,20 +93,35 @@ def coachroof() -> cq.Workplane:
     return prism.intersect(roof)
 
 
+def coach_side_span(x: float):
+    """Ruffsidens fot og takkant ved stasjon x: (z_fot, z_topp)."""
+    w = coach_half_width(x)
+    return C.deck_z(x, w), coach_roof_z(x) - 58.0
+
+
 def coach_windows() -> cq.Workplane:
-    """Nedfelte langvinduer i ruffsiden."""
-    xa, xb = P.COACH_X0 + 560.0, P.COACH_X1 - 300.0
+    """Nedfelte langvinduer i ruffsiden.
+
+    Plassert etter WIN_*_FRAC i params.py: i nedre halvdel av ruffsiden,
+    slik profiltegningen og fotografiene viser - ikke oppunder taket.
+    """
+    L = P.COACH_X1 - P.COACH_X0
+    xa = P.COACH_X0 + P.WIN_X0_FRAC * L
+    xb = P.COACH_X0 + P.WIN_X1_FRAC * L
     xm = 0.5 * (xa + xb)
+    z_bot, z_top = coach_side_span(xm)
+    H = z_top - z_bot
+    z0 = z_bot + P.WIN_Z0_FRAC * H
+    z1 = z_bot + P.WIN_Z1_FRAC * H
     w = coach_half_width(xm)
-    z = C.sheer_z(xm) + 0.55 * (coach_roof_z(xm) - C.sheer_z(xm)) + 40.0
     out = None
     for sign in (1, -1):
         b = (
             cq.Workplane("XY")
-            .box(xb - xa, 150.0, 175.0, centered=(True, True, True))
-            .edges("|X")
-            .fillet(60.0)
-            .translate((xm, sign * (w - 20.0), z))
+            .box(xb - xa, P.WIN_DEPTH, z1 - z0, centered=(True, True, True))
+            .edges("|Y")
+            .fillet(min(P.WIN_RAD, 0.45 * (z1 - z0)))
+            .translate((xm, sign * (w - 0.5 * P.WIN_DEPTH + 40.0), 0.5 * (z0 + z1)))
         )
         out = b if out is None else out.union(b)
     return out

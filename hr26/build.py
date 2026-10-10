@@ -36,6 +36,39 @@ BED = 256.0           # Bambu Lab A1
 BED_MARGIN = 1.5      # sikkerhetsmargin i modell-mm
 
 
+# ------------------------------------------------- robuste boolske operasjoner
+NUDGES = (0.0, 0.37, -0.37, 0.73, -0.73)   # smaa forskyvninger i x, fullskala-mm
+
+
+def _n_solids(wp) -> int:
+    return len(wp.val().Solids())
+
+
+def robust_union(base, part, what: str):
+    """Union som nekter aa feile i stillhet.
+
+    OCC kan returnere begge delene som separate solider - eller miste den
+    ene - naar en flate i den ene delen faller noyaktig paa en soem i den
+    andre. Det skjedde for ruffen mot skroget ved enkelte stasjonstall.
+    Vi provde derfor smaa forskyvninger av delen, og gir opp hoylytt om
+    ingen av dem gir ett sammenhengende volum.
+    """
+    before = _n_solids(base)
+    for dx in NUDGES:
+        cand = base.union(part.translate((dx, 0.0, 0.0)) if dx else part)
+        if _n_solids(cand) <= before and cand.val().Volume() > base.val().Volume() + 1.0:
+            return cand
+    raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
+
+
+def robust_cut(base, cutter, what: str):
+    before = _n_solids(base)
+    out = base.cut(cutter)
+    if _n_solids(out) > before:
+        raise RuntimeError(f"kutt '{what}' delte modellen i {_n_solids(out)} biter")
+    return out
+
+
 # --------------------------------------------------------------- bygging
 def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=print):
     t0 = time.time()
@@ -47,25 +80,27 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
     w = cq.Workplane("XY").newObject([H.hull_solid(n_stations, n_pts)])
     step("skrog loftet", w)
 
-    w = w.union(A.keel())
+    w = robust_union(w, A.keel(), "kjol")
     step("kjol", w)
-    w = w.union(D.coaming_block())
-    step("cockpitkarm", w)
-    w = w.union(D.coachroof())
+    w = robust_union(w, D.coachroof(), "ruff")
     step("ruff", w)
-    w = w.union(D.sprayhood())
+    w = robust_union(w, D.coaming_block(), "cockpitkarm")
+    step("cockpitkarm", w)
+    w = robust_union(w, D.sprayhood(), "sprayhood")
     step("sprayhood", w)
-    w = w.union(F.additions())
+    w = robust_union(w, F.additions(), "dekksbeslag")
     step("dekksbeslag", w)
 
-    w = w.cut(D.cockpit_cut())
+    w = robust_cut(w, D.cockpit_cut(), "cockpit")
     step("cockpit utskaaret", w)
-    w = w.cut(D.companionway_cut())
-    w = w.cut(D.fore_hatch())
-    w = w.cut(D.coach_windows())
+    w = robust_cut(w, D.companionway_cut(), "nedgang")
+    w = robust_cut(w, D.fore_hatch(), "forluke")
+    w = robust_cut(w, D.coach_windows(), "vinduer")
     step("luker og vinduer", w)
-    w = w.cut(F.cuts())
+    w = robust_cut(w, F.cuts(), "hull for rigg og rekke")
     step("hull for rigg og rekke", w)
+    if _n_solids(w) != 1:
+        raise RuntimeError(f"skroget bestaar av {_n_solids(w)} solider etter sammenstilling")
 
     if hollow:
         w = S.hollow(w)

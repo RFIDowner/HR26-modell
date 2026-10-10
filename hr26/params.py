@@ -98,6 +98,16 @@ COACH_RAD = 120.0       # hjørneradius
 SIDEDECK_MIN = 270.0    # minste gangbredde langs ruffen
 
 DECK_CAMBER = 90.0      # bue på dekket over halve bredden
+
+# Ruffvinduet, som andeler av ruffens lengde (x) og av ruffsidens hoyde (z,
+# nedenfra). Lest av profiltegningen 1:50 og kontrollert mot fotografiene:
+# vinduet sitter i nedre halvdel av siden, med en smal stripe ruff under.
+WIN_X0_FRAC = 0.39      # forkant, andel av rufflengden fra forkant ruff
+WIN_X1_FRAC = 0.86      # bakkant
+WIN_Z0_FRAC = 0.12      # underkant, andel av sidehoyden nedenfra
+WIN_Z1_FRAC = 0.60      # overkant
+WIN_DEPTH = 130.0       # hvor dypt vinduet felles inn i ruffsiden
+WIN_RAD = 55.0          # hjorneradius
 COCKPIT_X0 = 5180.0
 COCKPIT_X1 = 7260.0
 COCKPIT_HALF_W = 620.0

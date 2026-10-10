@@ -64,6 +64,19 @@ De uttrukne kurvene ligger i `data/`:
 | `deck_halfbreadth.csv` | rå dekkslinje fra dekksplanen |
 | `uw_station.csv` | rå undervannsprofil med kjøl og ror |
 
+**Merk om ruffvinduet:** vinduet sitter i **nedre halvdel** av ruffsiden, med en
+smal stripe ruff under seg — slik både profiltegningen og fotografiene viser.
+I profiltegningen går det fra ca. 11 % til 50 % av sidehøyden nedenfra, og fra
+3 666 til 4 841 mm fra baugen. Modellen bruker 12–60 % og 3 655–4 830 mm
+(`WIN_*_FRAC` i `params.py`). En tidligere versjon hadde vinduet oppunder
+taket; det var feil.
+
+**Merk om fenderlisten (uavklart):** modellen legger dekkskanten 112 mm over
+fenderlistens senter (`STRAKE_DROP` / `SHEER_OVER_STRAKE`). På fotografiene ser
+fenderlisten ut til å sitte *i* dekkskanten, med overkanten omtrent ved dekket.
+Stemmer det, ligger springet i modellen ca. 60 mm (2 mm i 1:30) for høyt. Det er
+ikke endret, fordi det flytter hele dekket og dermed alt som står på det.
+
 **Merk om akterspeilet:** i dekksplanen møtes de to sidelinjene i akterspeilets
 hjørner, og sporingen tolket det som at skroget smalner av til en spiss.
 Halvbredden holdes derfor fast fra `TRANSOM_X` og akterover (`curves.py`), slik
@@ -110,7 +123,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | `shell.py` | uthuling med innvendige spant |
 | `stand.py` | stativ |
 | `plaque.py` | skiltplate |
-| `build.py` | setter sammen, orienterer for print, eksporterer |
+| `build.py` | setter sammen, orienterer for print, eksporterer. Boolske operasjoner som ikke gir ett volum stopper bygget i stedet for å miste deler i stillhet |
 | `tools/render.py` | kontrollbilder av STL |
 | `tools/meshcheck.py` | sjekker at STL-ene er lukkede |
 
