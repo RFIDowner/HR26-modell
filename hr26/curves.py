@@ -3,6 +3,8 @@
 Tabellen er hentet ut av profil- og dekksplantegningen i 1:50 fra
 HR 26-brosjyren og fairet. Alle verdier i fullskala mm: x maalt fra
 baugen og akterover, z fra konstruksjonsvannlinjen (DWL), y halvbredde.
+Springet lagres som fenderlistens senterlinje (det som faktisk er maalt);
+dekkskanten avledes med P.SHEER_OVER_STRAKE.
 """
 from __future__ import annotations
 
@@ -19,13 +21,15 @@ _DATA = os.path.normpath(
 
 
 def _load():
-    x, hb, zs, zb = [], [], [], []
+    x, hb, zk, zb = [], [], [], []
     with open(_DATA, newline="") as fh:
         for row in csv.DictReader(fh):
             x.append(float(row["x_from_bow_mm"]))
             hb.append(float(row["deck_half_breadth_mm"]))
-            zs.append(float(row["sheer_z_mm"]))
+            zk.append(float(row["strake_z_mm"]))        # fenderlistens senterlinje
             zb.append(float(row["canoe_bottom_z_mm"]))
+    # dekkskanten ligger en halv listhoyde over listens senter
+    zs = [z + P.SHEER_OVER_STRAKE for z in zk]
     return np.array(x), np.array(hb), np.array(zs), np.array(zb)
 
 
