@@ -88,35 +88,62 @@ RUDDER_RAKE = 110.0     # forkant heller akterover nedover
 RUDDER_T = 90.0
 
 # ------------------------------------------------------------ ruff/dekk
-COACH_X0 = 2680.0       # forkant ruff fra baugen
-COACH_X1 = 5180.0       # bakkant ruff (nedgangskapp)
-COACH_HALF_W0 = 620.0   # halvbredde forkant
-COACH_HALF_W1 = 900.0   # halvbredde bakkant
-COACH_H0 = 330.0        # høyde over dekk, forkant
-COACH_H1 = 470.0        # høyde over dekk, bakkant
-COACH_RAD = 120.0       # hjørneradius
-SIDEDECK_MIN = 270.0    # minste gangbredde langs ruffen
+# Alt under er maalt ut av profiltegningen 1:50 (hoyder, lengder) og av
+# scannet (bredder midtskips) - se data/deckhouse_features.json for kilde
+# og sikkerhet per verdi. z over DWL, x fra baugen.
 
-DECK_CAMBER = 90.0      # bue på dekket over halve bredden
+# lav, flat forruff som fairer inn i fordekket forut
+TRUNK_X0 = 700.0
+TRUNK_TOP_Z = 1216.0
+TRUNK_W_FRAC = 0.78          # halvbredde som andel av dekkshalvbredden (anslag fra foto)
+TRUNK_RAD = 160.0
 
-# Ruffvinduet, som andeler av ruffens lengde (x) og av ruffsidens hoyde (z,
-# nedenfra). Lest av profiltegningen 1:50 og kontrollert mot fotografiene:
-# vinduet sitter i nedre halvdel av siden, med en smal stripe ruff under.
-WIN_X0_FRAC = 0.39      # forkant, andel av rufflengden fra forkant ruff
-WIN_X1_FRAC = 0.86      # bakkant
-WIN_Z0_FRAC = 0.12      # underkant, andel av sidehoyden nedenfra
-WIN_Z1_FRAC = 0.60      # overkant
-WIN_DEPTH = 130.0       # hvor dypt vinduet felles inn i ruffsiden
-WIN_RAD = 55.0          # hjorneradius
-COCKPIT_X0 = 5180.0
-COCKPIT_X1 = 7260.0
-COCKPIT_HALF_W = 620.0
+# trinnet opp til den hoye ruffen
+STEP_X0 = 2200.0
+STEP_X1 = 2330.0
+
+# hoy ruff: topp (x, z) og halvbredde (x, mm)
+COACH_X0 = STEP_X1
+COACH_X1 = 5625.0            # nedgangsskott / ruffens bakkant
+COACH_TOP = [(2330.0, 1350.0), (3000.0, 1375.0), (4200.0, 1385.0), (5625.0, 1375.0)]
+COACH_HALF_W = [(2200.0, 700.0), (2330.0, 720.0), (3800.0, 850.0), (5625.0, 850.0)]
+COACH_RAD = 140.0            # hjorneradius i plan
+COACH_ROOF_CAMBER = 58.0     # takets bue, senter over kant
+SIDEDECK_MIN = 250.0
+
+# luker og ventiler paa taket (x_fra, x_til, bredde, hoyde over tak)
+FOREHATCH = (2490.0, 2980.0, 500.0, 40.0)
+SLIDE_HATCH = (4352.0, 4940.0, 620.0, 60.0)
+VENT_D, VENT_H = 150.0, 45.0
+VENTS = [(1900.0, "trunk"), (3894.0, "roof")]
+
+# nedgang i ruffens bakkant: bredde, dybde inn i skottet, underkant over dekkskant
+COMPANION_W = 620.0
+COMPANION_DEPTH = 180.0
+COMPANION_SILL = 150.0
+
+DECK_CAMBER = 90.0           # bue paa dekket over halve bredden
+
+# ruffvinduet, som andeler av ruffens lengde (x) og av ruffsidens hoyde (z, nedenfra)
+WIN_X0_FRAC = 0.405          # = 3666 mm fra baugen
+WIN_X1_FRAC = 0.762          # = 4841 mm
+WIN_Z0_FRAC = 0.06
+WIN_Z1_FRAC = 0.50
+WIN_DEPTH = 130.0
+WIN_RAD = 55.0
+
+# cockpit
+COCKPIT_X0 = 5660.0
+COCKPIT_X1 = 7300.0
+COCKPIT_HALF_W = 850.0       # bronnen
+COAMING_HALF_W = 980.0       # karmens ytterkant
+COAMING_H0 = 280.0           # karmtopp over dekkskant, forkant
+COAMING_H1 = 200.0           # ... bakkant
 COCKPIT_DEPTH = 560.0
 COCKPIT_RAD = 140.0
-COAMING_H = 150.0       # cockpitkarm over dekk
 
 # --------------------------------------------------------- utstyrshull
-MAST_STEP_X = 3480.0    # mastefot fra baugen
+MAST_STEP_X = 3400.0    # mastefot fra baugen (profil: 3324-3471)
 
 # Masten er oval, slik alu-profiler er: dypere for-akter enn paa tvers.
 # Maalene er modell-mm ganget opp til fullskala, saa de foelger SCALE.
@@ -150,8 +177,8 @@ STANCHION_SPARES = 4          # ekstra paaler paa arket
 PULPIT_X = [520.0, 900.0]     # pulpit-bein (baug)
 PUSHPIT_X = [7250.0, 7680.0]  # pushpit-bein (akter)
 
-WINCH_X = 5450.0
-WINCH_INSET = 430.0
+WINCH_X = 5900.0
+WINCH_INSET = 400.0
 CLEAT_X = [700.0, 4900.0, 7500.0]
 
 # ------------------------------------------------------------- fenderlist
@@ -188,9 +215,9 @@ RUDDER_PIN_L = 2.2 * SCALE
 RUDDER_PIN_Z = (-210.0, -830.0)
 
 # ------------------------------------------------------------- sprayhood
-SPRAY_X0 = 4280.0       # forkant kalesje (fra baugen)
-SPRAY_X1 = 5190.0       # bakkant, mot nedgangen
-SPRAY_H = 560.0         # hoyde over ruffen
+SPRAY_X0 = 5135.0       # forkant, paa ruffens bakre del
+SPRAY_X1 = 6150.0       # bakkant, henger ut over cockpiten
+SPRAY_TOP_Z = 1745.0    # topp over DWL (profil)
 SPRAY_OVERHANG = 30.0   # stikker saa vidt ut til side for ruffen
 
 # ------------------------------------------------- surret storseil paa bom

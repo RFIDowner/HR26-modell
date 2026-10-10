@@ -68,21 +68,27 @@ De uttrukne kurvene ligger i `data/`:
 | `scan_roof_outline.csv` | ruffens halvbredde per stasjon fra scannet — pålitelig bare midtskips |
 | `deckhouse_features.json` | ruff, trinn, luker, nedgang, sprayhood og cockpit med kilde og sikkerhet per verdi |
 
-**Merk om ruffen (trinn 3, måling — ennå ikke bygget):** profiltegningen viser
-en ruff i to nivåer: en lav, flat forruff på z ≈ 1 216 fra ca. 900 mm fram til et
-trinn ved 2 200–2 330 mm, og en høy ruff på z ≈ 1 380 fra trinnet til nedgangs-
-skottet ved 5 625 mm. Forluken sitter på det høye taket foran masten
-(2 490–2 980), skyveluken over nedgangen (4 352–4 940), sprayhooden over
-nedgangen og ut over cockpiten (5 135–6 150). Bredden i plan finnes ikke i
-tegningene; fra scannet er ruffens halvbredde ca. 850 mm midtskips. Alt ligger
-i `data/deckhouse_features.json` med kilde og sikkerhet per verdi. Modellen
-har fortsatt den gamle, for korte ruffen (2 680–5 180) til trinn 4 er gjort.
+**Merk om ruffen (trinn 4 — bygget fra målingene):** ruffen er i to nivåer,
+slik profiltegningen viser: en lav, flat forruff på z ≈ 1 216 fra 700 mm fram
+til et trinn ved 2 200–2 330 mm, og en høy ruff på z ≈ 1 350–1 385 fra trinnet
+til nedgangsskottet ved 5 625 mm. Forluken sitter på det høye taket foran
+masten (2 490–2 980), skyveluken over nedgangen (4 352–4 940), én ventil på
+forruffen (1 900) og én på taket (3 894), og sprayhooden står over nedgangen
+og ut over cockpiten (5 135–6 150). Høyder og lengder er fra profiltegningen.
+Bredden finnes ikke i tegningene: halvbredden er 850 mm midtskips (fra
+scannet) og et anslag på 720 mm ved trinnet (fra foto). Tallene ligger i
+ruff/dekk-blokken i `params.py`, og med kilde og sikkerhet per verdi i
+`data/deckhouse_features.json`. Overlegget under viser modellens silhuett
+(rødt) på profiltegningen 1:50 — ruff, trinn, luker, ventiler og sprayhood
+faller på tegningens linjer.
+
+![Modellens silhuett lagt over profiltegningen 1:50](docs/images/overlegg-profil.jpg)
 
 **Merk om ruffvinduet:** vinduet sitter i **nedre halvdel** av ruffsiden, med en
 smal stripe ruff under seg — slik både profiltegningen og fotografiene viser.
 I profiltegningen går det fra ca. 11 % til 50 % av sidehøyden nedenfra, og fra
-3 666 til 4 841 mm fra baugen. Modellen bruker 12–60 % og 3 655–4 830 mm
-(`WIN_*_FRAC` i `params.py`). En tidligere versjon hadde vinduet oppunder
+3 666 til 4 841 mm fra baugen. Modellen bruker 6–50 % av ruffsidens høyde (målt
+fra dekket ved ruffsiden) og 3 666–4 841 mm (`WIN_*_FRAC` i `params.py`). En tidligere versjon hadde vinduet oppunder
 taket; det var feil.
 
 **Merk om fenderlisten:** fenderlisten sitter *i* dekkskanten — listens overkant
@@ -132,7 +138,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | `curves.py` | fairede skrogkurver, tverrsnitt, deplasement |
 | `hull.py` | lofting av skroget, fenderlist |
 | `appendages.py` | kjøl og ror med NACA-lignende profil |
-| `deckhouse.py` | dekk, ruff, vinduer, cockpit, luker |
+| `deckhouse.py` | ruff i to nivåer, luker, ventiler, nedgang, vinduer, sprayhood, cockpit |
 | `fittings.py` | utsparinger: mastefot, rekkepåler, pulpit, vinsjer |
 | `rig.py` | riggen som byggesett |
 | `shell.py` | uthuling med innvendige spant |
@@ -151,10 +157,10 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,1 × 205,1 × 109,4 | 174 cm³ / 216 g |
+| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 224 cm³ / 278 g |
 | 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
-| 03 | `03_mast-355mm-A1.stl` | 354,5 × 4,0 × 3,0 — ligger diagonalt, 253,5 × 253,5 | 3,3 cm³ / 4 g |
-| 04 | `04_mast-366mm-ikke-A1.stl` | 365,5 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
+| 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
+| 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
 | 05 | `05_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
 | 06 | `06_masttopp.stl` | 6,7 × 5,5 × 5,5 | 0,1 cm³ |
 | 07 | `07_saling.stl` | 56,2 × 14,7 × 3,0 | 0,1 cm³ |
@@ -162,13 +168,13 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 09 | `09_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
 | 10 | `10_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
 | 11 | `11_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
-| 12 | `12_stativ-vugge1.stl` | 77,4 × 94,6 × 6,0 | 35,4 cm³ / 44 g |
-| 13 | `13_stativ-vugge2.stl` | 74,2 × 106,4 × 6,0 | 36,5 cm³ / 45 g |
+| 12 | `12_stativ-vugge1.stl` | 76,2 × 94,6 × 6,0 | 35,2 cm³ / 44 g |
+| 13 | `13_stativ-vugge2.stl` | 73,1 × 106,4 × 6,0 | 36,3 cm³ / 45 g |
 | 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **325 cm³, altså ca. 400 g PLA**: skroget 216 g,
+Til sammen blir det rundt **370 cm³, altså ca. 460 g PLA**: skroget 278 g,
 stativet 151 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
@@ -185,12 +191,12 @@ stativet 151 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 **02 Ror** — printes liggende, 3,2 mm tykt. Støtte av. De to tappene på
 forkanten passer i hullene i akterspeilet.
 
-**03 Mast, 355 mm, for A1** — ligger allerede diagonalt og fyller
-253,5 × 253,5 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
+**03 Mast, 354 mm, for A1** — ligger allerede diagonalt og fyller
+253,2 × 253,2 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
 Ingen plass til brim. Se «Masten».
 
-**04 Mast, 366 mm, ikke A1** — med 11 mm sokkel ned i ruffen. Trenger en
-plate med minst 366 mm langs én akse eller 262 × 262 mm diagonalt. Se «Masten».
+**04 Mast, 365 mm, ikke A1** — med 11 mm sokkel ned i ruffen. Trenger en
+plate med minst 365 mm langs én akse eller 261 × 261 mm diagonalt. Se «Masten».
 
 **05–08 Riggbeslag** — små, flate, ligger rett på platen. Ingen støtte.
 4 vegger og 25 % infill, ellers blir salingarmene skjøre. Alle har ovalt
@@ -214,7 +220,7 @@ lettelseshull. 15 % infill holder. Tre vuggene ned på tappene.
 
 ### Deler du må skaffe selv
 
-* **Masten printes** (del 03 eller 04) — se «Masten». Vil du heller lage den av et ovalt 4,0 × 3,0 mm emne på 366 mm,
+* **Masten printes** (del 03 eller 04) — se «Masten». Vil du heller lage den av et ovalt 4,0 × 3,0 mm emne på 365 mm,
   passer det i de samme hullene.
 * **Pulpit og pushpit:** **1,0 mm messingtråd**, bøyd rundt tappene på bøyemalen.
 * **Livliner:** tynt tauverk eller tråd, opptil 0,4 mm. Tres gjennom øynene på
@@ -232,19 +238,19 @@ settes i ruffen, bommen til slutt. Det finnes to filer:
 
 | Fil | Lengde | Sokkel i ruffen | Plate |
 |---|---|---|---|
-| `03_mast-355mm-A1.stl` | 354,5 mm | ingen — limes i mastefoten | A1, diagonalt, 1 mm margin, **uten brim** |
-| `04_mast-366mm-ikke-A1.stl` | 365,5 mm | 11 mm | minst 366 mm langs én akse, eller 262 × 262 mm |
+| `03_mast-354mm-A1.stl` | 354,1 mm | ingen — limes i mastefoten | A1, diagonalt, under 3 mm margin, **uten brim** |
+| `04_mast-365mm-ikke-A1.stl` | 365,1 mm | 11 mm | minst 365 mm langs én akse, eller 261 × 261 mm |
 
-Synlig masthøyde er den samme for begge: 355 mm over ruffen, som er 12 m over
+Synlig masthøyde er den samme for begge: 354 mm over ruffen, som er 12 m over
 vannlinjen i 1:30. Forskjellen er bare hva som står nede i hullet.
 
-**355-varianten** er et sjansespill på A1: (354,5 + 4) / √2 = 253,5 mm på en
-256 mm plate, så det er ikke plass til brim, og en 355 mm strek med 15 cm²
+**354-varianten** er et sjansespill på A1: (354,1 + 4) / √2 = 253,2 mm på en
+256 mm plate, så det er ikke plass til brim, og en 354 mm strek med 15 cm²
 fotavtrykk kan løsne i enden underveis. Går det bra, fungerer den fint — hullet i
-ruffen er der fortsatt, så skyver du masten i bunn står den 11 mm lavere (344 mm
+ruffen er der fortsatt, så skyver du masten i bunn står den 11 mm lavere (343 mm
 synlig); vil du ha full høyde, holder du den oppe mens limet i mastefoten herder.
 
-**366-varianten** er den riktige om du har tilgang til en større printer. En
+**365-varianten** er den riktige om du har tilgang til en større printer. En
 Bambu X1 eller P1 har samme plate som A1 og går ikke; en 300 × 300 mm plate gjør
 det.
 
@@ -254,7 +260,7 @@ vært under en halv millimeter i 1:30.
 
 ### Slik printes den
 
-Det er en 366 mm lang strek på 4 × 3 mm. Alt handler om å holde den rett.
+Det er en 365 mm lang strek på 4 × 3 mm. Alt handler om å holde den rett.
 
 * **Liggende med den brede siden ned** — STL-en ligger allerede slik. Da er den
   bare 3 mm høy, og lagene løper langs masten, som er den sterke retningen.
@@ -274,7 +280,7 @@ Det er en 366 mm lang strek på 4 × 3 mm. Alt handler om å holde den rett.
   til den er kald.
 
 Stående i ruffen bærer masten seg selv med god margin: den veier 4 gram, og
-knekklasten for en 366 mm PLA-stav med dette tverrsnittet er rundt 60 gram.
+knekklasten for en 365 mm PLA-stav med dette tverrsnittet er rundt 60 gram.
 Det som kan knekke den, er å miste den på gulvet før den er limt.
 
 ## Om mastprofilen
@@ -291,7 +297,7 @@ hull — som fem perler på samme snor:
 | −11 mm | hullet i ruffen | masten stikker ned i dekket |
 | 0 mm | mastefot | beslaget limes rundt masten |
 | ca. 220 mm | saling | tres på og skyves opp |
-| ca. 355 mm | masttopp | hetten helt øverst |
+| ca. 354 mm | masttopp | hetten helt øverst |
 | ca. 50 mm | bom | ringen i enden går rundt masten |
 
 Alle fem er derfor ovale, **4,5 × 3,5 mm**. Var bare hullet i ruffen ovalt,
@@ -346,7 +352,7 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 **Skroget**
 
 * Orientering: stående, kjølen ned — STL-en ligger allerede riktig.
-* Plassering: rotert 45°, opptar 203 × 203 mm av platen.
+* Plassering: rotert 45°, opptar 205 × 205 mm av platen.
 * Støtte: **bare under skroget**. I Bambu Studio: støttetype «tre (auto)»,
   «kun på plate» avslått er ikke nødvendig — kjølen står på platen, og det
   eneste som trenger støtte er den lille undersiden ved hekk og baug.
@@ -420,16 +426,23 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
-* Ruffens forkant er noe kantet mot originalen.
+* Trinnet mellom forruffen og den høye ruffen er en rett 45°-flate, og
+  forruffen møter fordekket med en kant. På originalen er begge avrundet.
+* Cockpitkarmen går i tegningen helt rundt hekken og danner en lav kant
+  (ca. 200 mm, 7 mm i 1:30) langs akterspeilet, med pushpiten oppå. Modellen
+  har karm bare langs cockpiten (5 620–7 300 mm); akterdekket ligger i
+  dekkshøyde. Hører til trinn 8 (dekksutstyr fra planen).
+* Ruffen er massiv over dekket (skroget er uthult bare under dekket). Med
+  lokk-løsningen i trinn 5 hules den ut sammen med dekket.
 * Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 11 ikke-manifolde kanter av 169 000 — rester etter boolske
+* Skroget har 8 ikke-manifolde kanter av 166 000 — rester etter boolske
   operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
   import. Alle øvrige deler er helt lukkede. Kjør
   `python tools/meshcheck.py export/stl/*.stl` for å se status.
 
 ### Plass til større målestokk
 
-Skroget opptar 203 × 203 mm diagonalt. Platen er 256 × 256 mm. Fordi baugen er
+Skroget opptar 205 × 205 mm diagonalt. Platen er 256 × 256 mm. Fordi baugen er
 spiss blir det roterte fotavtrykket mindre enn et rektangel ville tilsi, og det
 er derfor rom for opptil omtrent **1:24** (LOA 331 mm, fotavtrykk ~254 mm).
 Endre `SCALE` i `hr26/params.py` og bygg på nytt.
