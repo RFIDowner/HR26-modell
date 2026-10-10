@@ -48,7 +48,8 @@ profiltegning og dekksplan i 1:50, og de er brukt slik:
    oppgitt 1 400 mm — 0,6 % avvik. De to tegningene er altså i samme målestokk,
    og kalibreringen er uavhengig bekreftet.
 3. **Springet** er lest av fenderlisten i profiltegningen, som lar seg følge
-   sammenhengende fra baug til akter.
+   sammenhengende fra baug til akter. Dekkskanten ligger en halv listhøyde over
+   listens senter, fordi listen sitter i dekkskanten.
 4. **Tverrsnittene** er rekonstruert parametrisk: en superellipse mellom kjølen
    og vannlinjebredden under vann, og en jevn utfalling opp til dekkskanten over.
    Fyldigheten varierer langs skroget (`SECTION_FULLNESS` i `hr26/params.py`).
@@ -60,7 +61,7 @@ De uttrukne kurvene ligger i `data/`:
 
 | Fil | Innhold |
 |---|---|
-| `hull_stations.csv` | fairet tabell: dekkshalvbredde, spring, kanobunn |
+| `hull_stations.csv` | fairet tabell: dekkshalvbredde, fenderlistens senterlinje, kanobunn |
 | `deck_halfbreadth.csv` | rå dekkslinje fra dekksplanen |
 | `uw_station.csv` | rå undervannsprofil med kjøl og ror |
 
@@ -71,11 +72,12 @@ I profiltegningen går det fra ca. 11 % til 50 % av sidehøyden nedenfra, og fra
 (`WIN_*_FRAC` i `params.py`). En tidligere versjon hadde vinduet oppunder
 taket; det var feil.
 
-**Merk om fenderlisten (uavklart):** modellen legger dekkskanten 112 mm over
-fenderlistens senter (`STRAKE_DROP` / `SHEER_OVER_STRAKE`). På fotografiene ser
-fenderlisten ut til å sitte *i* dekkskanten, med overkanten omtrent ved dekket.
-Stemmer det, ligger springet i modellen ca. 60 mm (2 mm i 1:30) for høyt. Det er
-ikke endret, fordi det flytter hele dekket og dermed alt som står på det.
+**Merk om fenderlisten:** fenderlisten sitter *i* dekkskanten — listens overkant
+er dekkets kant, slik fotografiene viser. Det som er målt ut av profiltegningen
+er listens senterlinje (`strake_z_mm` i `data/hull_stations.csv`); dekkskanten
+avledes som senterlinjen pluss en halv listhøyde (`SHEER_OVER_STRAKE`, 50 mm).
+En tidligere versjon la dekkskanten 112 mm over listen, altså 62 mm (2 mm i
+1:30) for høyt.
 
 **Merk om akterspeilet:** i dekksplanen møtes de to sidelinjene i akterspeilets
 hjørner, og sporingen tolket det som at skroget smalner av til en spiss.

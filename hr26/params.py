@@ -155,8 +155,12 @@ WINCH_INSET = 430.0
 CLEAT_X = [700.0, 4900.0, 7500.0]
 
 # ------------------------------------------------------------- fenderlist
-STRAKE_DROP = 112.0     # fenderlistens senter under dekkskanten
+# Fenderlisten sitter i dekkskanten: listens overkant er dekkets kant.
+# Dekkskanten ligger derfor en halv listhoyde over listens senterlinje,
+# som er det som er maalt ut av profiltegningen (data/hull_stations.csv).
 STRAKE_H = 95.0
+SHEER_OVER_STRAKE = 0.5 * STRAKE_H + 2.5    # 50 mm
+STRAKE_DROP = SHEER_OVER_STRAKE             # listens senter under dekkskanten
 STRAKE_PROUD = 55.0     # hvor langt den stikker ut
 
 # ------------------------------------------------------------------ rigg
