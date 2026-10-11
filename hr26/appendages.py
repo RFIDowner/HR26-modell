@@ -87,14 +87,15 @@ def rudder_pins(extra: float = 0.0) -> cq.Workplane:
 
 
 def rudder() -> cq.Workplane:
-    """Akterhengt ror med rorkult-tapp."""
+    """Akterhengt ror. Forkanten foelger akterspeilets helning (RUDDER_RAKE
+    er negativ: forover nedover), med RUDDER_GAP klaring til akterspeilet."""
     wires = []
     steps = 5
     for i in range(steps + 1):
         t = i / steps
         z = P.RUDDER_TOP_Z + (P.RUDDER_BOT_Z - P.RUDDER_TOP_Z) * t
         le = P.RUDDER_X + P.RUDDER_RAKE * t
-        ch = P.RUDDER_CHORD_TOP + (P.RUDDER_CHORD_BOT - P.RUDDER_CHORD_TOP) * t
+        ch = P.RUDDER_TE_X - le
         th = P.RUDDER_T * (1.0 - 0.28 * t)
         wires.append(_foil_wire(le, z, ch, th))
     solid = cq.Solid.makeLoft(wires, ruled=False)

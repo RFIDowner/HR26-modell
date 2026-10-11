@@ -5,6 +5,8 @@ klaring, slik at traaden sitter stramt uten aa sprenge dekket.
 """
 from __future__ import annotations
 
+import math
+
 import cadquery as cq
 
 from . import curves as C
@@ -135,7 +137,7 @@ def additions() -> cq.Workplane:
 
 
 def rudder_pin_holes() -> cq.Workplane:
-    """Hull i akterspeilet for rortappene."""
+    """Hull i akterspeilet for rortappene, under vannlinjen der hekken er massiv."""
     from . import appendages as A
 
     return A.rudder_pins(extra=CLEAR).translate((-0.35 * P.SCALE, 0.0, 0.0))
@@ -154,22 +156,30 @@ def cuts() -> cq.Workplane:
 def transom_name() -> cq.Workplane:
     """Baatens navn i relieff paa akterspeilet.
 
-    Akterspeilet er en loddrett flate, saa opphoyde bokstaver printes uten
-    utheng. Sett P.BOAT_NAME til "" for aa droppe det.
+    Bokstavene ekstruderes fra 40 mm inne i skroget og ut, dreid saa de
+    staar vinkelrett paa det hellende akterspeilet, og kappes av akter-
+    speilets flate flyttet NAME_RAISE akterover - saa relieffet er like
+    hoyt over hele den buede flaten. Sett P.BOAT_NAME til "" for aa droppe det.
     """
     if not P.BOAT_NAME:
         return None
-    x = P.LOA - 2.0
-    return (
+    from . import hull as H
+
+    depth = 40.0
+    xc = C.transom_x(P.NAME_Z, 0.0)
+    ang = math.degrees(math.atan(P.TRANSOM_RAKE))
+    txt = (
         cq.Workplane("YZ")
-        .workplane(offset=x - P.NAME_RAISE)
+        .workplane(offset=xc - depth)
         .text(
             P.BOAT_NAME,
             P.NAME_SIZE,
-            P.NAME_RAISE * 2.0,
+            depth + P.NAME_RAISE + 30.0,
             fontPath="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
             halign="center",
             valign="center",
         )
         .translate((0.0, 0.0, P.NAME_Z))
+        .rotate((xc, 0.0, P.NAME_Z), (xc, 1.0, P.NAME_Z), ang)
     )
+    return txt.cut(H.transom_cutter(offset=P.NAME_RAISE))

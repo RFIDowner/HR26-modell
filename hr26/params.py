@@ -61,8 +61,9 @@ WATERPLANE = [
     (0.65, 0.99),
     (0.75, 1.00),
     (0.85, 0.97),
-    (0.93, 0.91),
-    (1.00, 0.82),
+    (0.93, 0.88),
+    (1.00, 0.56),
+    (1.015, 0.40),   # ved akterspeilet (7 808): vannlinjen smalner inn mot det
 ]
 
 HULL_WALL = 1.5 * SCALE    # skallveggtykkelse, uttrykt i fullskala-mm
@@ -78,26 +79,47 @@ KEEL_ROOT_T = 320.0     # tykkelse ved rot
 KEEL_TIP_T = 175.0      # tykkelse ved bunn
 KEEL_FILLET = 90.0      # avrunding mot skroget
 
+# ------------------------------------------------------------ hekk/akterspeil
+# Hekken er rundet i plan (dekksplanen 1:50): dekkskanten gaar fra 890 mm
+# halvbredde ved x = 7700 gjennom et hjoerne med radius ca. 290 over i
+# akterspeilets overkant, som er svakt buet i plan (radius ca. 3 000) og
+# naar 7 950 paa senterlinjen. Akterspeilet heller 8,3 grader med toppen
+# lengst akter (profilen: krysser DWL ved 7 806, dekkshoeyde ved 7 945).
+# Skroget loftes rett akterover forbi akterspeilet, ca. 600 mm bredt
+# aktenfor hjoernet, og akterspeilets flate kappes ut av loften.
+STERN_OUTLINE = [            # dekkskantens halvbredde (x, y) maalt i dekksplanen
+    (7300.0, 995.0), (7400.0, 968.0), (7500.0, 944.0), (7600.0, 916.0),
+    (7700.0, 890.0), (7750.0, 866.0), (7800.0, 835.0), (7820.0, 812.0),
+    (7840.0, 773.0), (7860.0, 730.0), (7880.0, 650.0), (7891.0, 605.0),
+]
+STERN_HOLD_SLOPE = 0.5       # halvbredden faller saa mye per mm aktenfor hjoernet
+TRANSOM_WL_X = 7806.0        # akterspeilet krysser DWL her, paa senterlinjen
+TRANSOM_RAKE = 0.146         # helning dx/dz - toppen lengst akter (8,3 grader)
+TRANSOM_CAMBER_R = 3050.0    # akterspeilets bue i plan
+
 # ----------------------------------------------------------------- ror
-RUDDER_X = 7944.0       # forkant ved topp - henger paa akterspeilet
-RUDDER_CHORD_TOP = 470.0
-RUDDER_CHORD_BOT = 380.0
+# Akterhengt ror. Forkanten foelger akterspeilet med en liten klaring, og
+# tappene paa forkanten gaar inn i akterspeilet under vannlinjen.
+RUDDER_GAP = 15.0       # klaring mellom rorets forkant og akterspeilet
+RUDDER_TE_X = 8150.0    # bakkanten er loddrett (profilen), saa korden vokser nedover
 RUDDER_TOP_Z = -60.0
 RUDDER_BOT_Z = -1094.0
-RUDDER_RAKE = 110.0     # forkant heller akterover nedover
 RUDDER_T = 90.0
+RUDDER_X = TRANSOM_WL_X + TRANSOM_RAKE * RUDDER_TOP_Z + RUDDER_GAP   # forkant ved topp
+RUDDER_RAKE = TRANSOM_RAKE * (RUDDER_BOT_Z - RUDDER_TOP_Z)   # forkanten forover nedover, som akterspeilet
 
 # ------------------------------------------------------------ dekkskant
 # Dekkskanten er den tynne linjen over fenderlisten i profiltegningen 1:50,
 # der rekka staar. Skrogsiden fortsetter opp forbi listen: 130 mm over
 # listens senter i baugen, 270 midtskips og ca. 200 i hekken. Listen er en
-# list utenpaa (STRAKE_*). (x fra baugen, z over DWL.) Aktenfor 5600 er
-# tallene forelopige - de maales paa nytt sammen med hekken.
+# list utenpaa (STRAKE_*). (x fra baugen, z over DWL.) Aktenfor 6400 ligger
+# cockpitkarmen over linjen; aktenfor 7000 er den oevre linjen rorkulten.
 DECK_EDGE_Z = [
     (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1200.0), (2500.0, 1175.0),
     (3000.0, 1150.0), (3750.0, 1122.0), (4200.0, 1115.0), (4500.0, 1105.0),
     (5000.0, 1095.0), (5500.0, 1085.0), (6000.0, 1080.0), (6500.0, 1075.0),
-    (7000.0, 1057.0), (7500.0, 1012.0), (7900.0, 965.0),
+    (7000.0, 1056.0), (7200.0, 1040.0), (7400.0, 1020.0), (7600.0, 992.0),
+    (7800.0, 962.0), (7950.0, 940.0),
 ]
 DECK_CAMBER = 30.0           # bue paa dekket, senter over kant (fordekkets
                              # silhuett ligger 15-25 mm over dekkskanten)
@@ -143,15 +165,28 @@ WIN_BELOW_DECK = 30.0        # overkant under dekkskanten (1 mm leppe i 1:30)
 WIN_DEPTH = 15.0             # forsenkning, 0,5 mm i 1:30
 WIN_RAD = 55.0
 
-# cockpit (karmen aktenfor og bronnens bakkant tas sammen med hekken)
+# cockpit: bronnen er dekkshalvbredden minus COCKPIT_INSET langs sidene, og
+# foelger hekkens runding akterover (COCKPIT_AFT, maalt i dekksplanen) fram
+# til en nesten rett bakkant paa 7 735. Karmen ligger langs bronnen fra
+# COCKPIT_X0 og gaar i ett med dekket ved 6 800; toppen er maalt i profilen.
 COCKPIT_X0 = 5660.0
-COCKPIT_X1 = 7300.0
-COCKPIT_HALF_W = 850.0       # bronnen
-COAMING_HALF_W = 980.0       # karmens ytterkant
-COAMING_H0 = 110.0           # karmtopp over dekkskant, forkant (1190 over DWL)
-COAMING_H1 = 40.0            # ... bakkant
+COCKPIT_HALF_W = 850.0       # bronnen, oevre grense
+COCKPIT_INSET = 290.0        # bronnens side innenfor dekkskanten
+COCKPIT_AFT = [              # bronnens bakre runding (x, halvbredde)
+    (7640.0, 598.0), (7666.0, 550.0), (7682.0, 500.0), (7695.0, 450.0),
+    (7703.0, 400.0), (7710.0, 350.0), (7716.0, 300.0), (7721.0, 250.0),
+    (7724.0, 200.0), (7729.0, 150.0), (7733.0, 100.0), (7735.0, 50.0),
+    (7735.0, 0.0),
+]
 COCKPIT_FLOOR_Z = 294.0      # bronnens gulv over DWL
-COCKPIT_RAD = 140.0
+COCKPIT_RAD = 140.0          # hjorneradius forut, i plan
+COAMING_HALF_W = 980.0       # karmens ytterkant
+COAMING_X1 = 6900.0          # karmen slutter her (den er nede i dekket fra 6 800)
+COAMING_MIN_H = 40.0         # karmen staar minst saa mye over dekket ved ytterkanten
+COAMING_TOP_Z = [            # karmens overkant (x, z over DWL), fra profilen
+    (5680.0, 1190.0), (5800.0, 1180.0), (6000.0, 1148.0), (6200.0, 1118.0),
+    (6400.0, 1101.0), (6600.0, 1078.0), (6800.0, 1064.0),
+]
 
 # --------------------------------------------------------- utstyrshull
 MAST_STEP_X = 3400.0    # mastefot fra baugen (profil: 3324-3471)
@@ -227,10 +262,11 @@ VOID_AFT = 470.0            # og slutter saa langt fra hekken
 VOID_MARGIN = 0.4 * SCALE       # overalt
 VOID_BOW_EXTRA = 1.5 * SCALE    # i tillegg i det fremste kammeret
 
-# rortapper: to pinner som limes i akterspeilet
+# rortapper: to pinner paa rorets forkant som gaar inn i akterspeilet, begge
+# under vannlinjen der akterspeilet er massivt (bunnen ligger paa ca. -260)
 RUDDER_PIN_D = 1.3 * SCALE
 RUDDER_PIN_L = 2.2 * SCALE
-RUDDER_PIN_Z = (-210.0, -830.0)
+RUDDER_PIN_Z = (-90.0, -200.0)
 
 # ------------------------------------------------------------- sprayhood
 SPRAY_X0 = 5135.0       # forkant, paa ruffens bakre del

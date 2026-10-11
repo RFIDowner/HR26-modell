@@ -4,7 +4,8 @@ Tabellen er hentet ut av profil- og dekksplantegningen i 1:50 fra
 HR 26-brosjyren og fairet. Alle verdier i fullskala mm: x maalt fra
 baugen og akterover, z fra konstruksjonsvannlinjen (DWL), y halvbredde.
 Fenderlistens senterlinje ligger i tabellen; dekkskanten (den tynne linjen
-over listen i profilen) ligger i P.DECK_EDGE_Z.
+over listen i profilen) ligger i P.DECK_EDGE_Z, og rundt hekken erstattes
+tabellens halvbredder av den maalte dekksutlinjen i P.STERN_OUTLINE.
 """
 from __future__ import annotations
 
@@ -20,6 +21,24 @@ _DATA = os.path.normpath(
 )
 
 
+def _stern_table():
+    """Dekkskantens halvbredde rundt hekken: den maalte tabellen fram til
+    akterspeilets hjoerne, og aktenfor det holdes bredden nesten (svakt
+    fallende) fram forbi LOA. Loften gaar altsaa rett akterover forbi
+    akterspeilet som et bredt stykke, og akterspeilets flate - med buen i
+    plan - kappes ut av det etterpaa. Smalnet loften inn til en spiss der,
+    ble den saa vridd at kuttet feilet."""
+    xs = [p[0] for p in P.STERN_OUTLINE]
+    ys = [p[1] for p in P.STERN_OUTLINE]
+    x_last, y_last = xs[-1], ys[-1]
+    xs.append(P.LOA + 20.0)
+    ys.append(y_last - P.STERN_HOLD_SLOPE * (P.LOA + 20.0 - x_last))
+    return np.array(xs), np.array(ys)
+
+
+_SX, _SY = _stern_table()
+
+
 def _load():
     x, hb, zk, zb = [], [], [], []
     with open(_DATA, newline="") as fh:
@@ -29,9 +48,13 @@ def _load():
             zk.append(float(row["strake_z_mm"]))        # fenderlistens senterlinje
             zb.append(float(row["canoe_bottom_z_mm"]))
     x = np.array(x)
+    hb = np.array(hb)
+    # rundt hekken gjelder den maalte dekksutlinjen - byttes inn foer
+    # fairingen, ellers drar fairingen bredden ned foran hekken
+    hb = np.where(x >= _SX[0], np.interp(x, _SX, _SY), hb)
     # dekkskanten fra den maalte tabellen, resamplet paa stasjonene
     zs = np.interp(x, [p[0] for p in P.DECK_EDGE_Z], [p[1] for p in P.DECK_EDGE_Z])
-    return x, np.array(hb), np.array(zk), zs, np.array(zb)
+    return x, hb, np.array(zk), zs, np.array(zb)
 
 
 def _fair(y, passes=3, w=5):
@@ -50,22 +73,27 @@ _ZS = _fair(_ZS, passes=2)
 _ZB = _fair(_ZB, passes=8)
 
 
-# Akterspeilet er en rett, tverrgaaende kant. I dekksplanen moetes derfor
-# de to sidelinjene i hjornene, og sporingen tolker det som at skroget
-# smalner av til en spiss. Halvbredden holdes derfor fast fra TRANSOM_X og
-# akterover, med en svak innsmalning, slik at hekken faar den flate
-# akterspeilflaten den skal ha.
-TRANSOM_X = 7680.0
-TRANSOM_TAPER = 0.95
-
-
 def deck_half_breadth(x: float) -> float:
-    """Halvbredde ved dekkskanten."""
-    if x > TRANSOM_X:
-        hb = float(np.interp(TRANSOM_X, _X, _HB))
-        t = (x - TRANSOM_X) / (P.LOA - TRANSOM_X)
-        return hb * (1.0 - (1.0 - TRANSOM_TAPER) * t)
+    """Halvbredde ved dekkskanten.
+
+    Rundt hekken (fra P.STERN_OUTLINE[0]) brukes den maalte dekksutlinjen
+    direkte, uten fairing; aktenfor akterspeilets hjoerne holdes bredden,
+    og akterspeilet kappes ut av loften (se _stern_table).
+    """
+    if x >= _SX[0]:
+        return float(np.interp(x, _SX, _SY))
     return float(np.interp(x, _X, _HB))
+
+
+def transom_x(z: float, y: float = 0.0) -> float:
+    """Akterspeilets x ved hoyde z og halvbredde y.
+
+    Et plan som heller TRANSOM_RAKE (dx/dz) gjennom (TRANSOM_WL_X, 0), buet
+    i plan med radius TRANSOM_CAMBER_R. Samme flate som hull.transom_cutter.
+    """
+    R = P.TRANSOM_CAMBER_R
+    sag = R - np.sqrt(max(R * R - y * y, 0.0))
+    return float(P.TRANSOM_WL_X + P.TRANSOM_RAKE * z - sag * np.sqrt(1.0 + P.TRANSOM_RAKE ** 2))
 
 
 def sheer_z(x: float) -> float:
@@ -104,13 +132,11 @@ _BW_MAX = P.WL_BEAM_FRACTION * float(_HB.max())
 
 
 def wl_half_breadth(x: float) -> float:
-    """Halvbredde i DWL. Gaar mot null i vannlinjens forkant."""
+    """Halvbredde i DWL. Gaar mot null i vannlinjens forkant; akter smalner
+    den inn mot akterspeilet (tabellen gaar forbi t = 1) og holdes saa."""
     t = (x - P.LWL_FWD) / P.LWL
     if t <= 0.0:
         return 0.0
-    if t >= 1.0:
-        # akter for vannlinjen: hekkens bredde holdes
-        return _BW_MAX * P.WATERPLANE[-1][1]
     return _BW_MAX * _table(P.WATERPLANE, t)
 
 
@@ -254,7 +280,7 @@ def stations(count: int = 40):
 
 def displaced_volume_m3(n_stations: int = 200) -> float:
     """Deplasementsvolum under DWL ved Simpson-integrasjon av spantarealene."""
-    xs = np.linspace(P.LWL_FWD, P.LWL_AFT, n_stations)
+    xs = np.linspace(P.LWL_FWD, max(P.LWL_AFT, P.TRANSOM_WL_X), n_stations)
     area = []
     for x in xs:
         zb = bottom_z(x)
