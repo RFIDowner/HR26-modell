@@ -100,13 +100,33 @@ dekket; det var feil.
 linjen (`strake_z_mm` i `data/hull_stations.csv`). Den ligger *under*
 dekkskanten, ikke i den: trinn 2 la dekkskanten ned på listen, og det
 flyttet vinduet opp i ruffen og gjorde skrogsiden 130–280 mm for lav. Rundt
-hekken fortsetter listen ikke ennå; det tas sammen med akterspeilet.
+hekken følger listen skrogsiden fram til akterspeilet og går tvers over det,
+som ett sammenhengende loft fra babord forende til styrbord.
 
-**Merk om akterspeilet:** i dekksplanen møtes de to sidelinjene i akterspeilets
-hjørner, og sporingen tolket det som at skroget smalner av til en spiss.
-Halvbredden holdes derfor fast fra `TRANSOM_X` og akterover (`curves.py`), slik
-at hekken får den flate akterspeilflaten den skal ha — 1 331 mm bred, altså
-50 % av største bredde.
+**Merk om hekken og akterspeilet (trinn 5b):** hekken er rundet i plan, slik
+dekksplanen viser: dekkskanten går fra 890 mm halvbredde ved 7 700 gjennom et
+hjørne med radius rundt 290 mm over i akterspeilets overkant, som er svakt
+buet i plan (radius ca. 3 000 mm) og når 7 950 mm på senterlinjen
+(`STERN_OUTLINE`, målt punkt for punkt). Akterspeilet heller 8,3° med toppen
+lengst akter — i profilen krysser det vannlinjen ved 7 806 og dekkskanten ved
+7 945 (`TRANSOM_WL_X`, `TRANSOM_RAKE`, `TRANSOM_CAMBER_R`). Skroget loftes
+rett akterover forbi akterspeilet, ca. 600 mm bredt aktenfor hjørnet, og
+akterspeilets flate kappes ut av loften (`hull.transom_cutter`). Vannlinjen
+smalner inn mot akterspeilet (`WATERPLANE` fortsetter forbi t = 1), så
+akterspeilet er bredest oppe og smalner nedover til bunnen møter det rundt
+260 mm under vannlinjen. Tidligere endte modellen i et loddrett, flatt
+akterspeil 1 331 mm bredt med skarpe hjørner.
+
+**Merk om cockpitbrønnen:** brønnen følger dekkskanten 290 mm innenfor langs
+sidene (`COCKPIT_INSET`) og hekkens runding akterover etter den målte tabellen
+`COCKPIT_AFT`, fram til en nesten rett bakkant ved 7 735 mm — som i
+dekksplanen, der brønnen følger hekkens kurve hele veien rundt. Karmen
+(`COAMING_TOP_Z`) faller fra 1 190 mm over vannlinjen ved forkanten til den
+går i ett med dekket ved 6 800–6 900. Overlegget under viser modellens
+dekksutlinje (rødt) og brønnen (blått, snitt 850 mm over vannlinjen) på
+dekksplanen 1:50.
+
+![Modellens dekksutlinje og brønn lagt over dekksplanen 1:50](docs/images/overlegg-plan.jpg)
 
 **Merk om deplasementet:** modellen har et beregnet undervannsvolum på ca. 3,9 m³,
 mens brosjyren oppgir 2,5 tonn. Avviket kommer av at profiltegningen gir en
@@ -125,7 +145,8 @@ python -m hr26.build --no-hollow     # massivt skrog
 python -m hr26.build --stations 48   # finere lofting
 ```
 
-Bygget tar rundt ni minutter. Resultatet havner i `export/stl/`
+Bygget tar rundt tjue minutter; fenderlisten rundt hekken er det tyngste
+steget. Resultatet havner i `export/stl/`
 (print-orienterte STL-er) og `export/step/hr26.step` (hele modellen som STEP).
 STEP-fila er på 17 MB og ligger derfor ikke i repoet — den lages av samme
 kommando.
@@ -140,7 +161,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 |---|---|
 | `params.py` | alle mål og parametre |
 | `curves.py` | fairede skrogkurver, tverrsnitt, deplasement |
-| `hull.py` | lofting av skroget, fenderlist |
+| `hull.py` | lofting av skroget, akterspeilet, fenderlist |
 | `appendages.py` | kjøl og ror med NACA-lignende profil |
 | `deckhouse.py` | ruff, luker, ventiler, nedgang, vindu i skrogsiden, sprayhood, cockpit |
 | `fittings.py` | utsparinger: mastefot, rekkepåler, pulpit, vinsjer |
@@ -161,8 +182,8 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 243 cm³ / 301 g |
-| 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
+| 01 | `01_skrog.stl` | 205,9 × 205,9 × 104,8 | 228 cm³ / 283 g |
+| 02 | `02_ror.stl` | 34,5 × 3,2 × 16,4 | 1,0 cm³ / 1 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
 | 05 | `05_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
@@ -178,13 +199,13 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **390 cm³, altså ca. 480 g PLA**: skroget 301 g,
+Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 283 g,
 stativet 152 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
 **01 Skrog** — den store jobben, 12–16 timer.
-* Ligger ferdig orientert: kjølen ned, rotert 45°, 205 × 205 mm av platen.
+* Ligger ferdig orientert: kjølen ned, rotert 45°, 206 × 206 mm av platen.
 * **Infill 0 %.** Skroget er uthult med minst 1,5 mm vegg (1,9 mm nominelt,
   3,4 mm i baugkilen), og innvendige spant hver 26 mm bærer dekket. Setter du
   infill blir det bare tyngre og tregere. Innsiden er skrogsnittet flyttet
@@ -197,8 +218,9 @@ stativet 152 g, resten under 35 g. Én rull på 1 kg holder med god margin.
   brim om du vil ha det.
 * Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
 
-**02 Ror** — printes liggende, 3,2 mm tykt. Støtte av. De to tappene på
-forkanten passer i hullene i akterspeilet.
+**02 Ror** — printes liggende, 3 mm tykt. Støtte av. Forkanten følger
+akterspeilets helning, og de to tappene på den passer i hullene i akterspeilet
+rett under vannlinjen.
 
 **03 Mast, 354 mm, for A1** — ligger allerede diagonalt og fyller
 253,2 × 253,2 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
@@ -361,7 +383,7 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 **Skroget**
 
 * Orientering: stående, kjølen ned — STL-en ligger allerede riktig.
-* Plassering: rotert 45°, opptar 205 × 205 mm av platen.
+* Plassering: rotert 45°, opptar 206 × 206 mm av platen.
 * Støtte: **bare under skroget**. I Bambu Studio: støttetype «tre (auto)»,
   «kun på plate» avslått er ikke nødvendig — kjølen står på platen, og det
   eneste som trenger støtte er den lille undersiden ved hekk og baug.
@@ -402,8 +424,9 @@ en annen farge enn platen — svart tekst på hvit plate ser bra ut, og på A1
 er det bare å bytte rull manuelt når printeren stopper.
 
 Båtens navn står også **i relieff på akterspeilet**, 0,35 mm opphøyd, slik
-en Hallberg-Rassy bærer navnet sitt. Akterspeilet er en loddrett flate, så
-bokstavene printes uten utheng.
+en Hallberg-Rassy bærer navnet sitt. Akterspeilet heller 8°, så bokstavene
+står med et lite utheng oppover — det printes fint uten støtte. Bokstavene
+følger akterspeilets bue, så relieffet er like høyt over hele navnet.
 
 Navnet ligger i `BOAT_NAME` i `hr26/params.py` og brukes begge steder. Sett
 det til `""` for å droppe det. Resten av skiltteksten ligger i
@@ -423,35 +446,38 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
    Alle beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
 6. Sett masten i foten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
-7. Roret: tappene passer i de to hullene i akterspeilet.
+7. Roret: tappene passer i de to hullene i akterspeilet, rett under
+   vannlinjen. Forkanten skal ligge parallelt med akterspeilet.
 8. Tre livlinene gjennom øynene, stram lett, og lim endene i pulpit og pushpit.
 
 ---
 
 ## Videre arbeid
 
-* Cockpiten er forenklet — brønnen har bunn og vegger, men ingen brodekk,
-  benker eller luker.
+* Cockpiten er forenklet — brønnen har bunn og vegger og følger hekkens
+  runding, men ingen brodekk, benker eller luker.
+* Roret er bare bladet under vannlinjen. På originalen går rorhodet opp til
+  dekkshøyde, med rorkulten inn over akterdekket.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
 * Ruffens front er en rett 45°-flate. På originalen er den avrundet.
-* Cockpitkarmen går i tegningen helt rundt hekken og danner en lav kant
-  (ca. 200 mm, 7 mm i 1:30) langs akterspeilet, med pushpiten oppå. Modellen
-  har karm bare langs cockpiten (5 620–7 300 mm); akterdekket ligger i
-  dekkshøyde. Kan tas sammen med dekksutstyret fra planen.
+* Rundt akterdekket har tegningen en lav kant — karmen fortsetter rundt
+  hekken, men under 50 mm høy etter profilen (under 2 mm i 1:30), med
+  pushpiten oppå. Den er utelatt; karmen slutter der den går i ett med dekket
+  (6 900 mm), og akterdekket ligger i dekkshøyde.
 * Ruffen er massiv over dekket; skroget er uthult bare under dekket. Det
   koster noen gram plast, men gir en stiv og enkel print.
 * Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 6 ikke-manifolde kanter av 200 000 — rester etter boolske
+* Skroget har 4 ikke-manifolde kanter av 214 000 — rester etter boolske
   operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
   import. Alle øvrige deler er helt lukkede. Kjør
   `python tools/meshcheck.py export/stl/*.stl` for å se status.
 
 ### Plass til større målestokk
 
-Skroget opptar 205 × 205 mm diagonalt. Platen er 256 × 256 mm. Fordi baugen er
+Skroget opptar 206 × 206 mm diagonalt. Platen er 256 × 256 mm. Fordi baugen er
 spiss blir det roterte fotavtrykket mindre enn et rektangel ville tilsi, og det
 er derfor rom for opptil omtrent **1:24** (LOA 331 mm, fotavtrykk ~254 mm).
 Endre `SCALE` i `hr26/params.py` og bygg på nytt.

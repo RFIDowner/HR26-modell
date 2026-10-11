@@ -14,6 +14,7 @@ from __future__ import annotations
 import math
 
 import cadquery as cq
+import numpy as np
 
 from . import curves as C
 from . import params as P
@@ -57,10 +58,21 @@ def coach_half_width(x: float) -> float:
 
 
 def coaming_top_z(x: float) -> float:
-    """Cockpitkarmens overkant over DWL."""
-    t = (x - P.COCKPIT_X0) / (P.COCKPIT_X1 - P.COCKPIT_X0)
-    t = min(max(t, 0.0), 1.0)
-    return C.sheer_z(x) + P.COAMING_H0 + (P.COAMING_H1 - P.COAMING_H0) * t
+    """Cockpitkarmens overkant over DWL.
+
+    Den maalte tabellen COAMING_TOP_Z, men aldri lavere enn COAMING_MIN_H
+    over dekket ved karmens ytterkant (dekksbuen loefter dekket innenfor
+    dekkskanten). Fra tabellens slutt synker karmen ned i dekket fram til
+    COAMING_X1; aktenfor det er "karmtoppen" dekkskanten.
+    """
+    xe = P.COAMING_TOP_Z[-1][0]
+    if x >= P.COAMING_X1:
+        return C.sheer_z(x)
+    zt = max(_interp(P.COAMING_TOP_Z, x), deck_z(x, coaming_half_width(x)) + P.COAMING_MIN_H)
+    if x > xe:
+        t = (x - xe) / (P.COAMING_X1 - xe)
+        return zt * (1.0 - t) + C.sheer_z(x) * t
+    return zt
 
 
 # --------------------------------------------------------------- hjelpere
@@ -325,20 +337,77 @@ def sprayhood() -> cq.Workplane:
 
 # --------------------------------------------------------------- cockpit
 def cockpit_half_width(x: float) -> float:
-    return max(200.0, min(P.COCKPIT_HALF_W, C.deck_half_breadth(x) - 290.0))
+    """Bronnens halvbredde langs sidene, forut for den bakre rundingen."""
+    return max(200.0, min(P.COCKPIT_HALF_W, C.deck_half_breadth(x) - P.COCKPIT_INSET))
 
 
 def coaming_half_width(x: float) -> float:
     return max(260.0, min(P.COAMING_HALF_W, C.deck_half_breadth(x) - 200.0))
 
 
+def _offset_stb(pts, d: float):
+    """Forskyver en styrbord-kurve (x, y), som ender paa senterlinjen, `d`
+    utover langs normalen. Kurven speiles forbi senterlinjen foer normalene
+    regnes, saa enden blir riktig."""
+    ext = list(pts) + [(x, -y) for (x, y) in reversed(pts[:-1])][:3]
+    a = np.array(ext, dtype=float)
+    g = np.gradient(a, axis=0)
+    L = np.hypot(g[:, 0], g[:, 1])
+    L[L < 1e-9] = 1.0
+    out = a + d * np.c_[-g[:, 1] / L, g[:, 0] / L]
+    out = out[: len(pts)]
+    out[-1, 1] = 0.0
+    return [(float(x), float(y)) for x, y in out]
+
+
+def _cockpit_stb(grow: float = 0.0):
+    """Bronnens omriss paa styrbord side: fra enden av det fremre hjornet
+    (x = COCKPIT_X0 + COCKPIT_RAD) langs siden, rundt den maalte bakre
+    rundingen (COCKPIT_AFT) til senterlinjen. `grow` forskyver omrisset
+    utover (karet rundt bronnen)."""
+    x0 = P.COCKPIT_X0 + P.COCKPIT_RAD
+    x1 = P.COCKPIT_AFT[0][0]
+    n = max(2, int((x1 - x0) / 60.0))
+    xs = [x0 + (x1 - x0) * i / n for i in range(n)]
+    pts = [(x, cockpit_half_width(x)) for x in xs]
+    # aldri naermere dekkskanten enn 200 mm, uansett hva tabellen sier
+    pts += [(x, min(y, C.deck_half_breadth(x) - 200.0)) for x, y in P.COCKPIT_AFT]
+    if grow:
+        pts = _offset_stb(pts, grow)
+        pts[0] = (x0, pts[0][1])
+    return pts
+
+
+def _plan_prism_well(stb, x_fwd: float, rad: float, z0: float, z1: float) -> cq.Workplane:
+    """Loddrett prisme av en speilsymmetrisk planform med rett forkant ved
+    x_fwd og hjorneradius rad, der sidene er en spline gjennom styrbord-
+    punktene `stb` (foerste punkt der det fremre hjornet slutter, siste paa
+    senterlinjen akter) og speilbildet av dem."""
+    w0 = stb[0][1]
+    r = min(rad, 0.45 * w0, stb[0][0] - x_fwd)
+    c = math.sqrt(0.5)
+    wp = (
+        cq.Workplane("XY").workplane(offset=z0)
+        .moveTo(x_fwd, -(w0 - r)).lineTo(x_fwd, w0 - r)
+        .threePointArc((x_fwd + r - r * c, w0 - r + r * c), (x_fwd + r, w0))
+    )
+    path = [(stb[0][0], w0)] if stb[0][0] != x_fwd + r else []
+    path += list(stb[1:]) + [(x, -y) for (x, y) in reversed(stb[:-1])]
+    if stb[0][0] != x_fwd + r:
+        path.append((stb[0][0], -w0))
+    wp = wp.spline(path, includeCurrent=True)
+    wp = wp.threePointArc((x_fwd + r - r * c, -(w0 - r + r * c)), (x_fwd, -(w0 - r)))
+    return wp.close().extrude(z1 - z0)
+
+
 def coaming_block() -> cq.Workplane:
-    """Cockpitkarm med skraa overkant. Unioneres for bronnen skjaeres ut."""
-    z0 = min(C.sheer_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) - 220.0
-    z1 = max(coaming_top_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) + 60.0
-    prism = _plan_prism(_outline(P.COCKPIT_X0 - 40.0, P.COCKPIT_X1, coaming_half_width),
+    """Cockpitkarm med fallende overkant, fra forkanten av bronnen til den
+    gaar i ett med dekket (COAMING_X1). Unioneres for bronnen skjaeres ut."""
+    z0 = min(C.sheer_z(x) for x in (P.COCKPIT_X0, P.COAMING_X1)) - 220.0
+    z1 = max(coaming_top_z(x) for x in (P.COCKPIT_X0, P.COAMING_X1)) + 60.0
+    prism = _plan_prism(_outline(P.COCKPIT_X0 - 40.0, P.COAMING_X1, coaming_half_width),
                         z0, z1, P.COCKPIT_RAD + 60.0)
-    top = _roof_body(P.COCKPIT_X0 - 300.0, P.COCKPIT_X1 + 300.0, coaming_top_z, 1500.0, 2000.0, camber=0.0)
+    top = _roof_body(P.COCKPIT_X0 - 300.0, P.COAMING_X1 + 300.0, coaming_top_z, 1500.0, 2000.0, camber=0.0)
     return prism.intersect(top)
 
 
@@ -361,19 +430,16 @@ def cockpit_tub(grow: float) -> cq.Workplane:
     Med grow = skallveggen er dette gulvet og veggene rundt bronnen. Det
     gis til uthulingen som `keep`, saa bronnen faar bunn og sider.
     """
-    def hw(x):
-        return cockpit_half_width(x) + grow
-
-    z1 = max(coaming_top_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) + 200.0
-    return _plan_prism(
-        _outline(P.COCKPIT_X0 - grow, P.COCKPIT_X1 + grow, hw),
-        cockpit_floor_z() - grow, z1, P.COCKPIT_RAD + grow,
-    )
+    z1 = coaming_top_z(P.COCKPIT_X0) + 200.0
+    return _plan_prism_well(_cockpit_stb(grow), P.COCKPIT_X0 - grow, P.COCKPIT_RAD + grow,
+                            cockpit_floor_z() - grow, z1)
 
 
 def cockpit_cut() -> cq.Workplane:
-    """Cockpitbronnen. Skjaeres bare opp til karmtoppen, saa sprayhoodens utheng blir staaende."""
+    """Cockpitbronnen: rett forkant, sider som foelger dekkskanten og en
+    rundet bakkant som foelger hekken. Skjaeres bare opp til karmtoppen under
+    sprayhooden, saa uthenget blir staaende."""
     z0 = cockpit_floor_z()
-    prism = _plan_prism(_outline(P.COCKPIT_X0, P.COCKPIT_X1, cockpit_half_width), z0, 2600.0, P.COCKPIT_RAD)
-    top = _roof_body(P.COCKPIT_X0 - 300.0, P.COCKPIT_X1 + 300.0, _cockpit_lid_z, 1500.0, 2600.0, camber=0.0)
+    prism = _plan_prism_well(_cockpit_stb(0.0), P.COCKPIT_X0, P.COCKPIT_RAD, z0, 2600.0)
+    top = _roof_body(P.COCKPIT_X0 - 300.0, P.LOA + 200.0, _cockpit_lid_z, 1500.0, 2600.0, camber=0.0)
     return prism.intersect(top)

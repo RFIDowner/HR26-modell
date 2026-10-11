@@ -131,6 +131,7 @@
   "x_til": 7300,
   "kilde": "profil/plan",
   "sikkerhet": "middels",
+  "merknad": "x_til var bronnens rette bakkant i trinn 3-5a. Fra trinn 5b foelger bronnen hekkens runding (COCKPIT_AFT i params.py, maalt i dekksplanen) til 7735 paa senterlinjen, og karmtoppen er maalt paa nytt (COAMING_TOP_Z).",
   "karm_topp_z": [
    [
     6000,
