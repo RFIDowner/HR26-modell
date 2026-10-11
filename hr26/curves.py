@@ -171,34 +171,63 @@ def deck_arc(x: float, n: int = 13):
 
 
 def section_inner(x: float, wall: float, deck_t: float, n: int = 22):
-    """Tilnaermet innside av skallet ved stasjon x."""
-    zb = bottom_z(x) + wall
+    """Innsiden av skallet ved stasjon x: det ytre snittet flyttet `wall`
+    innover langs normalen, kappet i senterlinjen og under dekket.
+
+    En skalert kopi av snittet (slik det var foer) blir ikke en parallell
+    kurve: i baugen, der snittet er en tynn kile, ble veggen bare 5-15 mm
+    i stedet for 45, og hulrommet brot gjennom stevnen. Den ekte
+    forskyvningen gir `wall` overalt, og hulrommet begynner foerst der
+    skroget er bredt nok (over 2 x wall) - nedenfor er stevnen massiv.
+
+    Returnerer None der det ikke blir plass til noe hulrom.
+    """
+    outer = np.asarray(section(x, n=max(4 * n, 80)), dtype=float)
     zs = sheer_z(x) - deck_t
-    bd = deck_half_breadth(x) - wall
-    if bd <= 12.0 or zs - zb <= 12.0:
+    if len(outer) < 3 or zs - outer[0, 1] <= 12.0:
         return None
-    m = max(fullness(x), 1.02)
-    pts = []
-    if zb < -1.0:
-        bw = max(min(wl_half_breadth(x), bd) - wall, 4.0)
-        k = max(8, int(n * 0.6))
-        for i in range(k + 1):
-            t = i / k
-            z = zb * (1.0 - t)
-            f = max(1.0 - (1.0 - t) ** m, 0.0)
-            pts.append((bw * f ** (1.0 / m), z))
+    # tangent (sentraldifferanse) dreid 90 grader = normal innover
+    d = np.gradient(outer, axis=0)
+    L = np.hypot(d[:, 0], d[:, 1])
+    L[L < 1e-9] = 1.0
+    t = d / L[:, None]
+    inner = outer + wall * np.c_[-t[:, 1], t[:, 0]]
+
+    # kapp i senterlinjen: foerste punkt med y > 0, og krysningen foer det
+    pos = np.where(inner[:, 0] > 0.0)[0]
+    if len(pos) == 0:
+        return None
+    k = pos[0]
+    if k > 0:
+        a, b = inner[k - 1], inner[k]
+        f = -a[0] / (b[0] - a[0])
+        start = np.array([0.0, a[1] + f * (b[1] - a[1])])
     else:
-        pts.append((0.0, zb))
-    y0, z0 = pts[-1]
-    k = max(6, n - len(pts))
-    for i in range(1, k + 1):
-        t = i / k
-        pts.append((y0 + (bd - y0) * (t ** 1.45), z0 + (zs - z0) * t))
-    out = [pts[0]]
-    for q in pts[1:]:
-        if abs(q[0] - out[-1][0]) > 1e-6 or abs(q[1] - out[-1][1]) > 1e-6:
-            out.append(q)
-    return out
+        start = np.array([0.0, inner[0, 1]])
+    pts = np.vstack([start, inner[k:]])
+    # kapp under dekket: behold z < zs, legg til krysningen
+    below = pts[:, 1] < zs
+    if below.sum() < 2:
+        return None
+    m = np.where(~below)[0]
+    if len(m):
+        j = m[0]
+        a, b = pts[j - 1], pts[j]
+        f = (zs - a[1]) / (b[1] - a[1])
+        pts = np.vstack([pts[:j], [a[0] + f * (b[0] - a[0]), zs]])
+    pts[:, 0] = np.maximum(pts[:, 0], 0.0)
+    if pts[:, 0].max() <= 12.0 or pts[-1, 1] - pts[0, 1] <= 12.0:
+        return None
+
+    # jevn fordeling langs kurven, n punkter
+    seg = np.hypot(np.diff(pts[:, 0]), np.diff(pts[:, 1]))
+    cum = np.concatenate([[0.0], np.cumsum(seg)])
+    if cum[-1] <= 1e-6:
+        return None
+    s = np.linspace(0.0, cum[-1], n)
+    out = np.c_[np.interp(s, cum, pts[:, 0]), np.interp(s, cum, pts[:, 1])]
+    out[0, 0] = 0.0
+    return [(float(y), float(z)) for y, z in out]
 
 
 def deck_arc_inner(x: float, wall: float, deck_t: float, n: int = 11):
