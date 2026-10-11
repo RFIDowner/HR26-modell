@@ -208,6 +208,13 @@ RIB_THICK = 1.2 * SCALE     # tykkelse paa innvendige spant
 RIB_PITCH = 26.0 * SCALE    # senteravstand mellom spantene
 VOID_FWD = 620.0            # hulrommet starter her (fra baugen)
 VOID_AFT = 470.0            # og slutter saa langt fra hekken
+# Hulrommet legges lenger inn enn HULL_WALL. Skrogloften (36 stasjoner)
+# avviker inntil 0,7 mm (modell) fra de analytiske snittene som innsiden
+# regnes fra, og rundt forfoten, der stevnen moeter vannlinjen, runder
+# loften av profilen med inntil 2,5 mm. Marginene gjoer at veggen aldri
+# blir tynnere enn HULL_WALL; innsiden av skroget er det ikke saa noeye med.
+VOID_MARGIN = 0.4 * SCALE       # overalt
+VOID_BOW_EXTRA = 1.5 * SCALE    # i tillegg i det fremste kammeret
 
 # rortapper: to pinner som limes i akterspeilet
 RUDDER_PIN_D = 1.3 * SCALE

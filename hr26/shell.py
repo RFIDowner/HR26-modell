@@ -44,9 +44,47 @@ def bulkhead_stations():
     return xs
 
 
+def _bay_stations(a: float, b: float, wall: float, deck_t: float, per_bay: int,
+                  tol: float = 8.0, max_n: int = 24):
+    """Stasjoner for loften gjennom ett kammer.
+
+    Jevnt fordelt, men fortettet der hulrommets bunn skifter hoyde fort -
+    i baugen stiger den bratt opp langs stevnen, og en loft gjennom faa
+    stasjoner ville skaaret rett gjennom skrogveggen mellom dem. Det
+    halveres til bunnen mellom to stasjoner ligger innenfor `tol` mm av
+    den rette linjen mellom dem.
+    """
+    def zb(x):
+        pts = C.section_inner(x, wall, deck_t)
+        return None if pts is None else pts[0][1]
+
+    xs = [a + (b - a) * j / (per_bay - 1) for j in range(per_bay)]
+    zs = {x: zb(x) for x in xs}
+    changed = True
+    while changed and len(xs) < max_n:
+        changed = False
+        out = [xs[0]]
+        for x0, x1 in zip(xs, xs[1:]):
+            xm = 0.5 * (x0 + x1)
+            zm = zb(xm)
+            z0, z1 = zs[x0], zs[x1]
+            if zm is not None and z0 is not None and z1 is not None \
+                    and abs(zm - 0.5 * (z0 + z1)) > tol and x1 - x0 > 20.0:
+                zs[xm] = zm
+                out.append(xm)
+                changed = True
+            elif (zm is None) != (z0 is None and z1 is None) and x1 - x0 > 20.0:
+                zs[xm] = zm
+                out.append(xm)
+                changed = True
+            out.append(x1)
+        xs = out
+    return xs
+
+
 def compartments(wall: float | None = None, deck_t: float | None = None, per_bay: int = 4):
     """Hulrommet som en liste kamre, ett mellom hvert par av spant."""
-    wall = P.HULL_WALL if wall is None else wall
+    wall = (P.HULL_WALL + P.VOID_MARGIN) if wall is None else wall
     deck_t = P.DECK_THICK if deck_t is None else deck_t
     half = 0.5 * P.RIB_THICK
 
@@ -57,12 +95,16 @@ def compartments(wall: float | None = None, deck_t: float | None = None, per_bay
         b = bounds[i + 1] - (half if i + 1 < len(bounds) - 1 else 0.0)
         if b - a < 4.0 * P.SCALE:
             continue
-        xs = [a + (b - a) * j / (per_bay - 1) for j in range(per_bay)]
-        wires = [w for w in (_inner_wire(x, wall, deck_t) for x in xs) if w is not None]
+        w_bay = wall + (P.VOID_BOW_EXTRA if i == 0 else 0.0)
+        xs = _bay_stations(a, b, w_bay, deck_t, per_bay)
+        wires = [w for w in (_inner_wire(x, w_bay, deck_t) for x in xs) if w is not None]
         if len(wires) < 2:
             continue
+        # Fortettede stasjoner ligger ujevnt, og en glatt loft gjennom dem
+        # slaar ut i store buer mellom stasjonene. Da brukes rette linjer.
+        ruled = len(xs) > per_bay
         try:
-            out.append(cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=False)]))
+            out.append(cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=ruled)]))
         except Exception:  # pragma: no cover - degenerert kammer hoppes over
             continue
     return out

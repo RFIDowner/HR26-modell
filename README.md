@@ -157,7 +157,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 235 cm³ / 291 g |
+| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 252 cm³ / 312 g |
 | 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
@@ -174,15 +174,19 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 291 g,
+Til sammen blir det rundt **400 cm³, altså ca. 490 g PLA**: skroget 312 g,
 stativet 151 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
 **01 Skrog** — den store jobben, 12–16 timer.
 * Ligger ferdig orientert: kjølen ned, rotert 45°, 205 × 205 mm av platen.
-* **Infill 0 %.** Skroget er uthult med 1,5 mm vegg, og innvendige spant hver
-  26 mm bærer dekket. Setter du infill blir det bare tyngre og tregere.
+* **Infill 0 %.** Skroget er uthult med minst 1,5 mm vegg (1,9 mm nominelt,
+  3,4 mm i baugkilen), og innvendige spant hver 26 mm bærer dekket. Setter du
+  infill blir det bare tyngre og tregere. Innsiden er skrogsnittet flyttet
+  innover langs normalen med litt margin, så veggen holder tykkelsen også der
+  skroget er en tynn kile — den gamle, skalerte innsiden ga 0,2–0,5 mm vegg i
+  baugen og et hull i stevnen ved vannlinjen.
 * Støtte på, bare under skroget ved baug og hekk. Ingen støtte trengs oppe:
   dekket og cockpitgulvet spenner mellom spantene (26 mm), det broer PLA fint.
 * Lag 0,12–0,16 mm. Ingen brim — kjølen gir god vedheft, og det er plass til
@@ -357,7 +361,7 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 * Støtte: **bare under skroget**. I Bambu Studio: støttetype «tre (auto)»,
   «kun på plate» avslått er ikke nødvendig — kjølen står på platen, og det
   eneste som trenger støtte er den lille undersiden ved hekk og baug.
-* Skroget er allerede uthult med 1,5 mm vegg og innvendige spant hver 26 mm.
+* Skroget er allerede uthult med minst 1,5 mm vegg og innvendige spant hver 26 mm.
   **Sett infill til 0 %** — spantene bærer dekket.
 * Lag: 0,12–0,16 mm. Fin dyse (0,2 mm) gir tydeligere fenderlist og vinduer.
 * Ingen brim nødvendig; kjølen gir god vedheft. Vil du ha brim, er det plass.
@@ -437,7 +441,7 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 * Ruffen er massiv over dekket; skroget er uthult bare under dekket. Det
   koster noen gram plast, men gir en stiv og enkel print.
 * Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 8 ikke-manifolde kanter av 165 000 — rester etter boolske
+* Skroget har 19 ikke-manifolde kanter av 170 000 — rester etter boolske
   operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
   import. Alle øvrige deler er helt lukkede. Kjør
   `python tools/meshcheck.py export/stl/*.stl` for å se status.
