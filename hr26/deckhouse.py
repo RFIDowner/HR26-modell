@@ -291,9 +291,30 @@ def coaming_block() -> cq.Workplane:
     return prism.intersect(top)
 
 
+def cockpit_floor_z() -> float:
+    """Bronnens gulv over DWL."""
+    return min(C.sheer_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) - P.COCKPIT_DEPTH
+
+
+def cockpit_tub(grow: float) -> cq.Workplane:
+    """Bronnen vokst med `grow` paa alle kanter: karet som omslutter den.
+
+    Med grow = skallveggen er dette gulvet og veggene rundt bronnen. Det
+    gis til uthulingen som `keep`, saa bronnen faar bunn og sider.
+    """
+    def hw(x):
+        return cockpit_half_width(x) + grow
+
+    z1 = max(coaming_top_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) + 200.0
+    return _plan_prism(
+        _outline(P.COCKPIT_X0 - grow, P.COCKPIT_X1 + grow, hw),
+        cockpit_floor_z() - grow, z1, P.COCKPIT_RAD + grow,
+    )
+
+
 def cockpit_cut() -> cq.Workplane:
     """Cockpitbronnen. Skjaeres bare opp til karmtoppen, saa sprayhoodens utheng blir staaende."""
-    z0 = min(C.sheer_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) - P.COCKPIT_DEPTH
+    z0 = cockpit_floor_z()
     prism = _plan_prism(_outline(P.COCKPIT_X0, P.COCKPIT_X1, cockpit_half_width), z0, 2600.0, P.COCKPIT_RAD)
     top = _roof_body(P.COCKPIT_X0 - 300.0, P.COCKPIT_X1 + 300.0,
                      lambda x: coaming_top_z(x) + 12.0, 1500.0, 2600.0, camber=0.0)

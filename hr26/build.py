@@ -104,7 +104,8 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         raise RuntimeError(f"skroget bestaar av {_n_solids(w)} solider etter sammenstilling")
 
     if hollow:
-        w = S.hollow(w)
+        # cockpitkaret (gulv og vegger) spares, ellers aapner bronnen seg inn i skroget
+        w = S.hollow(w, keep=[D.cockpit_tub(P.HULL_WALL)])
         step("uthult", w)
         log(f"  plastforbruk (skall): {S.material_cm3(w):.0f} cm3")
     return w
