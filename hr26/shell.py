@@ -68,10 +68,18 @@ def compartments(wall: float | None = None, deck_t: float | None = None, per_bay
     return out
 
 
-def hollow(solid: cq.Workplane, log=None, **kw) -> cq.Workplane:
-    """Trekker kamrene fra en ferdig sammensatt modell."""
+def hollow(solid: cq.Workplane, log=None, keep=(), **kw) -> cq.Workplane:
+    """Trekker kamrene fra en ferdig sammensatt modell.
+
+    `keep` er volumer som skal staa igjen massive - cockpitkaret, ellers
+    ville uthulingen tatt gulvet og veggene i bronnen, og cockpiten hadde
+    aapnet seg rett inn i det hule skroget. De trekkes fra hvert kammer
+    foer kammeret trekkes fra modellen.
+    """
     bays = compartments(**kw)
     for i, c in enumerate(bays, start=1):
+        for k in keep:
+            c = c.cut(k)
         solid = solid.cut(c)
         if log:
             log(f"    kammer {i}/{len(bays)}")

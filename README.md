@@ -157,7 +157,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 224 cm³ / 278 g |
+| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 235 cm³ / 291 g |
 | 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
@@ -174,7 +174,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **370 cm³, altså ca. 460 g PLA**: skroget 278 g,
+Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 291 g,
 stativet 151 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
@@ -183,7 +183,8 @@ stativet 151 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 * Ligger ferdig orientert: kjølen ned, rotert 45°, 205 × 205 mm av platen.
 * **Infill 0 %.** Skroget er uthult med 1,5 mm vegg, og innvendige spant hver
   26 mm bærer dekket. Setter du infill blir det bare tyngre og tregere.
-* Støtte på, bare under skroget ved baug og hekk. Ingen støtte trengs oppe.
+* Støtte på, bare under skroget ved baug og hekk. Ingen støtte trengs oppe:
+  dekket og cockpitgulvet spenner mellom spantene (26 mm), det broer PLA fint.
 * Lag 0,12–0,16 mm. Ingen brim — kjølen gir god vedheft, og det er plass til
   brim om du vil ha det.
 * Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
@@ -421,7 +422,8 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 
 ## Videre arbeid
 
-* Cockpiten er forenklet — ingen brodekk, benker eller luker.
+* Cockpiten er forenklet — brønnen har bunn og vegger, men ingen brodekk,
+  benker eller luker.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
@@ -431,11 +433,11 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 * Cockpitkarmen går i tegningen helt rundt hekken og danner en lav kant
   (ca. 200 mm, 7 mm i 1:30) langs akterspeilet, med pushpiten oppå. Modellen
   har karm bare langs cockpiten (5 620–7 300 mm); akterdekket ligger i
-  dekkshøyde. Hører til trinn 8 (dekksutstyr fra planen).
-* Ruffen er massiv over dekket (skroget er uthult bare under dekket). Med
-  lokk-løsningen i trinn 5 hules den ut sammen med dekket.
+  dekkshøyde. Kan tas sammen med dekksutstyret fra planen.
+* Ruffen er massiv over dekket; skroget er uthult bare under dekket. Det
+  koster noen gram plast, men gir en stiv og enkel print.
 * Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 8 ikke-manifolde kanter av 166 000 — rester etter boolske
+* Skroget har 8 ikke-manifolde kanter av 165 000 — rester etter boolske
   operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
   import. Alle øvrige deler er helt lukkede. Kjør
   `python tools/meshcheck.py export/stl/*.stl` for å se status.
