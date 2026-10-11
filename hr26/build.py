@@ -82,9 +82,10 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
 
     w = robust_union(w, A.keel(), "kjol")
     step("kjol", w)
-    w = robust_union(w, D.trunk(), "forruff")
+    w = robust_union(w, H.rubbing_strake(), "fenderlist")
+    step("fenderlist", w)
     w = robust_union(w, D.coachroof(), "ruff")
-    step("ruff i to nivaaer", w)
+    step("ruff", w)
     w = robust_union(w, D.hatches(), "luker")
     w = robust_union(w, D.vents(), "ventiler")
     step("luker og ventiler", w)
@@ -96,7 +97,8 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
 
     w = robust_cut(w, D.cockpit_cut(), "cockpit")
     w = robust_cut(w, D.companionway_cut(), "nedgang")
-    w = robust_cut(w, D.coach_windows(), "vinduer")
+    win_cut, win_keep = D.hull_windows()
+    w = robust_cut(w, win_cut, "vinduer")
     step("cockpit, nedgang, vinduer", w)
     w = robust_cut(w, F.cuts(), "hull for rigg og rekke")
     step("hull for rigg og rekke", w)
@@ -104,8 +106,9 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         raise RuntimeError(f"skroget bestaar av {_n_solids(w)} solider etter sammenstilling")
 
     if hollow:
-        # cockpitkaret (gulv og vegger) spares, ellers aapner bronnen seg inn i skroget
-        w = S.hollow(w, keep=[D.cockpit_tub(P.HULL_WALL)])
+        # spares fra uthulingen: cockpitkaret (gulv og vegger), veggen bak
+        # vinduene og soylen under masten
+        w = S.hollow(w, keep=[D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()])
         step("uthult", w)
         log(f"  plastforbruk (skall): {S.material_cm3(w):.0f} cm3")
     return w

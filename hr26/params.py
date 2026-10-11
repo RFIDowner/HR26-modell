@@ -87,59 +87,70 @@ RUDDER_BOT_Z = -1094.0
 RUDDER_RAKE = 110.0     # forkant heller akterover nedover
 RUDDER_T = 90.0
 
+# ------------------------------------------------------------ dekkskant
+# Dekkskanten er den tynne linjen over fenderlisten i profiltegningen 1:50,
+# der rekka staar. Skrogsiden fortsetter opp forbi listen: 130 mm over
+# listens senter i baugen, 270 midtskips og ca. 200 i hekken. Listen er en
+# list utenpaa (STRAKE_*). (x fra baugen, z over DWL.) Aktenfor 5600 er
+# tallene forelopige - de maales paa nytt sammen med hekken.
+DECK_EDGE_Z = [
+    (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1200.0), (2500.0, 1175.0),
+    (3000.0, 1150.0), (3750.0, 1122.0), (4200.0, 1115.0), (4500.0, 1105.0),
+    (5000.0, 1095.0), (5500.0, 1085.0), (6000.0, 1080.0), (6500.0, 1075.0),
+    (7000.0, 1057.0), (7500.0, 1012.0), (7900.0, 965.0),
+]
+DECK_CAMBER = 30.0           # bue paa dekket, senter over kant (fordekkets
+                             # silhuett ligger 15-25 mm over dekkskanten)
+
 # ------------------------------------------------------------ ruff/dekk
-# Alt under er maalt ut av profiltegningen 1:50 (hoyder, lengder) og av
-# scannet (bredder midtskips) - se data/deckhouse_features.json for kilde
-# og sikkerhet per verdi. z over DWL, x fra baugen.
+# Hoyder og lengder er maalt ut av profiltegningen 1:50, bredder av
+# dekksplanen - se data/deckhouse_features.json. z over DWL, x fra baugen.
+# Fordekket er flatt helt fram; den lave "forruffen" i tegningens silhuett
+# (1216-1226) er dekket selv.
 
-# lav, flat forruff som fairer inn i fordekket forut
-TRUNK_X0 = 700.0
-TRUNK_TOP_Z = 1216.0
-TRUNK_W_FRAC = 0.78          # halvbredde som andel av dekkshalvbredden (anslag fra foto)
-TRUNK_RAD = 160.0
-
-# trinnet opp til den hoye ruffen
+# ruffens skraa front, fra dekket opp til taket
 STEP_X0 = 2200.0
 STEP_X1 = 2330.0
 
-# hoy ruff: topp (x, z) og halvbredde (x, mm)
+# ruff: topp (x, z); bredden er dekkshalvbredden minus sidedekket
 COACH_X0 = STEP_X1
 COACH_X1 = 5625.0            # nedgangsskott / ruffens bakkant
 COACH_TOP = [(2330.0, 1350.0), (3000.0, 1375.0), (4200.0, 1385.0), (5625.0, 1375.0)]
-COACH_HALF_W = [(2200.0, 700.0), (2330.0, 720.0), (3800.0, 850.0), (5625.0, 850.0)]
-COACH_RAD = 140.0            # hjorneradius i plan
+SIDEDECK = 210.0             # sidedekk mellom ruffside og dekkskant (plan)
+COACH_FRONT_R = 700.0        # rundet front i plan
+COACH_MIN_HALF_W = 220.0
+COACH_RAD = 140.0            # hjorneradius akter, i plan
 COACH_ROOF_CAMBER = 58.0     # takets bue, senter over kant
-SIDEDECK_MIN = 250.0
 
 # luker og ventiler paa taket (x_fra, x_til, bredde, hoyde over tak)
 FOREHATCH = (2490.0, 2980.0, 500.0, 40.0)
 SLIDE_HATCH = (4352.0, 4940.0, 620.0, 60.0)
 VENT_D, VENT_H = 150.0, 45.0
-VENTS = [(1900.0, "trunk"), (3894.0, "roof")]
+VENTS = [(1900.0, "deck"), (3894.0, "roof")]
 
-# nedgang i ruffens bakkant: bredde, dybde inn i skottet, underkant over dekkskant
+# nedgang i ruffens bakkant: bredde, dybde inn i skottet, terskel over dekket
 COMPANION_W = 620.0
 COMPANION_DEPTH = 180.0
-COMPANION_SILL = 150.0
+COMPANION_SILL = 60.0        # over dekket paa senterlinjen ved ruffens bakkant
 
-DECK_CAMBER = 90.0           # bue paa dekket over halve bredden
-
-# ruffvinduet, som andeler av ruffens lengde (x) og av ruffsidens hoyde (z, nedenfra)
-WIN_X0_FRAC = 0.405          # = 3666 mm fra baugen
-WIN_X1_FRAC = 0.762          # = 4841 mm
-WIN_Z0_FRAC = 0.06
-WIN_Z1_FRAC = 0.50
-WIN_DEPTH = 130.0
+# Vinduet sitter i skrogsiden, i baandet mellom fenderlisten og dekkskanten,
+# slik profiltegningen og fotoene viser (maalt 3700-4900, z 905-1105).
+# Over- og underkant foelger de to linjene det ligger mellom.
+WIN_X0 = 3700.0
+WIN_X1 = 4900.0
+WIN_ABOVE_STRAKE = 70.0      # underkant over listens senter (22 mm klaring)
+WIN_BELOW_DECK = 30.0        # overkant under dekkskanten (1 mm leppe i 1:30)
+WIN_DEPTH = 15.0             # forsenkning, 0,5 mm i 1:30
 WIN_RAD = 55.0
 
-# cockpit
+# cockpit (karmen aktenfor og bronnens bakkant tas sammen med hekken)
 COCKPIT_X0 = 5660.0
 COCKPIT_X1 = 7300.0
 COCKPIT_HALF_W = 850.0       # bronnen
 COAMING_HALF_W = 980.0       # karmens ytterkant
-COAMING_H0 = 280.0           # karmtopp over dekkskant, forkant
-COAMING_H1 = 200.0           # ... bakkant
-COCKPIT_DEPTH = 560.0
+COAMING_H0 = 110.0           # karmtopp over dekkskant, forkant (1190 over DWL)
+COAMING_H1 = 40.0            # ... bakkant
+COCKPIT_FLOOR_Z = 294.0      # bronnens gulv over DWL
 COCKPIT_RAD = 140.0
 
 # --------------------------------------------------------- utstyrshull
@@ -157,6 +168,7 @@ MAST_HOLE_X = MAST_SECTION_X + 2.0 * MAST_FIT
 MAST_HOLE_Y = MAST_SECTION_Y + 2.0 * MAST_FIT
 MAST_SOCKET = 11.0 * SCALE      # hvor dypt masten staar i ruffen
 MAST_CHAMFER = 0.3 * SCALE      # fas i begge ender av masten
+MAST_POST_W = 100.0             # massiv soyle under mastesteget, ned til bunnen
 
 # rekkepåler: stasjon fra baugen, styrbord og babord speiles
 STANCHION_X = [1450.0, 2500.0, 3550.0, 4600.0, 5650.0, 6700.0]
@@ -182,13 +194,12 @@ WINCH_INSET = 400.0
 CLEAT_X = [700.0, 4900.0, 7500.0]
 
 # ------------------------------------------------------------- fenderlist
-# Fenderlisten sitter i dekkskanten: listens overkant er dekkets kant.
-# Dekkskanten ligger derfor en halv listhoyde over listens senterlinje,
-# som er det som er maalt ut av profiltegningen (data/hull_stations.csv).
+# Listens senterlinje er maalt ut av profiltegningen (strake_z_mm i
+# data/hull_stations.csv). Den ligger under dekkskanten og bygges som en
+# egen list utenpaa skrogsiden, halvt begravd.
 STRAKE_H = 95.0
-SHEER_OVER_STRAKE = 0.5 * STRAKE_H + 2.5    # 50 mm
-STRAKE_DROP = SHEER_OVER_STRAKE             # listens senter under dekkskanten
 STRAKE_PROUD = 55.0     # hvor langt den stikker ut
+STRAKE_X0 = 200.0       # starter her - helt i stevnen er skroget for spisst
 
 # ------------------------------------------------------------------ rigg
 BOOM_Z = 1500.0               # bommens høyde over dekk ved masten
