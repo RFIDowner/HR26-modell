@@ -31,7 +31,7 @@ Fullskala, fra Hallberg Rassy-katalogen 1981 og HR 26-brosjyren:
 | Masthøyde over vl | 12 000 mm | 400 mm |
 
 Konstruktør: Olle Enderlein. 7/8-rigg med tilbakesveipte salinger, finnekjøl
-støpt i ett med skroget, akterhengt ror, fenderlist rundt hele skroget.
+støpt i ett med skroget, akterhengt ror, fenderlist langs skrogsidene.
 
 ---
 
@@ -47,9 +47,10 @@ profiltegning og dekksplan i 1:50, og de er brukt slik:
    Med vannlinjen lagt der antifoulingen starter blir dypgangen 1 391 mm mot
    oppgitt 1 400 mm — 0,6 % avvik. De to tegningene er altså i samme målestokk,
    og kalibreringen er uavhengig bekreftet.
-3. **Springet** er lest av fenderlisten i profiltegningen, som lar seg følge
-   sammenhengende fra baug til akter. Dekkskanten ligger en halv listhøyde over
-   listens senter, fordi listen sitter i dekkskanten.
+3. **Springet** er dekkskanten: den tynne linjen *over* fenderlisten i
+   profiltegningen, der rekka står (`DECK_EDGE_Z` i `params.py`). Fenderlisten
+   er lest for seg; den ligger 80 mm under dekkskanten i baugen, 270 midtskips
+   og rundt 200 i hekken, og skrogsiden fortsetter opp forbi den.
 4. **Tverrsnittene** er rekonstruert parametrisk: en superellipse mellom kjølen
    og vannlinjebredden under vann, og en jevn utfalling opp til dekkskanten over.
    Fyldigheten varierer langs skroget (`SECTION_FULLNESS` i `hr26/params.py`).
@@ -68,35 +69,38 @@ De uttrukne kurvene ligger i `data/`:
 | `scan_roof_outline.csv` | ruffens halvbredde per stasjon fra scannet — pålitelig bare midtskips |
 | `deckhouse_features.json` | ruff, trinn, luker, nedgang, sprayhood og cockpit med kilde og sikkerhet per verdi |
 
-**Merk om ruffen (trinn 4 — bygget fra målingene):** ruffen er i to nivåer,
-slik profiltegningen viser: en lav, flat forruff på z ≈ 1 216 fra 700 mm fram
-til et trinn ved 2 200–2 330 mm, og en høy ruff på z ≈ 1 350–1 385 fra trinnet
-til nedgangsskottet ved 5 625 mm. Forluken sitter på det høye taket foran
-masten (2 490–2 980), skyveluken over nedgangen (4 352–4 940), én ventil på
-forruffen (1 900) og én på taket (3 894), og sprayhooden står over nedgangen
-og ut over cockpiten (5 135–6 150). Høyder og lengder er fra profiltegningen.
-Bredden finnes ikke i tegningene: halvbredden er 850 mm midtskips (fra
-scannet) og et anslag på 720 mm ved trinnet (fra foto). Tallene ligger i
-ruff/dekk-blokken i `params.py`, og med kilde og sikkerhet per verdi i
-`data/deckhouse_features.json`. Overlegget under viser modellens silhuett
-(rødt) på profiltegningen 1:50 — ruff, trinn, luker, ventiler og sprayhood
-faller på tegningens linjer.
+**Merk om ruffen (trinn 5a):** fordekket er flatt og høyt (dekkskant 1 204 mm
+over vannlinjen i baugen, 1 115 midtskips), og det som ser ut som en lav
+forruff i profilens silhuett (1 216–1 226) er dekket selv. Ruffen er derfor
+lav og bred: taket ligger på z ≈ 1 350–1 385 fra den skrå fronten ved
+2 200–2 330 mm til nedgangsskottet ved 5 625, altså 250–300 mm over dekket.
+I plan er ruffsiden dekkshalvbredden minus et sidedekk på 210 mm (`SIDEDECK`),
+med rundet front (`COACH_FRONT_R`), slik dekksplanen viser. Forluken sitter på
+taket foran masten (2 490–2 980), skyveluken over nedgangen (4 352–4 940), én
+ventil på fordekket (1 900) og én på taket (3 894), og sprayhooden står over
+nedgangen og ut over cockpiten (5 135–6 150). Høyder og lengder er fra
+profiltegningen, bredder fra dekksplanen. Overlegget under viser modellens
+silhuett (rødt) på profiltegningen 1:50 — dekkskant, ruff, luker, ventiler,
+vindu og sprayhood faller på tegningens linjer.
 
 ![Modellens silhuett lagt over profiltegningen 1:50](docs/images/overlegg-profil.jpg)
 
-**Merk om ruffvinduet:** vinduet sitter i **nedre halvdel** av ruffsiden, med en
-smal stripe ruff under seg — slik både profiltegningen og fotografiene viser.
-I profiltegningen går det fra ca. 11 % til 50 % av sidehøyden nedenfra, og fra
-3 666 til 4 841 mm fra baugen. Modellen bruker 6–50 % av ruffsidens høyde (målt
-fra dekket ved ruffsiden) og 3 666–4 841 mm (`WIN_*_FRAC` i `params.py`). En tidligere versjon hadde vinduet oppunder
-taket; det var feil.
+**Merk om vinduet:** langvinduet sitter i **skrogsiden**, i båndet mellom
+fenderlisten og dekkskanten, rett under rekka — slik både profiltegningen,
+dekksplanen og fotografiene viser. Målt i profilen går det fra 3 700 til
+4 900 mm fra baugen og fra 905 til 1 105 mm over vannlinjen. Modellen legger
+underkanten 70 mm over listens senter og overkanten 30 mm under dekkskanten
+(`WIN_*` i `params.py`), som en 0,5 mm dyp forsenkning i skrogsiden. Bak
+vinduet står full veggtykkelse igjen (`hull_windows` gir uthulingen et
+`keep`-volum). Tidligere versjoner hadde vinduet i en ruffside 450 mm inne på
+dekket; det var feil.
 
-**Merk om fenderlisten:** fenderlisten sitter *i* dekkskanten — listens overkant
-er dekkets kant, slik fotografiene viser. Det som er målt ut av profiltegningen
-er listens senterlinje (`strake_z_mm` i `data/hull_stations.csv`); dekkskanten
-avledes som senterlinjen pluss en halv listhøyde (`SHEER_OVER_STRAKE`, 50 mm).
-En tidligere versjon la dekkskanten 112 mm over listen, altså 62 mm (2 mm i
-1:30) for høyt.
+**Merk om fenderlisten:** listen er en list utenpå skrogsiden, 95 mm høy og
+55 mm utstikkende (`STRAKE_*`), bygget som en loft langs den målte senter-
+linjen (`strake_z_mm` i `data/hull_stations.csv`). Den ligger *under*
+dekkskanten, ikke i den: trinn 2 la dekkskanten ned på listen, og det
+flyttet vinduet opp i ruffen og gjorde skrogsiden 130–280 mm for lav. Rundt
+hekken fortsetter listen ikke ennå; det tas sammen med akterspeilet.
 
 **Merk om akterspeilet:** i dekksplanen møtes de to sidelinjene i akterspeilets
 hjørner, og sporingen tolket det som at skroget smalner av til en spiss.
@@ -121,7 +125,7 @@ python -m hr26.build --no-hollow     # massivt skrog
 python -m hr26.build --stations 48   # finere lofting
 ```
 
-Bygget tar rundt fire minutter. Resultatet havner i `export/stl/`
+Bygget tar rundt ni minutter. Resultatet havner i `export/stl/`
 (print-orienterte STL-er) og `export/step/hr26.step` (hele modellen som STEP).
 STEP-fila er på 17 MB og ligger derfor ikke i repoet — den lages av samme
 kommando.
@@ -138,7 +142,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | `curves.py` | fairede skrogkurver, tverrsnitt, deplasement |
 | `hull.py` | lofting av skroget, fenderlist |
 | `appendages.py` | kjøl og ror med NACA-lignende profil |
-| `deckhouse.py` | ruff i to nivåer, luker, ventiler, nedgang, vinduer, sprayhood, cockpit |
+| `deckhouse.py` | ruff, luker, ventiler, nedgang, vindu i skrogsiden, sprayhood, cockpit |
 | `fittings.py` | utsparinger: mastefot, rekkepåler, pulpit, vinsjer |
 | `rig.py` | riggen som byggesett |
 | `shell.py` | uthuling med innvendige spant |
@@ -157,7 +161,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 252 cm³ / 312 g |
+| 01 | `01_skrog.stl` | 205,1 × 205,1 × 104,8 | 243 cm³ / 301 g |
 | 02 | `02_ror.stl` | 34,5 × 3,2 × 18,1 | 1,0 cm³ / 1 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
@@ -168,14 +172,14 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 09 | `09_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
 | 10 | `10_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
 | 11 | `11_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
-| 12 | `12_stativ-vugge1.stl` | 76,2 × 94,6 × 6,0 | 35,2 cm³ / 44 g |
-| 13 | `13_stativ-vugge2.stl` | 73,1 × 106,4 × 6,0 | 36,3 cm³ / 45 g |
+| 12 | `12_stativ-vugge1.stl` | 79,7 × 94,6 × 6,0 | 36,0 cm³ / 45 g |
+| 13 | `13_stativ-vugge2.stl` | 77,1 × 106,4 × 6,0 | 37,0 cm³ / 46 g |
 | 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **400 cm³, altså ca. 490 g PLA**: skroget 312 g,
-stativet 151 g, resten under 35 g. Én rull på 1 kg holder med god margin.
+Til sammen blir det rundt **390 cm³, altså ca. 480 g PLA**: skroget 301 g,
+stativet 152 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
@@ -432,8 +436,7 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
-* Trinnet mellom forruffen og den høye ruffen er en rett 45°-flate, og
-  forruffen møter fordekket med en kant. På originalen er begge avrundet.
+* Ruffens front er en rett 45°-flate. På originalen er den avrundet.
 * Cockpitkarmen går i tegningen helt rundt hekken og danner en lav kant
   (ca. 200 mm, 7 mm i 1:30) langs akterspeilet, med pushpiten oppå. Modellen
   har karm bare langs cockpiten (5 620–7 300 mm); akterdekket ligger i
@@ -441,7 +444,7 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 * Ruffen er massiv over dekket; skroget er uthult bare under dekket. Det
   koster noen gram plast, men gir en stiv og enkel print.
 * Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 19 ikke-manifolde kanter av 170 000 — rester etter boolske
+* Skroget har 6 ikke-manifolde kanter av 200 000 — rester etter boolske
   operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
   import. Alle øvrige deler er helt lukkede. Kjør
   `python tools/meshcheck.py export/stl/*.stl` for å se status.

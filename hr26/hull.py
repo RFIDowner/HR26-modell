@@ -6,6 +6,7 @@ med ferdig buet dekk - ingen ekstra boolsk operasjon som kan feile.
 from __future__ import annotations
 
 import cadquery as cq
+import numpy as np
 
 from . import curves as C
 from . import params as P
@@ -51,36 +52,39 @@ def hull(n_stations: int = 34) -> cq.Workplane:
     return cq.Workplane("XY").newObject([s])
 
 
-def rubbing_strake(n: int = 60) -> cq.Workplane:
-    """Fenderlist: en list som foelger dekkskanten hele veien rundt."""
-    path_pts = []
-    for i in range(n + 1):
-        x = P.LOA * i / n
-        x = min(max(x, 3.0), P.LOA - 3.0)
-        z = C.sheer_z(x) - P.STRAKE_DROP
-        y = C.deck_half_breadth(x)
-        path_pts.append((x, y, z))
+def rubbing_strake(n_stations: int = 40) -> cq.Workplane:
+    """Fenderlist: en list langs skrogsiden, halvt begravd i skroget.
 
-    sweeps = []
+    Loftet gjennom rektangler (STRAKE_H x 2 * STRAKE_PROUD) som staar
+    vinkelrett paa skrogsiden ved listens hoyde, saa listen stikker like
+    langt ut ogsaa der siden faller ut. Rette linjer mellom stasjonene
+    (ruled), en solid per side. Rundt hekken gaar den ikke ennaa.
+    """
+    x_end = P.LOA - 100.0
+    xs = [x for x in C.stations(n_stations) if P.STRAKE_X0 < x < x_end]
+    xs = [P.STRAKE_X0] + xs + [x_end]
+    half_h = 0.5 * P.STRAKE_H
+
+    def corners(x, sign):
+        sec = np.array(C.section(x, 60))
+        zc = C.strake_z(x)
+        yc = float(np.interp(zc, sec[:, 1], sec[:, 0]))
+        y_lo = float(np.interp(zc - 25.0, sec[:, 1], sec[:, 0]))
+        y_hi = float(np.interp(zc + 25.0, sec[:, 1], sec[:, 0]))
+        ty, tz = y_hi - y_lo, 50.0                 # tangent oppover langs siden
+        L = (ty * ty + tz * tz) ** 0.5
+        ty, tz = ty / L, tz / L
+        ny, nz = tz, -ty                           # normal utover
+        pts = []
+        for a, b in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
+            y = yc + a * P.STRAKE_PROUD * ny + b * half_h * ty
+            z = zc + a * P.STRAKE_PROUD * nz + b * half_h * tz
+            pts.append(cq.Vector(x, sign * y, z))
+        return pts
+
+    out = None
     for sign in (1, -1):
-        pts = [cq.Vector(x, sign * y, z) for (x, y, z) in path_pts]
-        path = cq.Wire.assembleEdges([cq.Edge.makeSpline(pts)])
-        prof = (
-            cq.Workplane("YZ")
-            .center(sign * path_pts[0][1], path_pts[0][2])
-            .rect(P.STRAKE_PROUD * 2, P.STRAKE_H)
-        )
-        try:
-            sweeps.append(
-                cq.Workplane("XY")
-                .newObject([prof.val()])
-                .sweep(cq.Workplane("XY").newObject([path]), isFrenet=True)
-            )
-        except Exception:  # pragma: no cover - degenerert sveip
-            pass
-    if not sweeps:
-        return cq.Workplane("XY")
-    out = sweeps[0]
-    for s in sweeps[1:]:
-        out = out.union(s)
+        wires = [cq.Wire.makePolygon(corners(x, sign) + [corners(x, sign)[0]]) for x in xs]
+        solid = cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=True)])
+        out = solid if out is None else out.union(solid)
     return out

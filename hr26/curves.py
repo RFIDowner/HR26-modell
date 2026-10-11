@@ -3,8 +3,8 @@
 Tabellen er hentet ut av profil- og dekksplantegningen i 1:50 fra
 HR 26-brosjyren og fairet. Alle verdier i fullskala mm: x maalt fra
 baugen og akterover, z fra konstruksjonsvannlinjen (DWL), y halvbredde.
-Springet lagres som fenderlistens senterlinje (det som faktisk er maalt);
-dekkskanten avledes med P.SHEER_OVER_STRAKE.
+Fenderlistens senterlinje ligger i tabellen; dekkskanten (den tynne linjen
+over listen i profilen) ligger i P.DECK_EDGE_Z.
 """
 from __future__ import annotations
 
@@ -28,9 +28,10 @@ def _load():
             hb.append(float(row["deck_half_breadth_mm"]))
             zk.append(float(row["strake_z_mm"]))        # fenderlistens senterlinje
             zb.append(float(row["canoe_bottom_z_mm"]))
-    # dekkskanten ligger en halv listhoyde over listens senter
-    zs = [z + P.SHEER_OVER_STRAKE for z in zk]
-    return np.array(x), np.array(hb), np.array(zs), np.array(zb)
+    x = np.array(x)
+    # dekkskanten fra den maalte tabellen, resamplet paa stasjonene
+    zs = np.interp(x, [p[0] for p in P.DECK_EDGE_Z], [p[1] for p in P.DECK_EDGE_Z])
+    return x, np.array(hb), np.array(zk), zs, np.array(zb)
 
 
 def _fair(y, passes=3, w=5):
@@ -42,8 +43,9 @@ def _fair(y, passes=3, w=5):
     return out
 
 
-_X, _HB, _ZS, _ZB = _load()
+_X, _HB, _ZK, _ZS, _ZB = _load()
 _HB = _fair(_HB, passes=2)
+_ZK = _fair(_ZK, passes=2)
 _ZS = _fair(_ZS, passes=2)
 _ZB = _fair(_ZB, passes=8)
 
@@ -67,8 +69,13 @@ def deck_half_breadth(x: float) -> float:
 
 
 def sheer_z(x: float) -> float:
-    """Dekkskantens hoyde over DWL."""
+    """Dekkskantens hoyde over DWL (rekkas linje, over fenderlisten)."""
     return float(np.interp(x, _X, _ZS))
+
+
+def strake_z(x: float) -> float:
+    """Fenderlistens senterlinje over DWL."""
+    return float(np.interp(x, _X, _ZK))
 
 
 def bottom_z(x: float) -> float:

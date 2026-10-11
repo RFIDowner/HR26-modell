@@ -1,8 +1,9 @@
-"""Ruff i to nivaaer, luker, ventiler, nedgang, sprayhood og cockpit.
+"""Ruff, luker, ventiler, nedgang, vindu i skrogsiden, sprayhood og cockpit.
 
-Alt er bygget fra maalingene i data/deckhouse_features.json: hoyder og
-lengder fra profiltegningen 1:50, bredder fra scannet (midtskips) og foto
-(forover). Se README under "Merk om ruffen".
+Hoyder og lengder er fra profiltegningen 1:50, bredder fra dekksplanen.
+Ruffen er lav og bred paa et flatt fordekk; vinduet sitter i skrogsiden,
+i baandet mellom fenderlisten og dekkskanten. Se README under "Merk om
+ruffen".
 
 Overbygg bygges som loddrette prismer med avrundede hjorner som snittes
 mot et takvolum. Da blir hjorneradiene forutsigbare og de boolske
@@ -10,10 +11,13 @@ operasjonene robuste.
 """
 from __future__ import annotations
 
+import math
+
 import cadquery as cq
 
 from . import curves as C
 from . import params as P
+from . import shell as S
 
 deck_z = C.deck_z
 
@@ -42,21 +46,14 @@ coach_roof_z = roof_z   # eldre navn, brukes av fittings og rig
 
 
 def coach_half_width(x: float) -> float:
-    """Den hoye ruffens halvbredde i plan."""
-    w = _interp(P.COACH_HALF_W, min(max(x, P.STEP_X0), P.COACH_X1))
-    return max(220.0, min(w, C.deck_half_breadth(x) - P.SIDEDECK_MIN))
-
-
-def trunk_half_width(x: float) -> float:
-    """Den lave forruffens halvbredde."""
-    hb = C.deck_half_breadth(x)
-    return max(120.0, min(P.TRUNK_W_FRAC * hb, hb - 180.0))
-
-
-def coach_side_span(x: float):
-    """Ruffsidens fot og takkant ved stasjon x: (z_fot, z_topp)."""
-    w = coach_half_width(x)
-    return deck_z(x, w), roof_z(x) - P.COACH_ROOF_CAMBER
+    """Ruffens halvbredde i plan: dekkshalvbredden minus sidedekket,
+    med rundet front fra STEP_X0 og COACH_FRONT_R akterover."""
+    w = max(P.COACH_MIN_HALF_W, C.deck_half_breadth(x) - P.SIDEDECK)
+    R = P.COACH_FRONT_R
+    if x < P.STEP_X0 + R:
+        u = (P.STEP_X0 + R - x) / R
+        w *= math.sqrt(max(0.0, 1.0 - u * u))
+    return w
 
 
 def coaming_top_z(x: float) -> float:
@@ -82,6 +79,31 @@ def _plan_prism(outline, z0: float, z1: float, rad: float) -> cq.Workplane:
         except Exception:  # pragma: no cover - radius for stor for kort side
             pass
     return wp
+
+
+def _plan_prism_outline(stb, z0: float, z1: float, aft_rad: float = 0.0) -> cq.Workplane:
+    """Loddrett prisme av en speilsymmetrisk planform gitt av styrbord-
+    punktene `stb` (fra forkant til akterkant, foerste punkt paa senter-
+    linjen). Sidene er splines, akterkanten rett, akterhjornene rundet
+    med `aft_rad`. Ingen fillet etterpaa - de kan feile stille paa korte
+    segmenter."""
+    xa, wa = stb[-1]
+    r = min(aft_rad, 0.45 * wa)
+    c = math.sqrt(0.5)
+    wp = cq.Workplane("XY").workplane(offset=z0).moveTo(*stb[0])
+    side = list(stb[1:])
+    if r > 0:
+        side[-1] = (xa - r, wa)
+    wp = wp.spline(side, includeCurrent=True)
+    if r > 0:
+        wp = wp.threePointArc((xa - r + r * c, wa - r + r * c), (xa, wa - r))
+        wp = wp.lineTo(xa, -(wa - r))
+        wp = wp.threePointArc((xa - r + r * c, -(wa - r + r * c)), (xa - r, -wa))
+    else:
+        wp = wp.lineTo(xa, -wa)
+    port = [(x, -y) for (x, y) in reversed(side[:-1])] + [stb[0]]
+    wp = wp.spline(port, includeCurrent=True)
+    return wp.close().extrude(z1 - z0)
 
 
 def _outline(x0: float, x1: float, hw, n: int = 16):
@@ -136,21 +158,12 @@ def _rounded_block(x0, x1, w, z0, z1, rad, top_chamfer=0.0) -> cq.Workplane:
     return b
 
 
-# ------------------------------------------------------------- forruff
-def trunk() -> cq.Workplane:
-    """Lav, flat forruff fra trinnet og fram til den fairer inn i fordekket."""
-    z0 = min(C.sheer_z(x) for x in (P.TRUNK_X0, P.STEP_X1)) - 200.0
-    prism = _plan_prism(_outline(P.TRUNK_X0, P.STEP_X1 + 60.0, trunk_half_width),
-                        z0, P.TRUNK_TOP_Z + 60.0, P.TRUNK_RAD)
-    roof = _roof_body(P.TRUNK_X0 - 300.0, P.STEP_X1 + 400.0, lambda x: P.TRUNK_TOP_Z,
-                      1400.0, 2200.0, camber=22.0)
-    return prism.intersect(roof)
-
-
 # ------------------------------------------------------------------- ruff
 def _step_wedge() -> cq.Workplane:
-    """Volumet foran/over trinnets skraa front - fjernes fra den hoye ruffen."""
-    za = P.TRUNK_TOP_Z
+    """Volumet foran/over ruffens skraa front - fjernes fra ruffen.
+
+    Fronten gaar fra dekket ved STEP_X0 opp til taket ved STEP_X1."""
+    za = deck_z(P.STEP_X0, 0.0) - 35.0
     zb = roof_z(P.STEP_X1) + 5.0
     pts = [
         (P.STEP_X0, za - 5.0),
@@ -163,10 +176,13 @@ def _step_wedge() -> cq.Workplane:
 
 
 def coachroof() -> cq.Workplane:
-    """Den hoye ruffen med skraatt trinn forut."""
+    """Ruffen: lav og bred, rundet front, skraa front opp til taket."""
     z0 = min(C.sheer_z(x) for x in (P.STEP_X0, P.COACH_X1)) - 200.0
     z1 = max(z for _, z in P.COACH_TOP) + 80.0
-    prism = _plan_prism(_outline(P.STEP_X0, P.COACH_X1, coach_half_width), z0, z1, P.COACH_RAD)
+    n = 60
+    stb = [(P.STEP_X0 + (P.COACH_X1 - P.STEP_X0) * i / n, 0.0) for i in range(n + 1)]
+    stb = [(x, coach_half_width(x)) for x, _ in stb]
+    prism = _plan_prism_outline(stb, z0, z1, P.COACH_RAD)
     roof = _roof_body(P.STEP_X0 - 300.0, P.COACH_X1 + 300.0, roof_z, 1500.0, 2400.0,
                       camber=P.COACH_ROOF_CAMBER)
     return prism.intersect(roof).cut(_step_wedge())
@@ -185,10 +201,10 @@ def hatches() -> cq.Workplane:
 
 
 def vents() -> cq.Workplane:
-    """Soppventiler: en paa forruffen, en paa taket bak masten."""
+    """Soppventiler: en paa fordekket, en paa taket bak masten."""
     out = None
     for x, where in P.VENTS:
-        base = (P.TRUNK_TOP_Z if where == "trunk" else roof_z(x)) - 40.0
+        base = (deck_z(x, 0.0) if where == "deck" else roof_z(x)) - 40.0
         v = (
             cq.Workplane("XY")
             .workplane(offset=base)
@@ -207,7 +223,7 @@ def vents() -> cq.Workplane:
 def companionway_cut() -> cq.Workplane:
     """Nedgangen: fordypning i ruffens bakkant."""
     x = P.COACH_X1
-    z0 = C.sheer_z(x) + P.COMPANION_SILL
+    z0 = deck_z(x, 0.0) + P.COMPANION_SILL
     z1 = roof_z(x) + 150.0
     b = (
         cq.Workplane("XY")
@@ -223,28 +239,60 @@ def companionway_cut() -> cq.Workplane:
     return b
 
 
-def coach_windows() -> cq.Workplane:
-    """Nedfelte langvinduer i ruffsiden, i nedre halvdel av siden."""
-    L = P.COACH_X1 - P.COACH_X0
-    xa = P.COACH_X0 + P.WIN_X0_FRAC * L
-    xb = P.COACH_X0 + P.WIN_X1_FRAC * L
-    xm = 0.5 * (xa + xb)
-    z_bot, z_top = coach_side_span(xm)
-    H = z_top - z_bot
-    z0 = z_bot + P.WIN_Z0_FRAC * H
-    z1 = z_bot + P.WIN_Z1_FRAC * H
-    w = coach_half_width(xm)
-    out = None
-    for sign in (1, -1):
-        b = (
-            cq.Workplane("XY")
-            .box(xb - xa, P.WIN_DEPTH, z1 - z0, centered=(True, True, True))
-            .edges("|Y")
-            .fillet(min(P.WIN_RAD, 0.45 * (z1 - z0)))
-            .translate((xm, sign * (w - 0.5 * P.WIN_DEPTH + 40.0), 0.5 * (z0 + z1)))
-        )
-        out = b if out is None else out.union(b)
-    return out
+def _window_box(grow: float) -> cq.Workplane:
+    """Vinduets omriss sett fra siden, ekstrudert tvers gjennom baaten.
+
+    Underkanten foelger fenderlisten, overkanten dekkskanten, slik tegningen
+    viser. `grow` gjor omrisset stoerre paa alle kanter."""
+    x0, x1 = P.WIN_X0 - grow, P.WIN_X1 + grow
+    lo = lambda x: C.strake_z(x) + P.WIN_ABOVE_STRAKE - grow
+    hi = lambda x: C.sheer_z(x) - P.WIN_BELOW_DECK + grow
+    pts = [(x0, lo(x0)), (x1, lo(x1)), (x1, hi(x1)), (x0, hi(x0))]
+    b = cq.Workplane("XZ").polyline(pts).close().extrude(3000.0, both=True)
+    try:
+        b = b.edges("|Y").fillet(P.WIN_RAD + grow)
+    except Exception:  # pragma: no cover
+        pass
+    return b
+
+
+def _inside_loft(depth: float, x0: float, x1: float, n: int = 8) -> cq.Workplane:
+    """Skrogets innside forskjoevet `depth` innover, loftet mellom x0 og x1."""
+    xs = [x0 + (x1 - x0) * i / (n - 1) for i in range(n)]
+    wires = [S._inner_wire(x, depth, 0.0) for x in xs]
+    return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=True)])
+
+
+def hull_windows():
+    """Langvinduene i skrogsiden: (kutt, behold).
+
+    Kuttet er et WIN_DEPTH tykt baand langs begge skrogsider innenfor
+    vinduets omriss. `behold` er et tykkere baand bak vinduet som gis til
+    uthulingen, saa det staar full veggtykkelse igjen bak forsenkningen."""
+    xa, xb = P.WIN_X0 - 200.0, P.WIN_X1 + 200.0
+    cut = _window_box(0.0).cut(_inside_loft(P.WIN_DEPTH, xa, xb))
+    keep_depth = P.WIN_DEPTH + P.HULL_WALL + P.VOID_MARGIN + 10.0
+    keep = _window_box(100.0).cut(_inside_loft(keep_depth, xa - 100.0, xb + 100.0))
+    return cut, keep
+
+
+def mast_post() -> cq.Workplane:
+    """Massiv soyle under mastesteget, fra bunnen opp til taket, med en
+    kloss rundt sokkelen. Gis til uthulingen som `keep`: ellers ville
+    sokkelen (330 mm ned fra taket) aapnet seg inn i hulrommet."""
+    x = P.MAST_STEP_X
+    z0 = C.bottom_z(x) + 20.0
+    z1 = roof_z(x) + 10.0
+    post = (
+        cq.Workplane("XY").workplane(offset=z0).center(x, 0.0)
+        .rect(P.MAST_POST_W, P.MAST_POST_W).extrude(z1 - z0)
+    )
+    zb = roof_z(x) - P.MAST_SOCKET - 60.0
+    block = (
+        cq.Workplane("XY").workplane(offset=zb).center(x, 0.0)
+        .rect(260.0, 230.0).extrude(z1 - zb)
+    )
+    return post.union(block)
 
 
 # ------------------------------------------------------------- sprayhood
@@ -260,7 +308,10 @@ def sprayhood() -> cq.Workplane:
     for i in range(steps + 1):
         t = i / steps
         x = x0 + (x1 - x0) * t
-        w = coach_half_width(min(x, P.COACH_X1)) + P.SPRAY_OVERHANG
+        # ruffens bredde foran nedgangen, karmens bredde over cockpiten
+        t_w = min(max((x - P.COACH_X1) / 300.0, 0.0), 1.0)
+        w = (1.0 - t_w) * coach_half_width(min(x, P.COACH_X1)) + t_w * coaming_half_width(x)
+        w += P.SPRAY_OVERHANG
         base = (roof_z(x) if x <= P.COACH_X1 else coaming_top_z(x)) - 70.0
         top = P.SPRAY_TOP_Z - 45.0 * (1.0 - t)
         pts = []
@@ -274,7 +325,7 @@ def sprayhood() -> cq.Workplane:
 
 # --------------------------------------------------------------- cockpit
 def cockpit_half_width(x: float) -> float:
-    return max(200.0, min(P.COCKPIT_HALF_W, C.deck_half_breadth(x) - P.SIDEDECK_MIN - 40.0))
+    return max(200.0, min(P.COCKPIT_HALF_W, C.deck_half_breadth(x) - 290.0))
 
 
 def coaming_half_width(x: float) -> float:
@@ -293,7 +344,15 @@ def coaming_block() -> cq.Workplane:
 
 def cockpit_floor_z() -> float:
     """Bronnens gulv over DWL."""
-    return min(C.sheer_z(x) for x in (P.COCKPIT_X0, P.COCKPIT_X1)) - P.COCKPIT_DEPTH
+    return P.COCKPIT_FLOOR_Z
+
+
+def _cockpit_lid_z(x: float) -> float:
+    """Hvor hoyt bronnen skjaeres: til karmtoppen under sprayhooden, saa
+    sprayhoodens utheng blir staaende, og hoyere aktenfor den, saa dekkets
+    bue ikke legger en hinne over bronnen."""
+    t = min(max((x - P.SPRAY_X1 - 50.0) / 200.0, 0.0), 1.0)
+    return coaming_top_z(x) + 12.0 + 200.0 * t
 
 
 def cockpit_tub(grow: float) -> cq.Workplane:
@@ -316,6 +375,5 @@ def cockpit_cut() -> cq.Workplane:
     """Cockpitbronnen. Skjaeres bare opp til karmtoppen, saa sprayhoodens utheng blir staaende."""
     z0 = cockpit_floor_z()
     prism = _plan_prism(_outline(P.COCKPIT_X0, P.COCKPIT_X1, cockpit_half_width), z0, 2600.0, P.COCKPIT_RAD)
-    top = _roof_body(P.COCKPIT_X0 - 300.0, P.COCKPIT_X1 + 300.0,
-                     lambda x: coaming_top_z(x) + 12.0, 1500.0, 2600.0, camber=0.0)
+    top = _roof_body(P.COCKPIT_X0 - 300.0, P.COCKPIT_X1 + 300.0, _cockpit_lid_z, 1500.0, 2600.0, camber=0.0)
     return prism.intersect(top)
