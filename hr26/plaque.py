@@ -26,12 +26,14 @@ RAISE = 0.7          # tekstens hoyde over platen
 
 NAME = P.BOAT_NAME                       # baatens navn, under typen
 TYPE_LINE = "Hallberg-Rassy 26"          # typen staar oeverst, storst
-TYPE_SIZE = 9.0                          # 10,5 mm ville vaert for bredt for platen
-NAME_SIZE = 7.0
-# De smaa linjene staar i fet skrift, 6 mm: strekene blir ca. 1 mm brede og
-# lesbare uten at man maa se noeye etter. Vanlig skrift paa 3,1 mm ga strek paa
-# ca. 0,3 mm, som slicere dropper, og 4,2 mm ble for smaatt paa platen.
-LINE_SIZE = 6.0
+# Liberation Sans Bold (Arial-lik) er ca. 15 % smalere enn DejaVu Sans Bold,
+# saa samme bredde gir stoerre bokstaver. DejaVu hadde et oeye i "e" paa bare
+# 0,7 mm2 og tynne haler paa "y", og de fylles igjen/forsvinner i sliceren.
+FONT_BOLD = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+TYPE_SIZE = 10.0
+NAME_SIZE = 7.5
+LINE_SIZE = 6.8                          # strek ca. 1,1 mm - lesbart og printbart
+BLOCK_HALF_H = 18.6                      # tekstblokken ligger mellom +-18,6 mm
 LINES = [
     "Konstrukt\u00f8r Olle Enderlein",
     "Ell\u00f6s, Sverige  \u00b7  1978\u201385",
@@ -39,24 +41,19 @@ LINES = [
 SCALE_LINE = "Skala 1:30"
 
 
-def _text(s: str, size: float, y: float, bold: bool = False) -> cq.Workplane:
-    """Tekstlinje midtstilt paa platen: bredden maales paa selve bokstavene,
-    saa linjen ligger midt paa uansett hva fonten legger til av luft."""
+def _text(s: str, size: float):
+    """Tekstlinje midtstilt i x og y paa selve bokstavene (ikke fontens luft).
+    Gir (linje, blekkhoeyde) med linjen i origo paa platens overflate."""
     t = (
         cq.Workplane("XY")
         .workplane(offset=T)
-        .text(
-            s,
-            size,
-            RAISE,
-            fontPath="/usr/share/fonts/truetype/dejavu/DejaVuSans%s.ttf"
-            % ("-Bold" if bold else ""),
-            halign="center",
-            valign="center",
-        )
+        .text(s, size, RAISE, fontPath=FONT_BOLD, halign="center", valign="center")
     )
     bb = t.val().BoundingBox()
-    return t.translate((-0.5 * (bb.xmin + bb.xmax), y, 0.0))
+    return (
+        t.translate((-0.5 * (bb.xmin + bb.xmax), -0.5 * (bb.ymin + bb.ymax), 0.0)),
+        bb.ylen,
+    )
 
 
 def plaque_model_mm() -> cq.Workplane:
@@ -84,15 +81,23 @@ def plaque_model_mm() -> cq.Workplane:
         )
     )
 
-    body = plate
+    items = []
     if NAME:
-        body = body.union(_text(TYPE_LINE, TYPE_SIZE, 14.9, bold=True))
-        body = body.union(_text(NAME, NAME_SIZE, 6.9, bold=True))
+        items.append(_text(TYPE_LINE, TYPE_SIZE))
+        items.append(_text(NAME, NAME_SIZE))
     else:
-        body = body.union(_text(TYPE_LINE.upper(), 6.4, 10.0, bold=True))
-    for i, line in enumerate(LINES):
-        body = body.union(_text(line, LINE_SIZE, -0.2 - i * 7.9, bold=True))
-    body = body.union(_text(SCALE_LINE, LINE_SIZE, -16.0, bold=True))
+        items.append(_text(TYPE_LINE.upper(), TYPE_SIZE))
+    items += [_text(line, LINE_SIZE) for line in LINES]
+    items.append(_text(SCALE_LINE, LINE_SIZE))
+
+    # like stor luft mellom alle linjer, blokken symmetrisk om platens midte
+    total = sum(h for _, h in items)
+    gap = (2.0 * BLOCK_HALF_H - total) / (len(items) - 1)
+    body = plate
+    y = BLOCK_HALF_H
+    for line, h in items:
+        body = body.union(line.translate((0.0, y - 0.5 * h, 0.0)))
+        y -= h + gap
     return body
 
 

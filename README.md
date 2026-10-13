@@ -419,10 +419,13 @@ av stativet:
                  Skala 1:30
 ```
 
-All tekst står i fet skrift, de tre nederste linjene på 6 mm med strek på ca.
-1 mm. Det er med vilje: vanlig skrift på 3 mm gir strek på ca. 0,3 mm, smalere
-enn en 0,4 mm dyse, og slicere dropper slike strek. Fet skrift på 4 mm var
-også for smått å lese på platen.
+All tekst står i fet Liberation Sans (Arial-lik), de tre nederste linjene på
+6,8 mm med strek på ca. 1,1 mm. Det er med vilje: vanlig skrift på 3 mm gir
+strek på ca. 0,3 mm, smalere enn en 0,4 mm dyse, og slicere dropper slike
+strek. DejaVu Sans Bold ble for bred og hadde så små øyne i «e» og tynne haler
+på «y» at de ble fylt igjen eller falt bort. Liberation er smalere, så
+samme bredde gir større bokstaver. Linjene fordeles med lik luft mellom seg
+(`plaque.py`).
 
 Teksten står 0,7 mm over platen, altså rundt seks lag med 0,12 mm laghøyde.
 Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
