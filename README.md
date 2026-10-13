@@ -197,12 +197,12 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 11 | `11_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
 | 12 | `12_stativ-vugge1.stl` | 79,7 × 94,6 × 6,0 | 36,0 cm³ / 45 g |
 | 13 | `13_stativ-vugge2.stl` | 77,1 × 106,4 × 6,0 | 37,0 cm³ / 46 g |
-| 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
+| 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 56,9 cm³ / 71 g |
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,7 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
 Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 283 g,
-stativet 152 g, resten under 35 g. Én rull på 1 kg holder med god margin.
+stativet 161 g, resten under 35 g. Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
