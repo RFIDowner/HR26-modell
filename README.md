@@ -188,7 +188,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
 | 05 | `05_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
 | 06 | `06_masttopp.stl` | 6,7 × 5,5 × 5,5 | 0,1 cm³ |
-| 07 | `07_saling.stl` | 56,2 × 14,7 × 3,0 | 0,1 cm³ |
+| 07 | `07_saling.stl` | 15,3 × 56,2 × 3,0 | 0,1 cm³ |
 | 08 | `08_bom.stl` | 100,0 × 5,5 × 2,4 | 0,3 cm³ |
 | 09 | `09_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
 | 10 | `10_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
