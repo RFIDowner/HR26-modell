@@ -198,7 +198,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 12 | `12_stativ-vugge1.stl` | 79,7 × 94,6 × 6,0 | 36,0 cm³ / 45 g |
 | 13 | `13_stativ-vugge2.stl` | 77,1 × 106,4 × 6,0 | 37,0 cm³ / 46 g |
 | 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
-| 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,4 cm³ / 18 g |
+| 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,5 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
 Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 283 g,
@@ -408,13 +408,14 @@ ned på tappene; ingen lim nødvendig om passformen blir stram.
 
 ## Skiltet
 
-Del 13 er en liten plate med opphøyd tekst, ment å stå foran eller ved siden
+Del 15 er en liten plate med opphøyd tekst, ment å stå foran eller ved siden
 av stativet:
 
 ```
-                     HUGO
-              Hallberg-Rassy 26
-  Konstruktør Olle Enderlein · bygget 1978–1985
+             Hallberg-Rassy 26
+                   HUGO
+           Konstruktør Olle Enderlein
+          Bygget 1978–1985 · Ellös, Sverige
  Lengde 7,95 m · Bredde 2,68 m · Dypgang 1,40 m
        Deplasement 2,5 t · Seilareal 32 m²
                  Skala 1:30
