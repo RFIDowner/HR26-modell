@@ -94,11 +94,14 @@ def beam() -> cq.Workplane:
         .fillet(7.0 * P.SCALE)
         .translate((0.5 * (x0 + x1), 0.0, 0.0))
     )
-    # lettelseshull slik at bjelken ikke blir en massiv kloss
+    # lettelseshull slik at bjelken ikke blir en massiv kloss. Tappene sitter
+    # 17 mm fra enden og er 6 mm brede, saa veggen i enden maa vaere minst
+    # 23 mm for at de skal staa paa massiv vegg (13 mm gjorde at tappene
+    # hang over hullet og ikke var festet til bjelken).
     b = b.cut(
         cq.Workplane("XY")
         .workplane(offset=base_z + 2.0 * P.SCALE)
-        .rect(length - 26.0 * P.SCALE, P.STAND_BASE_W - 20.0 * P.SCALE)
+        .rect(length - 46.0 * P.SCALE, P.STAND_BASE_W - 20.0 * P.SCALE)
         .extrude(h)
         .edges("|Z")
         .fillet(8.0 * P.SCALE)
