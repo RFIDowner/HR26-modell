@@ -28,11 +28,14 @@ NAME = P.BOAT_NAME                       # baatens navn, under typen
 TYPE_LINE = "Hallberg-Rassy 26"          # typen staar oeverst, storst
 TYPE_SIZE = 9.0                          # 10,5 mm ville vaert for bredt for platen
 NAME_SIZE = 6.0
+# De smaa linjene staar i fet skrift, 4,2 mm: strekene blir ca. 0,7 mm brede
+# og printes paa en 0,4 mm dyse. Vanlig skrift paa 3,1 mm ga strek paa ca.
+# 0,3 mm, som slicere dropper.
+LINE_SIZE = 4.2
 LINES = [
     "Konstrukt\u00f8r Olle Enderlein",
     "Bygget 1978\u20131985  \u00b7  Ell\u00f6s, Sverige",
-    "Lengde 7,95 m  \u00b7  Bredde 2,68 m  \u00b7  Dypgang 1,40 m",
-    "Deplasement 2,5 t  \u00b7  Seilareal 32 m\u00b2",
+    "Lengde 7,95 m  \u00b7  Bredde 2,68 m",
 ]
 SCALE_LINE = "Skala 1:30"
 
@@ -89,8 +92,8 @@ def plaque_model_mm() -> cq.Workplane:
     else:
         body = body.union(_text(TYPE_LINE.upper(), 6.4, 10.0, bold=True))
     for i, line in enumerate(LINES):
-        body = body.union(_text(line, 3.1, 0.1 - i * 4.2))
-    body = body.union(_text(SCALE_LINE, 4.0, -17.2, bold=True))
+        body = body.union(_text(line, LINE_SIZE, -0.2 - i * 5.6, bold=True))
+    body = body.union(_text(SCALE_LINE, 4.5, -17.2, bold=True))
     return body
 
 
