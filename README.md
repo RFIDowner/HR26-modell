@@ -198,7 +198,7 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 12 | `12_stativ-vugge1.stl` | 79,7 × 94,6 × 6,0 | 36,0 cm³ / 45 g |
 | 13 | `13_stativ-vugge2.stl` | 77,1 × 106,4 × 6,0 | 37,0 cm³ / 46 g |
 | 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 49,9 cm³ / 62 g |
-| 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,5 cm³ / 18 g |
+| 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,7 cm³ / 18 g |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
 Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 283 g,
@@ -416,10 +416,13 @@ av stativet:
                    HUGO
            Konstruktør Olle Enderlein
           Bygget 1978–1985 · Ellös, Sverige
- Lengde 7,95 m · Bredde 2,68 m · Dypgang 1,40 m
-       Deplasement 2,5 t · Seilareal 32 m²
+         Lengde 7,95 m · Bredde 2,68 m
                  Skala 1:30
 ```
+
+All tekst står i fet skrift, med strek på 0,6–1,5 mm. Det er med vilje: vanlig
+skrift på 3 mm gir strek på ca. 0,3 mm, smalere enn en 0,4 mm dyse, og
+slicere dropper slike strek.
 
 Teksten står 0,7 mm over platen, altså rundt seks lag med 0,12 mm laghøyde.
 Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
