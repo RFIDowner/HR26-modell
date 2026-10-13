@@ -38,7 +38,9 @@ SCALE_LINE = "Skala 1:30"
 
 
 def _text(s: str, size: float, y: float, bold: bool = False) -> cq.Workplane:
-    return (
+    """Tekstlinje midtstilt paa platen: bredden maales paa selve bokstavene,
+    saa linjen ligger midt paa uansett hva fonten legger til av luft."""
+    t = (
         cq.Workplane("XY")
         .workplane(offset=T)
         .text(
@@ -50,8 +52,9 @@ def _text(s: str, size: float, y: float, bold: bool = False) -> cq.Workplane:
             halign="center",
             valign="center",
         )
-        .translate((0.0, y, 0.0))
     )
+    bb = t.val().BoundingBox()
+    return t.translate((-0.5 * (bb.xmin + bb.xmax), y, 0.0))
 
 
 def plaque_model_mm() -> cq.Workplane:
@@ -81,13 +84,13 @@ def plaque_model_mm() -> cq.Workplane:
 
     body = plate
     if NAME:
-        body = body.union(_text(TYPE_LINE, TYPE_SIZE, 14.5, bold=True))
-        body = body.union(_text(NAME, NAME_SIZE, 6.3, bold=True))
+        body = body.union(_text(TYPE_LINE, TYPE_SIZE, 14.9, bold=True))
+        body = body.union(_text(NAME, NAME_SIZE, 6.7, bold=True))
     else:
         body = body.union(_text(TYPE_LINE.upper(), 6.4, 10.0, bold=True))
     for i, line in enumerate(LINES):
-        body = body.union(_text(line, 3.1, -0.3 - i * 4.2))
-    body = body.union(_text(SCALE_LINE, 4.0, -17.6, bold=True))
+        body = body.union(_text(line, 3.1, 0.1 - i * 4.2))
+    body = body.union(_text(SCALE_LINE, 4.0, -17.2, bold=True))
     return body
 
 
