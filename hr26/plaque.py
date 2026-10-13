@@ -27,15 +27,14 @@ RAISE = 0.7          # tekstens hoyde over platen
 NAME = P.BOAT_NAME                       # baatens navn, under typen
 TYPE_LINE = "Hallberg-Rassy 26"          # typen staar oeverst, storst
 TYPE_SIZE = 9.0                          # 10,5 mm ville vaert for bredt for platen
-NAME_SIZE = 6.0
-# De smaa linjene staar i fet skrift, 4,2 mm: strekene blir ca. 0,7 mm brede
-# og printes paa en 0,4 mm dyse. Vanlig skrift paa 3,1 mm ga strek paa ca.
-# 0,3 mm, som slicere dropper.
-LINE_SIZE = 4.2
+NAME_SIZE = 7.0
+# De smaa linjene staar i fet skrift, 6 mm: strekene blir ca. 1 mm brede og
+# lesbare uten at man maa se noeye etter. Vanlig skrift paa 3,1 mm ga strek paa
+# ca. 0,3 mm, som slicere dropper, og 4,2 mm ble for smaatt paa platen.
+LINE_SIZE = 6.0
 LINES = [
     "Konstrukt\u00f8r Olle Enderlein",
-    "Bygget 1978\u20131985  \u00b7  Ell\u00f6s, Sverige",
-    "Lengde 7,95 m  \u00b7  Bredde 2,68 m",
+    "Ell\u00f6s, Sverige  \u00b7  1978\u201385",
 ]
 SCALE_LINE = "Skala 1:30"
 
@@ -88,12 +87,12 @@ def plaque_model_mm() -> cq.Workplane:
     body = plate
     if NAME:
         body = body.union(_text(TYPE_LINE, TYPE_SIZE, 14.9, bold=True))
-        body = body.union(_text(NAME, NAME_SIZE, 6.7, bold=True))
+        body = body.union(_text(NAME, NAME_SIZE, 6.9, bold=True))
     else:
         body = body.union(_text(TYPE_LINE.upper(), 6.4, 10.0, bold=True))
     for i, line in enumerate(LINES):
-        body = body.union(_text(line, LINE_SIZE, -0.2 - i * 5.6, bold=True))
-    body = body.union(_text(SCALE_LINE, 4.5, -17.2, bold=True))
+        body = body.union(_text(line, LINE_SIZE, -0.2 - i * 7.9, bold=True))
+    body = body.union(_text(SCALE_LINE, LINE_SIZE, -16.0, bold=True))
     return body
 
 
