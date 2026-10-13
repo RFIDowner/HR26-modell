@@ -141,15 +141,17 @@ def spreaders() -> cq.Workplane:
     )
     L = P.SPREADER_LEN
     out = hub
-    for sign in (1, -1):
-        arm = (
-            cq.Workplane("XZ")
-            .rect(1.4 * P.SCALE, 1.1 * P.SCALE)
-            .extrude(L)
-            .rotate((0, 0, 0), (0, 0, 1), 90 * sign)
-            .rotate((0, 0, 0), (0, 0, 1), -sign * P.SPREADER_SWEEP)
-        )
-        out = out.union(arm.translate((0, 0, 0.5 * hub_h)))
+    # Armene gaar paa tvers av baaten (+-Y) og svinger bakover (+x). Hullets
+    # lange akse ligger langs x, fore-akter, saa den staar vinkelrett paa
+    # armene - slik masten (4,0 fore-akter, 3,0 paa tvers) maa sitte.
+    arm = (
+        cq.Workplane("XZ")
+        .rect(1.4 * P.SCALE, 1.1 * P.SCALE)
+        .extrude(-L)                                  # mot +Y
+        .rotate((0, 0, 0), (0, 0, 1), -P.SPREADER_SWEEP)  # spissen bakover (+x)
+    )
+    for a in (arm, arm.mirror("XZ")):
+        out = out.union(a.translate((0, 0, 0.5 * hub_h)))
     return _oval(out.faces(">Z").workplane(), HX, HY).cutThruAll()
 
 
