@@ -415,14 +415,14 @@ av stativet:
              Hallberg-Rassy 26
                    HUGO
            Konstruktør Olle Enderlein
-          Bygget 1978–1985 · Ellös, Sverige
-         Lengde 7,95 m · Bredde 2,68 m
+           Ellös, Sverige · 1978–85
                  Skala 1:30
 ```
 
-All tekst står i fet skrift, med strek på 0,6–1,5 mm. Det er med vilje: vanlig
-skrift på 3 mm gir strek på ca. 0,3 mm, smalere enn en 0,4 mm dyse, og
-slicere dropper slike strek.
+All tekst står i fet skrift, de tre nederste linjene på 6 mm med strek på ca.
+1 mm. Det er med vilje: vanlig skrift på 3 mm gir strek på ca. 0,3 mm, smalere
+enn en 0,4 mm dyse, og slicere dropper slike strek. Fet skrift på 4 mm var
+også for smått å lese på platen.
 
 Teksten står 0,7 mm over platen, altså rundt seks lag med 0,12 mm laghøyde.
 Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
