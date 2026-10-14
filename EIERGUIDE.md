@@ -200,9 +200,21 @@ Målene stemte godt over kors. Den målte bredden ble 0,7 % fra oppgitt, og dypg
 
 ![Skiltet til stativet: type, navn, konstruktør, sted og år, og skala.](docs/images/skilt.jpg)
 
+## Verftet, konstruktøren og båten
+
+**Verftet.** Harry Hallberg (1914–1997) begynte å bygge trebåter som 14-åring og startet eget verft i Kungsviken på Orust i 1943, midt under krigsårene. Hans første serieproduserte båt var Folkbåten, og han hadde stor suksess med Kungskryssaren. Han var tidlig ute med glassfiber og serieproduksjon av seilbåter fra 1963. På 1960-tallet flyttet han til et større anlegg i Ellös, ti kilometer unna.
+
+**Christoph Rassy.** Rassy ble født i 1934 i Bayern, ved Starnberger See, og lærte å bygge trebåter ved et lite verft i Sør-Tyskland. I 1960 flyttet han til Sverige med sykkelen som eneste eiendel. Han overtok senere Hallbergs gamle verft i Kungsviken. Da Hallberg trakk seg tilbake i 1972, ble navnene slått sammen til Hallberg-Rassy, med verftet i Ellös. Rassy ledet det til 2003, da sønnen Magnus overtok.
+
+**Konstruktøren.** Olle Enderlein (1917–1993) vokste opp i Norrköping og utdannet seg til ingeniør. Som 27-åring forlot han motorprodusenten Archimedes for å konstruere båter på heltid. Fra slutten av 1960-årene til begynnelsen av 1980-årene tegnet han nesten alle Hallberg-Rassys modeller, blant dem Rasmus 35, som var Rassys første serieproduserte båt. Andre kjente konstruksjoner er OE 36 og Shipman 28. Kildene oppgir fra rundt hundre til over to hundre konstruksjoner. Tegningene hans er bevart i arkivet til Sjöhistoriska museet i Stockholm, og museet har gitt ut en bok om ham av Ingrid Kaiser (2002).
+
+**Hallberg-Rassy 26.** Båten ble tegnet av Enderlein og bygget fra 1978 til 1985, 469 stykker. I 1978 fikk den prisen «Golden Steering Wheel» fra bladet Båtnytt, som en familiebåt bygget til høy standard. I dag bygger verftet i Ellös seilyachter på 34 til 69 fot.
+
+Mer å lese: verftets egne sider (hallberg-rassy.com, «Company history») og Sjöhistoriska museets samling på DigitaltMuseum (søk «Olle Enderlein»).
+
 ## Hvor mye arbeid lå bak
 
-Modellen er laget i en lang dialog med en AI (Claude fra Anthropic), som skrev programmet og regnet på tegningene. En token er en bit tekst på omtrent fire tegn. Fordi dialogen er så lang, leses det som allerede er sagt inn på nytt i hver runde, og det er den største posten. Tallene er hentet fra bruksrapporten per 12. oktober, og arbeidet etter det (skiltet, bjelken og denne guiden) kommer i tillegg.
+Modellen er laget i en lang dialog med en AI (Claude fra Anthropic), som skrev programmet og regnet på tegningene. En token er en bit tekst på omtrent fire tegn. Fordi dialogen er så lang, leses det som allerede er sagt inn på nytt i hver runde, og det er den største posten. Tallene er hentet fra bruksrapporten per 12. oktober.
 
 | | Omtrent |
 |---|---|
@@ -210,7 +222,6 @@ Modellen er laget i en lang dialog med en AI (Claude fra Anthropic), som skrev p
 | Skrevet til mellomlager | 1,7 millioner tokens |
 | Direkte inn og ut | 6 000 tokens |
 | Beregnet etter API-priser | ca. 200 dollar, ca. 2 000 kr per 12. oktober |
-| Anslag for alt arbeid til nå | 200 til 230 dollar, ca. 2 000 til 2 400 kr |
 
 ## Det modellen ikke er
 
