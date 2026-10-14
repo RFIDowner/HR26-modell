@@ -115,6 +115,13 @@ Ideer til maling:
 
 - **Skrogveggen er tynn:** 1,5 mm som minst. Slip aldri mer enn ca. 0,3 mm,
   ellers kommer du gjennom.
+- **Klampene og ankerrullen i baugen stikker gjennom skroget.** De er laget som
+  klosser som går ned under dekket, og i den smale baugen kommer de ut gjennom
+  skrogsiden og stevnen (se bildet i Innsikt-kapitlet). De kan files ned til
+  skrogflaten: legg maskeringstape rundt, fil flatt mot skroget, og stopp når
+  flaten er jevn. Gå ikke dypere. Veggen bak er minst 1,3 mm tykk, så det blir
+  ikke hull. Skulle det likevel komme et lite hull, lapper du det med superlim og
+  natron eller epoxyspartel, og pusser med 240 og 400.
 - **Støttemerker** under skroget: fil først, så våtpapir 240 og 400.
 - **Laglinjer:** grunning og tynne lag spartel, så våtpapir 400 til 600.
 - **Små mangler:** superlim blandet med natron (bakepulver) gir rask fyll som kan
@@ -137,6 +144,74 @@ til livliner, pinvise med 0,5 mm bor (øyene på pålene) og et 1,2 mm bor
 
 - Cockpiten er forenklet, uten benker eller brodekk, og karmen går ikke rundt
   hekken.
+- Klampene og ankerrullen i baugen stikker gjennom skroget og kan pusses ned,
+  se «Pusse og reparere».
 - Roret er bare bladet under vannlinjen, uten rorhode.
 - Mastens tykkelse er et anslag og ikke et målt mål.
 - Vinduet i skrogsiden er litt for langt akterover, ca. 2 mm i modellen.
+
+# Innsikt: slik ble modellen til
+
+Modellen er tegnet fra bunnen av i et parametrisk program. Hvert mål er et tall som kan endres, og hele båten bygges på nytt fra tallene. Utgangspunktet var bilder av båten og tegninger i en gammel brosjyre: profil og dekksplan i 1:50 og seilplan i 1:100. Tegningene er brukt som hjelpemidler. Hver kurve er sporet piksel for piksel og kalibrert mot lengden på 7,95 m.
+
+## Hva som er målt og hva som er tolket
+
+| Målt fra tegning | Tolket eller anslått |
+|---|---|
+| Lengde, bredde, dypgang og vannlinje | Tverrsnittene i skroget |
+| Profil: stevn, kjøl, rorets form | Mastens tykkelse (4 × 3 mm, anslag) |
+| Dekkskant, fenderliste og rundet hekk | Rekkepålenes tykkelse |
+| Ruff, luker, cockpit og vindu | Sprayhooden (høyde målt, formen forenklet) |
+
+Målene stemte godt over kors. Den målte bredden ble 0,7 % fra oppgitt, og dypgangen 0,6 %. Det viste at de to tegningene er i samme målestokk, og at kalibreringen var riktig.
+
+![Modellens silhuett (rødt) lagt over profiltegningen i 1:50. Dekkskant, ruff, luker, vindu og sprayhood faller på tegningens linjer.](docs/images/overlegg-profil.jpg)
+
+## Valgene vi måtte ta
+
+**1. Ingen spanteriss.** Brosjyren har profil og dekksplan, men ikke spantene, altså tverrsnittene. Vi laget dem selv: nedenfor vannlinjen en superellipse som blir fyldigere og flatere midtskips, og over vannlinjen en jevn utfalling opp til dekkskanten. Formen mellom stasjonene er en rekonstruksjon, ikke en fasit.
+
+**2. Dekkskanten sto for lavt.** Først ble dekkskanten lagt på fenderlisten, fordi det så ut som den øverste linjen. Det ga et for lavt skrog, og vinduet havnet oppe i ruffen. Tegningen og bilder viser at skrogsiden fortsetter 130 til 280 mm over listen, opp til en tynn linje der rekka står. Vi flyttet dekkskanten dit, og listen ble en list utenpå skroget.
+
+**3. Vinduet.** Langvinduet sitter i skrogsiden, i en fortsettelse av siden, ikke trukket inn i ruffen. Det er 1 200 mm langt og ligger mellom listen og dekkskanten. Underkant og overkant følger de to linjene, så vinduet skråner med båten. Det er forsenket 15 mm, altså en halv millimeter i 1:30.
+
+**4. Hekken.** Sporingen leste hjørnene i dekksplanen som en spiss. Men hekken er rundet i plan, og akterspeilet heller 8,3° med toppen lengst akter. Vi rettet det: skroget er rundet, akterspeilet hellende og svakt buet, og cockpitbrønnen følger hekkens kurve helt bak. Roret henger nå riktig på akterspeilet. Før bommet tappene.
+
+![Dekksplanen med modellens dekksutlinje (rødt) og cockpitbrønn (blått). Brønnen følger hekkens kurve.](docs/images/eier-hekk-plan.jpg)
+![Akterspeilet sett skrått bakfra, med navnet i relieff.](docs/images/akterspeil.jpg)
+
+**5. Et hull i stevnen.** Skroget er hult, og i den smale baugkilen ble innsiden først laget som en forminsket kopi av ytterformen. Veggen ble da bare 0,2 til 0,5 mm tykk, og hulrommet gikk gjennom stevnen ved vannlinjen. Innsiden er nå ekte forskjøvet innover langs normalen, med en liten margin. Veggen er minst 1,5 mm overalt, og 3,4 mm i baugen.
+
+**6. Et hult skrog som bærer seg selv.** Skroget er hult for å spare plast og vekt. Innvendige spant hver 26 mm bærer dekket, som spenner mellom dem som en bro. Cockpitgulv, mastesokkel og vindusvegg er spart som massive partier.
+
+**7. Det som er for tynt.** I 1:30 blir 1 mm til 30 mm. Rekkepålene er 1,1 mm tykke, som er 33 mm i virkeligheten, mot ca. 25 mm på en ekte påle. De er litt for grove, men tynnere ville ikke latt seg lage. Øynene for livlinene er 0,5 mm, og må bores opp for hånd.
+
+**8. Feil som ble funnet underveis.** Salingen hadde armene 90° feil mot hullet, og passet ikke på masten. Stativbjelkens klosser hang over en utsparing uten feste. Begge ble oppdaget ved montering og rettet.
+
+**9. Beslagene i baugen stikker ut.** Ankerrullen og de to fortøyningsklampene i baugen er laget som klosser som går ned i skroget under dekket. I den smale baugen kommer de ut gjennom skrogsiden og stevnen: en kloss på hver side (A) og en foran i stevnen (B). Dette ble oppdaget etter at modellen var ferdig, og er ikke rettet. De kan pusses ned til skrogflaten. Ved kontroll er veggen bak minst 1,3 mm tykk, så det blir ikke hull. Se «Pusse og reparere».
+
+![Baugen sett fra siden. A: en fortøyningsklampe, B: klossen under ankerrullen. Begge stikker ned under dekkskanten og ut gjennom skroget.](docs/images/eier-baug.jpg)
+
+**10. Deplasementet stemmer ikke.** Modellen har et beregnet undervannsvolum på 3,9 m³, mens brosjyren oppgir 2,5 tonn. Avviket skyldes den forholdsvis flate kanobunnen i tegningen. Formen er hentet fra tegningen, så tallet er ikke egnet til hydrostatikk.
+
+**11. Farger.** Vannlinjen er et vannrett plan, så bunnstoffet og den lyse stripen kan legges inn som farger i lagene. Fenderlisten og dekkskanten stiger mot baugen og følger ikke noe plan, så de lar seg ikke farge slik og må males.
+
+**12. Skiltet.** Skriften på skiltet måtte være tykk nok. Tynne streker kan ikke lages i en så liten målestokk, så vi valgte en fet skrifttype og færre linjer.
+
+![Skiltet til stativet: type, navn, konstruktør, sted og år, og skala.](docs/images/skilt.jpg)
+
+## Hvor mye arbeid lå bak
+
+Modellen er laget i en lang dialog med en AI (Claude fra Anthropic), som skrev programmet og regnet på tegningene. En token er en bit tekst på omtrent fire tegn. Fordi dialogen er så lang, leses det som allerede er sagt inn på nytt i hver runde, og det er den største posten. Tallene er hentet fra bruksrapporten per 12. oktober, og arbeidet etter det (skiltet, bjelken og denne guiden) kommer i tillegg.
+
+| | Omtrent |
+|---|---|
+| Lest på nytt fra mellomlager | 46 millioner tokens |
+| Skrevet til mellomlager | 1,7 millioner tokens |
+| Direkte inn og ut | 6 000 tokens |
+| Beregnet etter API-priser | ca. 200 dollar, ca. 2 000 kr per 12. oktober |
+| Anslag for alt arbeid til nå | 200 til 230 dollar, ca. 2 000 til 2 400 kr |
+
+## Det modellen ikke er
+
+Den er en utstillingsmodell, ikke en nøyaktig kopi. Skrogformen mellom målepunktene er tolket. Cockpiten er forenklet, og roret er bare bladet under vannlinjen. Vinduet er ca. 2 mm for langt akterover i modellen.
