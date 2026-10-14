@@ -31,11 +31,27 @@ pusser og reparerer den.
   tappene på bjelken.
 - **Skilt:** plate med navn og data.
 
+## Støtten under skroget
+
+Skroget er printet med støtte (support) under og rundt seg. Den skal fjernes
+**svært forsiktig**, i ro og mak:
+
+1. **Start med bunnlaget**, den flate plata som støtten står på. Løsne den først,
+   så støtteveggene ikke lenger henger sammen i bunnen.
+2. **Løsne deretter støtteveggene én og én**, litt og litt. Bruk fingrene og en
+   liten flat tang, og vipp støtten bort fra skroget.
+3. **Ikke riv eller trekk i store biter.** Skrogveggen er bare 1,5 mm tykk.
+4. **Rester nærmest skroget** skjæres bort med en skarp kniv, utover og bort fra
+   veggen, aldri inn mot den. Til slutt pusses det lett, se «Pusse og
+   reparere».
+
 ## Slik henger det sammen
 
 Alt limes med superlim (cyanoakrylat). Epoxy fungerer også.
 
-1. Rekkepålene limes i hullene langs dekkskanten, med øynene for-akter.
+1. Rekkepålene limes i hullene langs dekkskanten, med øynene for-akter. Hullene
+   i dekket renses først med et 1,2 mm bor for hånd. **Øynene på pålene må
+   bores opp**, se «Rekkepåler og livliner».
 2. Pulpit (foran) og pushpit (bak) bøyes av 1,0 mm messingtråd rundt tappene på
    bøyemalen og limes i hullene.
 3. Mastefoten limes i ruffen. Saling og masttopp tres på masten, og masten
@@ -44,6 +60,20 @@ Alt limes med superlim (cyanoakrylat). Epoxy fungerer også.
 5. Roret limes på akterspeilet med tappene i hullene.
 6. Livlinene (tynn tråd) tres gjennom øynene på pålene og limes ved pulpit og
    pushpit.
+
+## Rekkepåler og livliner
+
+Hver rekkepåle har to øyne for livlinene, men de er bare 0,5 mm og blir for små
+til å være åpne etter printingen. **De må bores opp:**
+
+1. Hold pålen i en liten tang eller trykk den lett mot en kloss av tre.
+2. Bor gjennom hvert øye med et **0,5 mm bor i en pinvise** (håndholdt bor).
+   Bor for hånd, ikke med maskin, og rett gjennom, vinkelrett på pålen.
+3. Rens hullet med bunnen av boret eller en nål, så tråden går lett gjennom.
+4. Tre livlinen (0,2–0,3 mm tråd) gjennom øynene, og fest den med en liten dråpe
+   superlim.
+
+Pålene er tynne, så bor rolig og støtt dem med fingeren like bak hullet.
 
 ## Masten og riggen
 
@@ -100,7 +130,8 @@ Ideer til maling:
 
 Superlim, epoxy, våtpapir (240, 400, 600), fil, kniv, pinsett, flattang,
 akrylmaling og pensler, grunning i spray, klarlakk, 1,0 mm messingtråd, tynn tråd
-til livliner.
+til livliner, pinvise med 0,5 mm bor (øyene på pålene) og et 1,2 mm bor
+(hullene i dekket).
 
 ## Det modellen ikke har
 

@@ -7,7 +7,8 @@ utskrift på **Bambu Lab A1** (256 × 256 × 256 mm) i PLA.
 Skroget printes i **ett stykke**, stående med kjølen ned og dekket opp, plassert
 diagonalt på platen. Ror, rigg­beslag og stativ printes som egne deler.
 
-> Skal du bare eie, male eller reparere modellen? Se **[EIERGUIDE.md](EIERGUIDE.md)**.
+> Skal du bare eie, male eller reparere modellen? Se **[EIERGUIDE.md](EIERGUIDE.md)**,
+> eller **[EIERGUIDE.pdf](EIERGUIDE.pdf)** for en utskrift på A4.
 
 ![Modellen sett skrått ovenfra](docs/images/modell-iso.jpg)
 
