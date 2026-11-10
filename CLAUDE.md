@@ -31,7 +31,8 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
 
 ## Referanser
 
-* Bilder av den ekte båten ligger i `~/Documents/Seilbåt`:
+* Bilder av den ekte båten ligger i `docs/foto/`, uten metadata og nedskalert
+  til høyst 2400 px. Originalene ligger lokalt i `~/Documents/Seilbåt`.
   * IMG_9388: baugen forfra
   * IMG_9391: akterspeilet
   * IMG_9389: skrått bakfra
