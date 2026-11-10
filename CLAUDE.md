@@ -8,6 +8,8 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
 
 * Skriver norsk. Vil at Claude er «kaptein»: anbefaler, bestemmer og kjører,
   og avslutter med valgt kurs og hva som trengs fra brukeren.
+* Under lange jobber skal det være lite underveisrapportering og mest mulig
+  faktisk forbedring. Høyst ett bilde mellom hvert trinn.
 * Minner skal lagres slik at også Fable ser dem: her i `CLAUDE.md`, pushet til
   GitHub, i tillegg til Claude Codes lokale minne.
 * Om V10 (10.11.2026): «tiden er ikke problem, tokens er», og deretter «maks
