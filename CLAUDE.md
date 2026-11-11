@@ -24,6 +24,11 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   18 % for smal og mangler undervannsdel.
 * Årsaker, krav og plan står i `V10.md` i grenen `v10`. Arbeidet skjer lokalt i
   worktreen `../HR26-modell-v10`.
+* **Status 11.11.2026: pauset.** Alt arbeid ligger i grenen `v10`: koden for
+  arbeidspakkene A, B og C (bygget hver for seg, ikke samlet), patcher,
+  rapporter, bildemål, poengkort og skript i `v10/`. Les avsnittet «Status» i
+  `V10.md` før du fortsetter. Neste steg er samlet bygging og eksport, så
+  forbedringsrunder.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
