@@ -1,0 +1,88 @@
+{
+ "summary": "Why the hull looks robotic (cross-section lens): curves.section() is two different curves glued together at the waterline, and both are forced vertical exactly at z=0.\n- Below the waterline is a superellipse centred on the DWL (curves.py:155-162). Its fullness exponent m is 1.1–1.95, so its curvature runs to infinity right at the waterline.\n- Above it is a power curve, y = bw + (bd−bw)·s^1.45 (curves.py:168-176). It is concave by construction: flare rises from 0° at the waterline to 18–34° at the deck edge.\n\nThree things follow.\n- **Crease along the DWL.** Every section turns hardest 8–34 mm below the waterline (spline radius 43–170 mm full scale, 1.4–5.7 mm at 1:30). Its curvature then flips sign across z=0. The STL confirms it: the side leans 9–41° in the band z −60…−5 but only 2–14° in z 5…60.\n- **Hollow topsides.** They sit up to 32–54 mm inside the waterline-to-deck chord between x=398 and 4770, i.e. 1.1–1.8 mm at model scale.\n- **Flat slab sides aft.** From x≈6400 aft the sides are vertical (1–2.5° flare).\n\nBambu's sections are the opposite: convex, with flare decreasing upward. Over its visible band (z≈390–960, width-corrected) it bulges 14–37 mm outward with flare falling from 23–50° to 0–23°. Ours is concave in the same band (−0.4 to −10 mm) with flare rising.\n\nAll of this is real geometry, so it shows on a print as well as on screen. The OCC spline and the loft are faithful: the STL is within ±5 mm full scale (±0.17 mm model) of the formula, except at the forefoot near x≈1008–1221 where the generator switches construction.\n\nThe underlying cause is the unsourced waterline half-breadth (`WL_BEAM_FRACTION` 0.845 and the `WATERPLANE` table, params.py:47-67). It is 0.82 of the deck half-breadth amidships and 0.97–0.98 at x≈6758–7155. Any convex section that hits it exactly needs tumblehome aft.\n\nProposal, demonstrated in numpy only (no CAD build): one curve per section from keel to deck edge.\n- It rounds the corner between a bottom line through the keel point (0, zb) at deadrise β and a side line through the measured deck edge (bd, zs) at flare φ.\n- The rounding is an affine-mapped superellipse with exponent n.\n- Keel point, deck edge and strake height are kept exactly.\n- It is convex everywhere (0 inflections) and smooth (C∞) inside, with zero curvature at both ends.\n- The bilge radius is 690–780 mm amidships, at z≈−250 to −284.\n- The strake face ends up 7–13 mm outside the deck outline, within line tolerance (20 mm at x=7552).\n- Midship waterline half-breadth stays within −1 to −3.5%.\n\nCost of the proposal:\n- Max waterline beam −5.3% (2265 → 2145 mm), and its peak moves from x=6030 to 4936.\n- Waterline area −9.5%.\n- Canoe-body volume −5.4% (3.887 → 3.676 m³), which moves toward the brochure's 2.5 t.\n- The aft waterline narrows by up to 27% (at x=7155).\n\nMeasurement note: 01_skrog.stl lies on the plate rotated 45°, not 44°. With −44° the slices are yawed about 1° and show false ±40–70 mm errors; README.md also says 45°.",
+ "findings": [
+  {
+   "id": "sections-1",
+   "title": "The DWL is a built-in crease: two curves forced vertical at z=0, with infinite curvature and a sign flip there",
+   "claim": "section() builds the underwater part as a superellipse centred on the DWL, (y/bw)^m + (z/zb)^m = 1 with m = 1.1–1.95, and the topside as a separate power curve. Both have a vertical tangent exactly at z=0. With m < 2 the bilge curvature goes to infinity as z approaches 0, so the tightest turn of the bilge sits at the waterline. Above it the side immediately bends the other way, an inflection exactly on the DWL. On a flat-shaded mesh this reads as a hard horizontal line along the waterline, and the hull looks like a rounded tub with a wall glued on top.",
+   "evidence": "Analytic curvature radius at z=−10 mm: +61 to +199 mm (convex); at z=+10 mm: −382 to −7772 mm (concave), stations x=1192–7552. OCC spline (n_pts=26): minimum bilge radius 43–170 mm full scale (1.4–5.7 mm at 1:30) at z = −8 to −34 mm. Of the 62–86° total bilge turn, 31–62° happens in the last 150 mm below the DWL; the 45° point sits only 43–212 mm below the DWL. STL slices (rotation −45°): side leans 9.0–41.4° from vertical in z −60…−5, but only −1.5 to 14.0° in z 5…60, then flare grows again (0.7–15.6° at z 250–400). Scripts: gen_analysis.py, stl_ours.py in the sections scratch folder.",
+   "where": "hr26/curves.py:143-182 (superellipse 155-162, topside power curve 168-176, comment 173-174); hr26/params.py:35-45 (SECTION_FULLNESS 1.10–1.95)",
+   "visual_impact": "high",
+   "on_screen_only": false,
+   "fix": "Replace the two-piece section with one convex curve from keel to deck edge that crosses the DWL at an inclined, non-vertical tangent, so the bilge turn sits well below the waterline (see sections-6). A minimum stopgap without the new family: centre the underwater superellipse below the DWL and use m >= 2. But m >= 2 alone still leaves the vertical tangent and the inflection at z=0.",
+   "effort": "medium",
+   "risk": "Changes every section, so the hollowing (section_inner), the strake path (_side_frame) and the window recess all follow automatically through C.section. Booleans must be re-verified after a rebuild.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "sections-2",
+   "title": "Topsides are hollow (concave) by construction; Bambu's are convex",
+   "claim": "y = bw + (bd−bw)·s^1.45 lies inside the straight line from the WL point to the deck edge everywhere, by up to 0.136·(bd−bw). Flare therefore increases upward, from 0° at the DWL to its maximum at the deck edge. That is a pinched, skirt-like section. Bambu's sides, and normal round-bilge hulls, do the opposite: convex, with flare decreasing toward the deck.",
+   "evidence": "Formula: max deviation from the WL-to-deck chord −32.5 to −53.7 mm for x=398–4770 (−1.08 to −1.79 mm at 1:30) at z≈480–530; −24 to −2 mm aft. STL agrees: −51.3 to −33.6 mm for x=1192–4770. Flare at deck 17.9–33.5° for x≤4770 vs chord flare 12.6–24.5°. Common band z≈390–960 above our DWL (Bambu's bottom + 200 mm up to our strake − 75 mm), Bambu with y×1.223: Bambu +13.8 to +37.0 mm convex (raw width +11.9 to +30.6), flare 23–50° at band bottom falling to 0–23° at band top. Ours in the same band: −0.4 to −9.8 mm concave, flare 4–18° rising to 5–24°. See fig2.",
+   "where": "hr26/curves.py:168-176",
+   "visual_impact": "high",
+   "on_screen_only": false,
+   "fix": "Use a convex topside whose flare decreases from the bilge to the deck edge. The single-curve family in sections-6 gives +38 to +48 mm convexity over the WL-to-deck chord, flare 25–32° at the WL falling to 9–22° at the deck, and 0 inflections.",
+   "effort": "medium",
+   "risk": "Convex sides push the hull out at strake height (+17 to +40 mm amidships). Deck flare must stay at about 9° or more amidships, or the strake sticks out beyond the traced deck outline.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "sections-3",
+   "title": "Over-full waterline aft, with no source, forces hollow or slab topsides, puts the strake outside the deck outline and inflates volume",
+   "claim": "The waterline half-breadth is 0.845 × max deck half-breadth shaped by WATERPLANE, and neither has a source. It is 0.82 of the deck half-breadth amidships and 0.97–0.98 at x≈6758–7155. With the DWL tangent forced vertical, the only way up to the measured deck edge is a hollow flare. Aft, the chord flare is only 0.9–1.7°, so the sides become vertical slabs. A convex section that hits this waterline exactly is impossible aft without tumblehome.",
+   "evidence": "bw/bd: 1091/1338 at x=4770; 1088/1120 at 6758; 1013/1029 at 7155. STL topside lean at x=6758–7155: 0.7–1.4° (z 250–400), −0.4 to −1.5° just above the DWL. Strake face minus deck outline (current): +12, +28, +45, +50 mm at x=5962–7155, i.e. it already sticks out past the traced outline aft. Solving the deck flare so a convex corner-rounding curve hits the table waterline exactly gives φ = −1.6 to −21.7° (tumblehome) at x=6360–7155 and strake protrusion 43–134 mm, for n = 3.5 down to 2.2. Canoe body 3.887 m³ (curves.displaced_volume_m3) vs brochure 2.5 t (≈2.4 m³ including keel). README.md:41-62 lists profile, deck line, sheer and main dimensions as measured; the deck-plan overlay shows a single outer outline with no strake outside it.",
+   "where": "hr26/params.py:47-67 (WL_BEAM_FRACTION, WATERPLANE); hr26/curves.py:131-140 (wl_half_breadth)",
+   "visual_impact": "high",
+   "on_screen_only": false,
+   "fix": "Treat the waterline half-breadth as an output of the section family, not an input. Keep keel point, deck edge and strake height exact; choose deck flare φ(x) so the strake face stays within about 15 mm of the deck outline. Optionally keep the waterline within ±3% between 0.4 and 0.6 LOA (the proposal achieves −1.0 to −3.5% there).",
+   "effort": "small",
+   "risk": "Changes the reconstructed waterplane: max WL beam −5.3%, WL area −9.5%, aft WL half-breadth −8 to −27% at x=5565–7155. The transom's immersed width shrinks. The rudder pin holes at z −90/−200 on the centreline are unaffected.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "sections-4",
+   "title": "Spline overshoot and wiggle at the DWL; otherwise spline and loft reproduce the formula faithfully",
+   "claim": "Interpolating through the 26 points (16 below the DWL, uniform in z; 10 above) adds a small bump just above the waterline. Point spacing jumps from 8–34 mm to 100–120 mm exactly where the curvature is singular. The loft itself does not add shape errors beyond a few mm. So the robotic look comes from the formula, not from OCC.",
+   "evidence": "Spline vs formula: +2.2 to +5.3 mm outward (0.07–0.18 mm at 1:30) at z≈40–45 mm for x=1192–2385; 0.5–2.7 mm elsewhere; <0.5 mm above z=300. Spline inflections at z≈75–85 and 187–284 (up to 5 per section at x=7155). DWL tangent smoothed from 0° to 3.3–16.7°. STL vs formula at all 42 loft stations and midpoints (rotation −45°): within about ±5 mm (±0.17 mm model), apart from fittings, holes and the forefoot (sections-5). With the brief's −44° the slices were yawed about 1° and showed false −70/+40 mm errors (keel and canoe-bottom heights matched to 1 mm, which exposed this).",
+   "where": "hr26/curves.py:154-176 (k=int(n*0.6) below, n−k above); hr26/hull.py:27-32 (makeSpline, default chord-length parametrization); hr26/build.py:73 (n_pts=26)",
+   "visual_impact": "low",
+   "on_screen_only": true,
+   "fix": "With the single-curve family, sample every station at the same parameter values (e.g. 41 points uniform in θ or arc length). Pass identical parameters= to makeSpline, so the spline has no spacing jump and the loft's iso-lines do not twist between stations.",
+   "effort": "small",
+   "risk": "None beyond the rebuild; the loft wires keep 3 edges.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "sections-5",
+   "title": "Construction switch at the forefoot (x=1008): stem branch to underwater branch, with a 91 mm bottom_z step",
+   "claim": "Forward of LWL_FWD the section is a 25-point power curve from the stem point (y = bd·s^1.45, vertical at the stem). Aft of it, it is the superellipse plus topside. bottom_z also jumps there, from the stem formula's 0.0 to the table's −91.1 mm. The loft between stations 1000 and 1221 has to bridge different topologies, and the STL departs from the formula there.",
+   "evidence": "bottom_z(1007.9) = 0.0, bottom_z(1008.1) = −91.1. 10 loft stations (x≤1000) use the stem branch, 32 the underwater branch. STL minus formula at x=1111 (between loft stations 1000 and 1221): −27.8/−28.0 mm below the DWL (−0.93 mm at 1:30), while other mid-stations stay within ±5 mm.",
+   "where": "hr26/curves.py:109-119 (bottom_z), 155-166 (zb < −1 branch); hr26/hull.py:70-77",
+   "visual_impact": "medium",
+   "on_screen_only": false,
+   "fix": "Use one formula for all stations: in the proposed family K = (0, bottom_z(x)) is simply on the stem profile when x < LWL_FWD, so there is no branch switch. Make bottom_z continuous at LWL_FWD by blending the stem formula into the traced forefoot (profile lens).",
+   "effort": "small",
+   "risk": "Touches the forefoot profile near x=1008; check against overlegg-profil.jpg.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "sections-6",
+   "title": "Proposed section family: corner-rounding superellipse, smooth, convex, all measured constraints kept",
+   "claim": "One curve per station from keel to deck edge, numpy demo only. It keeps keel point, deck edge, LOA, beam, sheer and strake height exactly. It has 0 inflections, a soft bilge 250–280 mm below the DWL amidships, convex flared topsides and natural V forefoot sections. Canoe-body volume drops 5.4%, toward the brochure 2.5 t.",
+   "evidence": "Formula: K = (0, bottom_z(x)), D = (deck_half_breadth(x), sheer_z(x)), ub = (cos β, sin β), us = (sin φ, cos φ). Corner: C = K + a·ub = D − c·us (2×2 solve). P(θ) = C − a·(1 − sin(θ)^(2/n))·ub + c·(1 − cos(θ)^(2/n))·us, θ ∈ [0, π/2]. This is an affine image of |f|^n + |g|^n = 1: convex for n ≥ 1, C∞ inside, zero curvature at both ends for n > 2. It is mirror-smooth (G2) at the keel where β=0 (x ≥ 0.27 LOA); forward of that there is a deliberate V at the stem. Tables (fraction of LOA, PCHIP): φ° (0,24) (0.10,19) (0.20,13.5) (0.30,11) (0.45,9.5) (0.60,9.0) (0.75,9.0) (0.90,10.0) (1.0,10.5); n (0,2.4) (0.15,3.1) (0.35,3.4) (0.6,3.5) (0.8,3.3) (1.0,3.1); β° (0,45) (0.127,15) (0.2,4) (0.27,0) (1.0,0). Per station x=398…7552: φ 21.6/19.0/16.0/13.5/12.0/11.0/9.8/9.3/9.0/9.0/9.0/9.2/9.6/10.0/10.3; n 2.69…3.50…3.15; WL half-breadth 140/300/457/598/838/1001/1071/1038/990/926/844/744/634 vs table 133/360/533/663/868/1011/1091/1125/1132/1116/1088/1013/755 (x=1192–7552). Flare at WL 25–32°, at deck 9–22°. Topside convexity +17 to +48 mm. Bilge radius at the 45° point 690–783 mm at z −258 to −284 (x=3180–6360), vs today's 43–170 mm at z −8 to −34. Strake face minus deck outline +7 to +13 mm (+20 at 7552). Totals: canoe body 3.887 → 3.676 m³ (−5.4%); max WL beam 2265 → 2145 mm (−5.3%), peak x 6030 → 4936 (deck max beam is at 4950); WL area 11.78 → 10.66 m² (−9.5%). Files: proposal.py and final.py in the sections scratch folder; fig3.",
+   "where": "hr26/curves.py:143-182 (replace section); 122-140 (fullness/wl_half_breadth become unused); 281-297 (displaced_volume_m3 must integrate the new section); hr26/params.py:35-67",
+   "visual_impact": "high",
+   "on_screen_only": false,
+   "fix": "Implement section(x) with the formula above. Interpolate φ, n, β with PCHIP rather than np.interp. Sample a fixed set of θ (same count every station) and pass parameters= to makeSpline. Drop the stem branch. Update displaced_volume_m3. Rebuild in a copy of the repo and compare against overlegg-profil.jpg and overlegg-plan.jpg. Softness knob: n 3.0 is rounder, n 3.5 firmer; lower n needs more deck flare to keep the strake inside the deck outline.",
+   "effort": "medium",
+   "risk": "Strake moves out 17–40 mm amidships (plan) and in up to 34 mm aft. Aft waterline narrows up to 27% (x=7155), so the transom's immersed shape changes. The window recess (x 3700–4900) and hollowing follow the new side. The longitudinal smoothness of bottom_z, sheer_z and deck_half_breadth (np.interp tables) still matters for the loft and belongs to the curves lens.",
+   "keeps_measured_lines": true
+  }
+ ],
+ "images": [
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/sections/fig1_bodyplan_current.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/sections/fig2_ours_vs_bambu_topsides.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/sections/fig3_proposal_vs_current.png"
+ ]
+}

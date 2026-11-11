@@ -1,0 +1,17 @@
+  skrog loftet               3s
+  kjol                       4s
+  fenderlist                 9s
+  ruff                      11s
+  luker og ventiler         13s
+  karm og sprayhood         22s
+Traceback (most recent call last):
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\build_hull_only.py", line 15, in <module>
+    w = B.build_hull(hollow=True, n_stations=nst)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/wt/stern\hr26\build.py", line 95, in build_hull
+    w = robust_union(w, F.additions(), "dekksbeslag")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/wt/stern\hr26\build.py", line 61, in robust_union
+    raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
+RuntimeError: union av 'dekksbeslag' ga ikke ett volum - delen ville falt bort
+exit 1

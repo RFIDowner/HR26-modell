@@ -1,0 +1,15 @@
+  skrog loftet               7s
+  kjol                      12s
+  fenderlist               147s
+  ruff                     161s
+Traceback (most recent call last):
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\work\c\build_check.py", line 14, in <module>
+    w = B.build_hull(hollow=True, n_stations=40, log=lambda s: print(s, flush=True))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/wt/deck\hr26\build.py", line 89, in build_hull
+    w = robust_union(w, D.hatches(), "luker")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/wt/deck\hr26\build.py", line 61, in robust_union
+    raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
+RuntimeError: union av 'luker' ga ikke ett volum - delen ville falt bort
+exit 1

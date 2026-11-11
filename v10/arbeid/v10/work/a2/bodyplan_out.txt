@@ -1,0 +1,173 @@
+[
+{
+"x": 159,
+"wl_old": 0,
+"wl_new": 0,
+"flare_wl": null,
+"flare_deck": 19.8,
+"inflections": 2,
+"Rmin_new": 2,
+"Rmin_old": 1000000000,
+"strake_face35": 4,
+"strake_face55": 24
+},
+{
+"x": 398,
+"wl_old": 0,
+"wl_new": 0,
+"flare_wl": null,
+"flare_deck": 14.8,
+"inflections": 2,
+"Rmin_new": 3,
+"Rmin_old": 1000000000,
+"strake_face35": 12,
+"strake_face55": 32
+},
+{
+"x": 795,
+"wl_old": 0,
+"wl_new": 0,
+"flare_wl": null,
+"flare_deck": 12.8,
+"inflections": 2,
+"Rmin_new": 11,
+"Rmin_old": 1000000000,
+"strake_face35": 8,
+"strake_face55": 28
+},
+{
+"x": 1192,
+"wl_old": 136,
+"wl_new": 172,
+"flare_wl": 36.8,
+"flare_deck": 13.0,
+"inflections": 2,
+"Rmin_new": 29,
+"Rmin_old": 0,
+"strake_face35": 2,
+"strake_face55": 22
+},
+{
+"x": 1590,
+"wl_old": 362,
+"wl_new": 330,
+"flare_wl": 29.9,
+"flare_deck": 12.7,
+"inflections": 2,
+"Rmin_new": 95,
+"Rmin_old": 1,
+"strake_face35": -4,
+"strake_face55": 16
+},
+{
+"x": 2385,
+"wl_old": 673,
+"wl_new": 604,
+"flare_wl": 29.0,
+"flare_deck": 10.9,
+"inflections": 0,
+"Rmin_new": 422,
+"Rmin_old": 14,
+"strake_face35": -5,
+"strake_face55": 15
+},
+{
+"x": 3180,
+"wl_old": 872,
+"wl_new": 838,
+"flare_wl": 27.5,
+"flare_deck": 9.8,
+"inflections": 0,
+"Rmin_new": 565,
+"Rmin_old": 79,
+"strake_face35": -4,
+"strake_face55": 16
+},
+{
+"x": 3975,
+"wl_old": 1012,
+"wl_new": 1009,
+"flare_wl": 26.2,
+"flare_deck": 9.3,
+"inflections": 0,
+"Rmin_new": 653,
+"Rmin_old": 163,
+"strake_face35": -5,
+"strake_face55": 15
+},
+{
+"x": 4770,
+"wl_old": 1092,
+"wl_new": 1075,
+"flare_wl": 26.2,
+"flare_deck": 9.0,
+"inflections": 0,
+"Rmin_new": 685,
+"Rmin_old": 165,
+"strake_face35": -4,
+"strake_face55": 16
+},
+{
+"x": 5565,
+"wl_old": 1128,
+"wl_new": 1047,
+"flare_wl": 26.6,
+"flare_deck": 9.0,
+"inflections": 0,
+"Rmin_new": 684,
+"Rmin_old": 101,
+"strake_face35": -5,
+"strake_face55": 15
+},
+{
+"x": 6360,
+"wl_old": 1119,
+"wl_new": 931,
+"flare_wl": 26.4,
+"flare_deck": 9.2,
+"inflections": 0,
+"Rmin_new": 633,
+"Rmin_old": 39,
+"strake_face35": -6,
+"strake_face55": 14
+},
+{
+"x": 7155,
+"wl_old": 975,
+"wl_new": 751,
+"flare_wl": 28.9,
+"flare_deck": 10.0,
+"inflections": 0,
+"Rmin_new": 542,
+"Rmin_old": 11,
+"strake_face35": -3,
+"strake_face55": 17
+},
+{
+"x": 7552,
+"wl_old": 751,
+"wl_new": 638,
+"flare_wl": 32.2,
+"flare_deck": 10.2,
+"inflections": 0,
+"Rmin_new": 488,
+"Rmin_old": 7,
+"strake_face35": 4,
+"strake_face55": 24
+},
+{
+"x": 7791,
+"wl_old": 479,
+"wl_new": 547,
+"flare_wl": 34.8,
+"flare_deck": 10.4,
+"inflections": 0,
+"Rmin_new": 439,
+"Rmin_old": 11,
+"strake_face35": 10,
+"strake_face55": 30
+}
+]
+max WL beam 2267 -> 2154 (-5.0 %), at x 5898 -> 4927
+WL area 11.77 -> 10.78 m2
+canoe body 3.851 -> 3.666 m3

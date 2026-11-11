@@ -1,0 +1,274 @@
+{
+ "summary": "I measured shape targets from 9 photos of the real boat and compared them with baseline_fine.stl. All work is in scratchpad/v10/photo; the repo and worktrees were not touched. 46 targets are in targets.json, with value, unit, uncertainty, source image, method and today's model value.\n\n**How each photo was calibrated**\n- **IMG_9370 (side):** fitted an orthographic camera with roll, yaw and elevation. Calibrated on the drawing's stem profile (rms 0.7 px), the stem head at z=1204 and the rub-rail line strake_z (rms 1.0 px, about 10 mm). The image turned out isotropic (9.56 x 9.89 mm/px). The fitted 7° camera elevation is doubtful, because the coachroof roof is not visible. Gaps measured on the hull side (window, rail, deck edge) do not depend on it.\n- **IMG_9388 (bow head-on):** fitted a pinhole camera (f=1888 px, 1.47 m ahead of the bow) to the rub-rail silhouette, the stem line and the keel. The rail fit is rms 5-9 px and the keel tip is 44 px off, so absolute numbers here carry ±40 mm.\n- **IMG_9391 (transom):** a pinhole camera fit failed (rail rms 13 px), so I used scale-free ratios instead (±0.08).\n- **Deck photos (IMG_9304, IMG_9372):** mostly qualitative, because of perspective.\n\n**Biggest differences from today's hull**\n1. **Topsides.** Head-on, the real outline below the rail stays out. Flare is about 5° just under the rail and grows to about 15° 0.45 m lower, so the side is convex. It lies 33-37 px (1.1°) outside today's outline. That is about 95-110 mm more half-breadth at z 270-440 near x≈3550. Today's side is hollow right under the rail. This supports the convex section family from the sections lens.\n2. **Rub rail.** The real rail is a dark D-profile about 45 x 30 mm. It runs unbroken from the stem head round both stern quarters, with no flat end. Today's rail is a 95 x 55 square bar with a flat bow end and knuckles at the stern.\n3. **Window.** The real window is about 1610 mm long (x≈4010-5620). Its frame is 255 mm tall with a raised rim about 25 mm wide, a semicircular forward end and a rounded aft end that leans forward at the top. Today's window is 3700-4900, 176 mm tall, with R55 corners. This conflicts with the 1:50 drawing, so it should be checked before the model is changed.\n4. **Deck edge amidships.** The window frame top sits 315 mm above the rail centre, so the deck edge must be at least about 330 mm above the rail (today 271 mm). That means DECK_EDGE_Z should be at least about 1160 at x 4200-4800 (today 1099-1114), assuming strake_z is right. At the bow and the transom, the gap between the deck edge and the rail matches the drawing.\n5. **Stern.** Seen from astern, the outline is a smooth convex U. The half-width at the boot-top is about 0.70 of the half-width at rail level; today it is about 0.84. The transom has no crease where it meets the sides, the boot-top is straight across the middle 55%, and the rail turns the corners smoothly.\n6. **Stem and bow.** The stem is rounded, R≈30 mm; today it is a knife edge with a flat cap. The bow waterline at boot-top height is roughly today's, 10-45 mm fuller.\n7. **Mast.** The side photo puts the mast at about 3600 ±120 mm from the bow; params.py has 3400. Worth checking.\n8. **Boot-top.** The blue band is about 100 mm tall, with a cream pinstripe about 20 mm wide below it. Its top edge is about 120 mm above the waterline amidships and rises roughly 35 mm toward the ends.",
+ "targets_file": "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/targets.json",
+ "targets": [
+  {
+   "name": "rub_rail_visible_height",
+   "value": "45 mm (today 95)",
+   "uncertainty": "+-12 mm",
+   "source_image": "IMG_9370 (+IMG_9387, IMG_9391)",
+   "method": "FWHM of the dark band along the hull = 4.3 px = 42 mm after back-projection with the fitted side camera; close-up of the transom 33-43 mm"
+  },
+  {
+   "name": "rub_rail_protrusion",
+   "value": "30 mm (today 55)",
+   "uncertainty": "+-10 mm",
+   "source_image": "IMG_9388",
+   "method": "head-on silhouette step from the rail outer edge to the hull below it (10-15 px at ~2.65 mm/px)"
+  },
+  {
+   "name": "rub_rail_profile",
+   "value": "dark rubber D-profile, rounded face, unbroken from stem head (wraps under the bow roller) round both stern quarters and across the transom",
+   "uncertainty": "qualitative",
+   "source_image": "IMG_9395, IMG_9387, IMG_9391, IMG_9304",
+   "method": "visual"
+  },
+  {
+   "name": "rub_rail_below_deck_edge_bow",
+   "value": "90 mm (today 79-103)",
+   "uncertainty": "+-15 mm",
+   "source_image": "IMG_9370",
+   "method": "stem head top vs rail centre, 8-10 px at x=0-300"
+  },
+  {
+   "name": "rub_rail_below_deck_edge_transom",
+   "value": "140 mm (today 136)",
+   "uncertainty": "+-25 mm",
+   "source_image": "IMG_9370",
+   "method": "near transom top corner vs rail end, 14 px"
+  },
+  {
+   "name": "deck_edge_minus_rail_centre_amidships_min",
+   "value": ">=330 mm (today 271)",
+   "uncertainty": "+-20 mm, lower bound",
+   "source_image": "IMG_9370, IMG_9387",
+   "method": "window frame top is 31.7 px = 315 mm above the rail centre at x 4200-4800 and must lie below the deck edge; does not depend on camera elevation"
+  },
+  {
+   "name": "deck_edge_z_amidships_min",
+   "value": ">=1160 mm above DWL at x 4200-4800 (today 1099-1114)",
+   "uncertainty": "+-25 mm, assumes rail at strake_z",
+   "source_image": "IMG_9370",
+   "method": "fitted side camera; window top back-projects to 1161/1144/1115 at x 4236/4807/5430"
+  },
+  {
+   "name": "window_x_forward_end",
+   "value": "4010 mm from bow (today 3700)",
+   "uncertainty": "+-100 mm",
+   "source_image": "IMG_9370",
+   "method": "fitted side camera, frame extreme at u=577.5"
+  },
+  {
+   "name": "window_x_aft_end",
+   "value": "5620 mm from bow (today 4900)",
+   "uncertainty": "+-100 mm",
+   "source_image": "IMG_9370",
+   "method": "fitted side camera, frame extreme at u=745.5"
+  },
+  {
+   "name": "window_length",
+   "value": "1610 mm (today 1200)",
+   "uncertainty": "+-150 mm; IMG_9374 cross-check 1400-1570",
+   "source_image": "IMG_9370, IMG_9374",
+   "method": "end difference; conflicts with the 1:50 drawing, verify before changing"
+  },
+  {
+   "name": "window_frame_height",
+   "value": "255 mm frame, 190 mm glass (today 176)",
+   "uncertainty": "+-20 / +-15 mm",
+   "source_image": "IMG_9370",
+   "method": "26 px frame, 19 px glass"
+  },
+  {
+   "name": "window_frame_top_and_bottom_vs_rail",
+   "value": "frame top 315 mm, frame bottom 55 mm above rail centre (today ~241 / 70)",
+   "uncertainty": "+-15 / +-12 mm",
+   "source_image": "IMG_9370, IMG_9387",
+   "method": "pixel distances on the hull side, scale 9.89 mm/px"
+  },
+  {
+   "name": "window_end_shapes_and_rim",
+   "value": "forward end semicircular R~125; aft end rounded and raked, bottom ~85 mm aft of top; raised light-grey rim ~25 mm (today R55, 15 mm recess)",
+   "uncertainty": "R +-30, rake +-40, rim +-8 mm",
+   "source_image": "IMG_9370, IMG_9387, IMG_9374",
+   "method": "zoomed crops"
+  },
+  {
+   "name": "boot_top",
+   "value": "blue band 100 mm, cream pinstripe 20 mm below it; top edge ~120 mm above the floating waterline amidships, rising ~35 mm toward bow and stern quarters",
+   "uncertainty": "+-20 / +-8 / +-25 / +-30 mm; absolute z vs DWL +-60",
+   "source_image": "IMG_9370, IMG_9387, IMG_9391",
+   "method": "band edges tracked per column, back-projected"
+  },
+  {
+   "name": "stem_profile_above_water",
+   "value": "matches the drawing stem curve",
+   "uncertainty": "rms 7 mm",
+   "source_image": "IMG_9370",
+   "method": "stem outline fit"
+  },
+  {
+   "name": "transom_rake",
+   "value": "9.5 deg (today 8.3)",
+   "uncertainty": "+-3 deg",
+   "source_image": "IMG_9370",
+   "method": "aft outline slope"
+  },
+  {
+   "name": "mast_x_at_coachroof",
+   "value": "3600 mm from bow (today 3400)",
+   "uncertainty": "+-120 mm",
+   "source_image": "IMG_9370",
+   "method": "mast centre column with the fitted camera, ~40 mm rake removed"
+  },
+  {
+   "name": "coachroof_side_height",
+   "value": "245 mm (today ~245)",
+   "uncertainty": "+-25 mm",
+   "source_image": "IMG_9370",
+   "method": "coachroof base line to roof-edge line, 25 px"
+  },
+  {
+   "name": "stem_round_radius",
+   "value": "30 mm (today 0, knife edge)",
+   "uncertainty": "+-12 mm",
+   "source_image": "IMG_9388",
+   "method": "stem shading band 45-55 px at ~1.06 mm/px, R = width/(2 cos 25deg)"
+  },
+  {
+   "name": "bow_waterline_halfbreadth_z130",
+   "value": "x1200:200, x1500:345, x1800:478, x2100:605, x2400:724 mm (today 157, 329, 467, 584, 685)",
+   "uncertainty": "+-30 mm, +-25 more for boot-top height",
+   "source_image": "IMG_9388",
+   "method": "boot-top top edge back-projected onto plane z=130 with the fitted head-on camera"
+  },
+  {
+   "name": "topside_halfbreadth_x3550_z270_440",
+   "value": "1071-1121 mm (today 974-1011)",
+   "uncertainty": "+-40 mm",
+   "source_image": "IMG_9388",
+   "method": "head-on silhouette is 33-37 px outside today's below the rail; photo rays taken at the depth of today's silhouette station (x~3550)"
+  },
+  {
+   "name": "topside_silhouette_flare_below_rail",
+   "value": "5 deg under the rail, 7 deg at -0.15 m, 11 deg at -0.3 m, 15 deg at -0.45 m (convex); today hollow under the rail",
+   "uncertainty": "+-3 deg",
+   "source_image": "IMG_9388",
+   "method": "slope of the right-hand silhouette, rows 635-800, near-level camera"
+  },
+  {
+   "name": "topside_convexity_vs_chord",
+   "value": "+15 mm (today -12 to -18, concave)",
+   "uncertainty": "+-10 mm",
+   "source_image": "IMG_9388",
+   "method": "silhouette bulge vs chord from rail bottom to boot-top end"
+  },
+  {
+   "name": "deck_edge_rounding",
+   "value": "soft, R ~15-25 mm, no separate toe rail",
+   "uncertainty": "low confidence",
+   "source_image": "IMG_9395, IMG_9387",
+   "method": "highlight width"
+  },
+  {
+   "name": "stern_outline_halfwidth_ratio_boottop_to_rail",
+   "value": "0.70 (today 0.84)",
+   "uncertainty": "+-0.08",
+   "source_image": "IMG_9391",
+   "method": "astern silhouette at boot-top vs rail-corner level, rudder as centreline; model value perspective-weighted from slices at x 7600-7800"
+  },
+  {
+   "name": "transom_outline_shape",
+   "value": "convex U: 1.0 -> 0.95 (z~600) -> 0.85 (z~350) -> 0.70 (boot-top); boot-top straight over the middle 55% of the rail-level width",
+   "uncertainty": "+-0.07",
+   "source_image": "IMG_9391",
+   "method": "silhouette read on a 10 px grid, normalised"
+  },
+  {
+   "name": "transom_side_corner",
+   "value": "no crease; transom blends into the quarters with a large soft radius (est. 100-250 mm at rail level); rail and boot-top turn smoothly",
+   "uncertainty": "radius low confidence",
+   "source_image": "IMG_9391, IMG_9304, IMG_9372",
+   "method": "shading and line curvature"
+  },
+  {
+   "name": "deck_layout",
+   "value": "square forehatch on the roof just forward of the mast; rounded coachroof front; sprayhood a soft dome with raked front and rounded aft hoop, ~300-370 mm above the roof; low coaming with rounded edges fading aft; one small winch each side at the forward end of the cockpit, clear of the hood",
+   "uncertainty": "low/qualitative",
+   "source_image": "IMG_9372, IMG_9304, IMG_9374",
+   "method": "visual"
+  }
+ ],
+ "model_vs_photo": [
+  {
+   "area": "Topside sections (bow head-on)",
+   "today": "Hollow under the rail: the outline pulls in right below the 95x55 rail, then runs straight; at x~3550, z 270-440 the half-breadth is 974-1011 mm",
+   "photo": "Convex: flare ~5 deg under the rail growing to ~15 deg 0.45 m lower; outline 33-37 px (1.1 deg) outside today's, about +95-110 mm half-breadth at z 270-440 near x~3550",
+   "suggestion": "Use the convex single-curve section (sections-6) with flare ~5-8 deg at rail height amidships and ~15 deg at z~300, at least +40 mm bulge over the chord. Then re-render with the IMG_9388 camera (B_bow overlay) and check the outline stays out below the rail"
+  },
+  {
+   "area": "Rub rail",
+   "today": "95 x 55 square bar, ruled loft, flat end at x=200, 16-26 deg knuckles at the stern corner",
+   "photo": "Dark D-profile ~45 mm tall, ~30 mm proud, rounded face; runs from the stem head under the bow roller, round both quarters and across the transom with smooth turns",
+   "suggestion": "STRAKE_H~45, STRAKE_PROUD~30 (1.5 x 1.0 mm on the model) as a half-round/D profile; start it at the stem; densify the corner path; keep the centre on strake_z (it matches within 15 mm)"
+  },
+  {
+   "area": "Hull window",
+   "today": "x 3700-4900 (1200 mm), 176 mm tall, R55 rounded rectangle, 15 mm recess",
+   "photo": "x ~4010-5620 (1610 mm); frame 255 mm tall (glass 190), top 315 mm and bottom 55 mm above the rail centre; semicircular forward end, aft end rounded and leaning forward at the top (~85 mm); raised rim ~25 mm",
+   "suggestion": "Check against the drawing first: it conflicts with the 1:50 tracing (3666-4841). If confirmed, lengthen and move the window aft, make the forward end a full semicircle, rake the aft end, and model the frame as a raised rim around a shallow recessed glass"
+  },
+  {
+   "area": "Deck edge vs rail amidships",
+   "today": "DECK_EDGE_Z 1099-1114 at x 4200-4800, 271 mm above the rail centre",
+   "photo": "Window frame top is already 315 mm above the rail centre, so the deck edge sits at least ~330 mm above it (z >= ~1160). Bow (90 mm) and transom (140 mm) gaps match the drawing",
+   "suggestion": "Re-check the 1:50 tracing of the thin deck line between x~3000 and 6500. If the rail line is right, lift DECK_EDGE_Z by about 50-60 mm there with a smooth spline that keeps the bow and transom values; otherwise lower strake_z. Either way the window must sit inside the gap"
+  },
+  {
+   "area": "Stern / transom from astern",
+   "today": "Raked cambered face cut from a loft that runs straight aft; sharp face edge; astern outline nearly parallel then pinched (half-width at boot-top ~0.84 of rail level)",
+   "photo": "Smooth convex U, no crease at the transom edge; half-width at boot-top ~0.70 of rail level; boot-top straight over the middle 55%, turning down round soft corners",
+   "suggestion": "Narrow the aft waterline (as in sections-3, WL half-breadth at x 7000-7800 down 15-25%) and build the corner into the sections or the stern loft (R ~100-250 mm in plan at rail height, larger lower down) instead of a boolean face. Keep the deck outline and the 8-10 deg rake"
+  },
+  {
+   "area": "Stem",
+   "today": "Knife edge with a flat 174 x 9 mm cap at x=4",
+   "photo": "Rounded stem, R ~30 mm (shading band 45-55 mm wide) along the whole visible stem",
+   "suggestion": "Add the square-root foot from edges-9 with R~25-35 mm (about 1 mm on the model) and close the bow with the round nose"
+  },
+  {
+   "area": "Bow waterline at boot-top height",
+   "today": "Half-breadth at z=130: 157/329/467/584/685 at x 1200/1500/1800/2100/2400",
+   "photo": "200/345/478/605/724 (±30)",
+   "suggestion": "No change needed beyond noise. If anything, ease the entrance 10-40 mm fuller at x 1200 and 2400 when the sections are rebuilt"
+  },
+  {
+   "area": "Mast position",
+   "today": "MAST_STEP_X 3400 (drawing 3324-3471)",
+   "photo": "~3600 ±120 at the coachroof in IMG_9370",
+   "suggestion": "Cross-check against another photo or a tape measurement before moving the mast; the two disagree by about 1.5 sigma"
+  },
+  {
+   "area": "Boot-top (if printed or embossed)",
+   "today": "not modelled",
+   "photo": "Blue band ~100 mm, cream pinstripe ~20 mm below it; top edge ~120 mm above the floating waterline amidships, rising ~35 mm toward the ends",
+   "suggestion": "If wanted, a 0.1-0.2 mm deep emboss or a colour-change line: top at about DWL+100 amidships, sheered up 30-40 mm at the ends"
+  },
+  {
+   "area": "Deck fittings",
+   "today": "Sprayhood a loaf with flat vertical ends that swallows D300 winches; anchor-roller brick; flat-topped coaming",
+   "photo": "Sprayhood a soft dome with raked front and rounded aft hoop; small winches on the coaming clear of the hood; plough anchor on a slim bow roller; low coaming with rounded edges fading aft",
+   "suggestion": "Follow edges-6/7/2/8: cap the hood ends, move the winches out, use a slim roller and fillet the coaming"
+  }
+ ],
+ "images": [
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/A_side_IMG9370_overlay.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/A_side_model_render.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/B_bow_IMG9388_overlay.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/B_bow_model_render.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/C_transom_IMG9391_annot.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/D_deck_IMG9372_annot.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/E_details_window_rail_stem.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/v10/photo/F_charts_profile_sections.png"
+ ]
+}
