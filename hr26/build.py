@@ -44,6 +44,20 @@ def _n_solids(wp) -> int:
     return len(wp.val().Solids())
 
 
+def _volume(wp) -> float:
+    """Volum med toleranse. OCCs vanlige Volume() kan bomme med titalls liter
+    paa trimmede B-spline-flater (glatte lofter som fenderlisten, kjolen og
+    det rundede akterspeilet) og gi falske avvisninger i robust_union. Den
+    presise beregningen tar flere titalls sekunder, saa den brukes bare
+    naar den raske sier nei."""
+    from OCP.BRepGProp import BRepGProp
+    from OCP.GProp import GProp_GProps
+
+    g = GProp_GProps()
+    BRepGProp.VolumeProperties_s(wp.val().wrapped, g, 1e-6, False)
+    return g.Mass()
+
+
 def robust_union(base, part, what: str):
     """Union som nekter aa feile i stillhet.
 
@@ -56,7 +70,10 @@ def robust_union(base, part, what: str):
     before = _n_solids(base)
     for dx in NUDGES:
         cand = base.union(part.translate((dx, 0.0, 0.0)) if dx else part)
-        if _n_solids(cand) <= before and cand.val().Volume() > base.val().Volume() + 1.0:
+        if _n_solids(cand) <= before and (
+            cand.val().Volume() > base.val().Volume() + 1.0
+            or _volume(cand) > _volume(base) + 1.0       # treg, men presis
+        ):
             return cand
     raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
 

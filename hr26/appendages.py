@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 
 import cadquery as cq
+import numpy as np
 
 from . import curves as C
 from . import params as P
@@ -48,20 +49,90 @@ def _foil_wire(x_le: float, z: float, chord: float, thick: float) -> cq.Wire:
     )
 
 
+def _offset_foil_wire(x_le: float, z: float, chord: float, thick: float, off: float) -> cq.Wire:
+    """Profilet forskjoevet `off` utover langs normalen i snittplanet."""
+    pts = np.array(_foil(chord, thick))
+    if off > 0.0:
+        d = np.roll(pts, -1, axis=0) - np.roll(pts, 1, axis=0)
+        d /= np.linalg.norm(d, axis=1, keepdims=True)
+        pts = pts + off * np.c_[-d[:, 1], d[:, 0]]      # utover: profilet gaar med klokka
+    v = [cq.Vector(x_le + px, py, z) for (px, py) in pts]
+    return cq.Wire.assembleEdges([cq.Edge.makeSpline(v + [v[0]])])
+
+
+def _keel_fillet_offset(d: float) -> float:
+    """Kjolens utvidelse mot skroget, d mm under overgangen (negativ: inne i
+    skroget). Ved overgangen er den 0,75 x KEEL_FILLET og flaten heller 30
+    grader mot bunnen (et tydelig snitt, ikke tangerende, saa unionen er
+    robust); KEEL_FILLET lenger ned gaar den tangentielt over i kjolsiden."""
+    r = P.KEEL_FILLET
+    a = 0.75 * r
+    slope = 1.0 / math.tan(math.radians(30.0))
+    if d <= 0.0:
+        return a + slope * (-d)
+    if d >= r:
+        return 0.0
+    k = slope * r / a
+    return a * (1.0 - d / r) ** k
+
+
 def keel() -> cq.Workplane:
-    """Finnekjol, loftet mellom rot og bunn. Stikker opp i skroget for union."""
+    """Finnekjol, loftet mellom rot og bunn. Stikker opp i skroget for union.
+
+    Mot skroget utvides profilet (KEEL_FILLET), saa overgangen blir en
+    hulkil i stedet for en skarp kant. Kanobunnen ligger nesten vannrett
+    langs roten (innen ca. 7 mm), saa utvidelsen bygges inn i vannrette
+    snitt rundt overgangshoyden - ingen fillet i OCC.
+    """
     root_z = C.bottom_z(0.5 * (P.KEEL_LE_ROOT + P.KEEL_TE_ROOT)) + 260.0
-    wires = []
-    steps = 7
-    for i in range(steps + 1):
-        t = i / steps
+
+    def section(z):
+        t = (z - root_z) / (P.KEEL_TIP_Z - root_z)
         le = P.KEEL_LE_ROOT + (P.KEEL_LE_TIP - P.KEEL_LE_ROOT) * (t ** 0.85)
         te = P.KEEL_TE_ROOT + (P.KEEL_TE_TIP - P.KEEL_TE_ROOT) * (t ** 1.30)
-        z = root_z + (P.KEEL_TIP_Z - root_z) * t
         th = P.KEEL_ROOT_T + (P.KEEL_TIP_T - P.KEEL_ROOT_T) * t
-        wires.append(_foil_wire(le, z, te - le, th))
-    solid = cq.Solid.makeLoft(wires, ruled=False)
-    return cq.Workplane("XY").newObject([solid])
+        return le, te - le, th
+
+    steps = 7
+    zs = [root_z + (P.KEEL_TIP_Z - root_z) * i / steps for i in range(steps + 1)]
+    r = P.KEEL_FILLET
+    if r <= 0.0:
+        wires = [_foil_wire(*_le_z(section(z), z)) for z in zs]
+        return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=False)])
+
+    # overgangen: kanobunnens hoyde der kjolsiden moeter den, midlet langs roten
+    le, ch, th = section(zs[1])
+    z_j = []
+    for x in np.linspace(le + 0.1 * ch, le + 0.9 * ch, 9):
+        sec = np.asarray(C.section(float(x), 60), dtype=float)
+        z_j.append(float(np.interp(0.5 * th, sec[:, 0], sec[:, 1])))
+    zj = float(np.mean(z_j))
+
+    fil = [zj + f * r for f in (0.7, 0.35, 0.0, -0.2, -0.4, -0.6, -0.8, -1.0)]
+    wires = [_foil_wire(*_le_z(section(zs[0]), zs[0]))]
+    for z in fil:
+        le, ch, th = section(z)
+        wires.append(_offset_foil_wire(le, z, ch, th, _keel_fillet_offset(zj - z)))
+    wires += [_foil_wire(*_le_z(section(z), z)) for z in zs if z < zj - 1.6 * r]
+    return cq.Workplane("XY").newObject([_loft3(wires)])
+
+
+def _le_z(sec, z):
+    le, ch, th = sec
+    return le, z, ch, th
+
+
+def _loft3(wires) -> cq.Solid:
+    """Glatt loft med hoyst tredjegrads flate paa tvers av snittene (som
+    hull._loft3); standardloften svinger mellom tett og glissent plasserte snitt."""
+    from OCP.BRepOffsetAPI import BRepOffsetAPI_ThruSections
+
+    b = BRepOffsetAPI_ThruSections(True, False, 1e-6)
+    b.SetMaxDegree(3)
+    for w in wires:
+        b.AddWire(w.wrapped)
+    b.Build()
+    return cq.Solid(b.Shape())
 
 
 def _pin_positions():
