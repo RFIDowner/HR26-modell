@@ -198,9 +198,9 @@ def transom_name() -> cq.Workplane:
     Bokstavene ekstruderes fra 40 mm inne i skroget og ut, dreid saa de
     staar vinkelrett paa det hellende akterspeilet, og kappes av akter-
     speilets flate flyttet NAME_RAISE akterover - saa relieffet er like
-    hoyt over hele den buede flaten. Sett P.BOAT_NAME til "" for aa droppe det.
+    hoyt over hele den buede flaten. Brukes bare naar P.NAME_ON_TRANSOM er sann.
     """
-    if not P.BOAT_NAME:
+    if not P.BOAT_NAME or not P.NAME_ON_TRANSOM:
         return None
     from . import hull as H
 

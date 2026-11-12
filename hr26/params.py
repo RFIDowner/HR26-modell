@@ -112,6 +112,9 @@ TRANSOM_CAMBER_R = 3050.0    # akterspeilets bue i plan
 # kant mot akterspeilet blir skarp, som paa baaten.
 TRANSOM_CORNER_L = 110.0     # rundingens bredde paa akterspeilet (0 = skarpt hjoerne som foer)
 TRANSOM_CORNER_EXIT = 7.0    # restknekk mot skrogsiden, grader (gir et robust kutt)
+TRANSOM_TOP_R = 20.0         # avrundet overkant mot dekket (0,67 mm i 1:30); 0 = skarp
+TRANSOM_TOP_EXIT = 20.0      # restknekk mot dekket og akterspeilet, grader (8 og 30 ga ikke-manifold STL)
+TRANSOM_TOP_TAPER = 150.0    # rundingen avtar mot hjoernene over saa mange mm
 TRANSOM_CORNER_Z = (-240.0, -170.0)   # rundingen bygges opp mellom disse hoydene
                              # (V10: lavere enn foer; med de nye, fyldigere spantene
                              # ligger hjoernet ved z = -150 alt 430 ut, forbi parkeringen)
@@ -349,7 +352,8 @@ SAIL_D1 = 175.0         # diameter ved nokken
 SAIL_START = 260.0      # starter saa langt akter for masten
 
 # ------------------------------------------------------------- baatens navn
-BOAT_NAME = "HUGO"          # settes i relieff paa akterspeilet og paa skiltet
+BOAT_NAME = "HUGO"          # settes i relieff paa skiltet
+NAME_ON_TRANSOM = False     # eieren (12.11.2026): navnet trenger ikke staa paa akterspeilet
 NAME_SIZE = 5.0 * SCALE     # bokstavhoyde i modell-mm
 NAME_RAISE = 0.35 * SCALE   # hoyde over akterspeilet
 NAME_Z = 640.0              # senterhoyde over DWL

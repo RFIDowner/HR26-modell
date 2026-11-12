@@ -531,3 +531,107 @@ def _rounded_cutter() -> cq.Workplane:
     if not solid.isValid() or solid.Volume() <= 0.0:
         raise RuntimeError("ugyldig kutt")
     return cq.Workplane("XY").newObject([solid])
+
+
+# ---------------------------------------------- akterspeilets overkant
+# OCC-fillet feiler ogsaa paa kanten mellom akterspeilet og dekket, saa den
+# rundes med et eget kutt: i hvert loddrette snitt (y fast) en sirkelbue som
+# skjaerer dekket og akterspeilet med en liten restknekk (TRANSOM_TOP_EXIT) i
+# stedet for aa tangere dem - tangerende flater faar det boolske kuttet til
+# aa feile. Snittene loftes paa tvers. Mot hjoernene (der akterspeilet runder
+# over i skrogsiden) avtar radien jevnt.
+
+def _top_edge(y: float):
+    """Akterspeilets overkant ved halvbredde y: (x, z)."""
+    z = C.deck_z(C.transom_x(950.0, y), y)
+    x = C.transom_x(z, y)
+    for _ in range(30):
+        x = C.transom_x(z, y)
+        z1 = C.deck_z(x, y)
+        if abs(z1 - z) < 1e-4:
+            break
+        z = z1
+    return x, z
+
+
+def _top_profile(y: float, R: float, out: float = 40.0):
+    """Kuttets tverrsnitt i planet y = konstant: liste av (x, z) og
+    buens midtpunkt. Hjoernet E, dekket forover langs a, akterspeilet
+    nedover langs b."""
+    xe, ze = _top_edge(y)
+    h = 2.0
+    a = np.array([-h, C.deck_z(xe - h, y) - C.deck_z(xe, y)])
+    a /= np.linalg.norm(a)
+    b = np.array([-P.TRANSOM_RAKE, -1.0])
+    b /= np.linalg.norm(b)
+    E = np.array([xe, ze])
+    phi = math.acos(float(np.clip(a @ b, -1.0, 1.0)))
+    u = (a + b) / np.linalg.norm(a + b)              # halveringslinjen, inn i skroget
+    d = R * math.cos(math.radians(P.TRANSOM_TOP_EXIT)) / math.sin(0.5 * phi)
+    Cc = E + d * u
+
+    def near_hit(v):
+        # E + t v paa sirkelen |p - Cc| = R, naermeste roten til E
+        w = E - Cc
+        bq = 2.0 * (v @ w)
+        cq_ = w @ w - R * R
+        disc = max(bq * bq - 4.0 * cq_, 0.0)
+        return E + 0.5 * (-bq - math.sqrt(disc)) * v
+
+    IA, IB = near_hit(a), near_hit(b)
+    M = Cc - R * u
+    nA = np.array([-a[1], a[0]])
+    if nA @ (-u) < 0.0:
+        nA = -nA
+    nB = np.array([-b[1], b[0]])
+    if nB @ (-u) < 0.0:
+        nB = -nB
+    return [IA, M, IB, IB + out * nB, E - out * u, IA + out * nA]
+
+
+def round_transom_top(w: cq.Workplane) -> cq.Workplane:
+    """Runder akterspeilets overkant paa et ferdig skrog. Maa gjoeres ETTER
+    at fenderlisten er unionert: gjort i hull_solid fikk det unionen med
+    listen til aa miste listen (V10, samlet bygg)."""
+    if P.TRANSOM_TOP_R <= 0.0:
+        return w
+    try:
+        out = w.cut(transom_top_cutter())
+        if len(out.val().Solids()) == 1 and out.val().isValid():
+            return out
+        print("  advarsel: avrundingen av akterspeilets overkant ga et ugyldig volum; hopper over")
+    except Exception as exc:  # pragma: no cover
+        print(f"  advarsel: avrundingen av akterspeilets overkant feilet ({exc}); hopper over")
+    return w
+
+
+def transom_top_cutter(n: int = 21) -> cq.Workplane:
+    """Kuttet som runder akterspeilets overkant (se over)."""
+    y_end = None
+    # overkanten gaar ut til der dekkskantens avrunding begynner
+    for y in np.arange(300.0, 900.0, 5.0):
+        x, _z = _top_edge(float(y))
+        if C.deck_half_breadth(x) - P.DECK_EDGE_R - 10.0 < y:
+            y_end = float(y) - 5.0
+            break
+    if y_end is None:
+        raise RuntimeError("fant ikke enden av akterspeilets overkant")
+    ys = np.linspace(-y_end, y_end, n)
+    wires = []
+    for y in ys:
+        t = min(max((y_end - abs(y)) / P.TRANSOM_TOP_TAPER, 0.0), 1.0)
+        R = max(P.TRANSOM_TOP_R * t * t * (3.0 - 2.0 * t), 1.5)
+        IA, M, IB, Q2, Q0, Q1 = _top_profile(float(y), R)
+        v = lambda p: cq.Vector(float(p[0]), float(y), float(p[1]))
+        arc = cq.Edge.makeThreePointArc(v(IA), v(M), v(IB))
+        edges = [arc, cq.Edge.makeLine(v(IB), v(Q2)), cq.Edge.makeLine(v(Q2), v(Q0)),
+                 cq.Edge.makeLine(v(Q0), v(Q1)), cq.Edge.makeLine(v(Q1), v(IA))]
+        wires.append(cq.Wire.assembleEdges(edges))
+    # Rett (ruled) loft mellom snittene: den glatte loften gjennom alle
+    # snittene ga et kutt som OCC ikke klarte aa trekke fra (hjoernet ble
+    # staaende). Avstanden mellom snittene er ca. 55 mm og overkanten er
+    # svakt buet i plan, saa fasettene avviker under 0,2 mm.
+    solid = cq.Solid.makeLoft(wires, ruled=True)
+    if not solid.isValid():
+        raise RuntimeError("ugyldig kutt for overkanten")
+    return cq.Workplane("XY").newObject([solid])

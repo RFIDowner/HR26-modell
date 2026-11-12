@@ -38,8 +38,8 @@ BED_MARGIN = 1.5      # sikkerhetsmargin i modell-mm
 # STL-eksport med ABSOLUTT toleranse (modell-mm og radianer). CadQuerys
 # standard er relativ toleranse, som gjorde den 263 mm lange dekkskanten til
 # 16 rette stykker med knekk i hvert punkt (V10-analysen).
-STL_TOL = 0.01
-STL_ANG = 0.1
+STL_TOL = 0.02
+STL_ANG = 0.15        # 0,02 mm / 0,15 rad: ca. 19 MB for skroget, 0,3 % knekker over 5 grader
 
 # Faste delnumre, saa et delvis bygg (--only) ikke endrer nummereringen.
 PART_NO = {
@@ -120,6 +120,8 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         step("navn", w)
     w = robust_union(w, H.rubbing_strake(), "fenderlist")
     step("fenderlist", w)
+    w = H.round_transom_top(w)
+    step("akterspeilets overkant", w)
     w = robust_union(w, D.coachroof(), "ruff")
     step("ruff", w)
     w = robust_union(w, D.hatches(), "luker")
