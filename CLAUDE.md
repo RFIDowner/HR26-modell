@@ -14,6 +14,17 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   GitHub, i tillegg til Claude Codes lokale minne.
 * Om V10 (10.11.2026): «tiden er ikke problem, tokens er», og deretter «maks
   effort og ultra, ikke spar på noe, best mulig».
+* «Tegninger fra produsent trumfer alt» (12.11.2026). Rekkefølgen er
+  Enderleins tegning og brosjyren, så bildene av båten, så Bambu-modellen.
+* Brukeren liker linjene i Bambu-modellen, særlig dekkskanten, fenderlisten og
+  akterspeilet. De er stilmålet der tegningene ikke sier noe, etter at bredden
+  er rettet.
+* Veggene skal ikke være tynne, heller tykke. V10 bruker minst 2 mm.
+* Farger er ikke viktige nå. Bare modeller formen.
+* Mast og hull for rekke og pulpit har lav prioritet. Hullene viser bare hvor
+  delene skal stå; mast og rekke limes, og litt pussing og sparkel er greit.
+* Før en stor bygging vil brukeren ha spørsmålene først, og så en bekreftelse
+  og oppsummering før arbeidet starter.
 
 ## V10 – glattere skrog og dekk (startet 10.11.2026)
 
@@ -29,6 +40,12 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   rapporter, bildemål, poengkort og skript i `v10/`. Les avsnittet «Status» i
   `V10.md` før du fortsetter. Neste steg er samlet bygging og eksport, så
   forbedringsrunder.
+* **12.11.2026: gjenopptatt, med utvidet mål.** Enderleins tegning 448-5 er
+  fasit for linjene. Taket på ruffen blir et avtakbart lokk
+  (`16_ruff-tak.stl`), og innredningen fra tegningen (toalettrom, salong,
+  bysse, nedgang) printes i skroget uten support. Vinduene i skrogsiden blir
+  åpninger. Forbedringsrundene kjøres med workflow. Rekkefølge: utsiden,
+  så innredning, lokk og vinduer, så forbedringsrunder, så dokumentasjon.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
@@ -46,12 +63,23 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   * IMG_9304 og 9372: dekket ovenfra
 * Samme mappe har Bambu-modellen. Den er bra for utseende og for posisjoner
   langs båten, men ikke for bredder.
+* Verftets side for HR 26 (hallberg-rassy.com, «previous models») har
+  brosjyren som modellen er sporet fra (profil og dekksplan 1:50), katalogen
+  fra 1981, Enderleins egen tegning 448-5 (profil og plan med innredning,
+  1:15, 1977), en vuggeskisse og mer. Kopier ligger i
+  `~/Documents/Seilbåt/Hallberg-Rassy-kilder`, ikke i repoet.
+* HR 26 er trolig Enderleins konstruksjon nr. 448. Sjöhistoriska museet har
+  arkivet hans (DigitaltMuseum, nummer `1996:10:<nr>:<ark>`), men ingen
+  HR 26-tegninger ligger ute på nett. DigitaltMuseum stenger ute automatiske
+  oppslag, så det må sjekkes i nettleser eller ved å spørre museet.
 
 ## Tekniske merknader
 
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
 * Skroget alene bygger på ca. 150 s. `python -m hr26.build` sletter alle
-  STL-er i `export/stl` før eksport.
+  STL-er i `export/stl` før eksport. Med `--only skrog,stativ-vugge1,...`
+  bygges og eksporteres bare de delene, og de andre fila blir liggende.
+  Delnumrene er faste (`PART_NO` i `build.py`).
 * CadQuery eksporterer STL med relativ toleranse som standard, og det gir
   flis-trekanter. Bruk `Shape.exportStl(..., relative=False)`.
 * OCC-avrunding feiler på skrogets dekkskant, på akterspeilet og på ruffens
