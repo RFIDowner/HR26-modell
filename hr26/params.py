@@ -130,6 +130,16 @@ RUDDER_T = 90.0
 RUDDER_X = TRANSOM_WL_X + TRANSOM_RAKE * RUDDER_TOP_Z + RUDDER_GAP   # forkant ved topp
 RUDDER_RAKE = TRANSOM_RAKE * (RUDDER_BOT_Z - RUDDER_TOP_Z)   # forkanten forover nedover, som akterspeilet
 
+# ------------------------------------------------------- ruff-tak (lokk)
+# Ruffen er et avtakbart lokk (cabin.py) over kahytten. Skjoeten foelger
+# dekket rundt ruffens fot; innenfor staar en kant som lokket tres over.
+CABIN = True                 # False = ruffen i ett med skroget, uten kahytt (som foer)
+LID_LIFT = 30.0              # skjoeten over dekket (1 mm i 1:30)
+LID_WALL = 2.0 * SCALE       # veggtykkelse i lokket
+LID_CLEAR = 0.15 * SCALE     # klaring mellom lokket og kanten
+LIP_W = 1.0 * SCALE          # kantens tykkelse
+LIP_H = 2.0 * SCALE          # kantens hoyde over skjoeten
+
 # ------------------------------------------------------------ dekkskant
 # Dekkskanten er den tynne linjen over fenderlisten i profiltegningen 1:50,
 # der rekka staar. Skrogsiden fortsetter opp forbi listen: 130 mm over
