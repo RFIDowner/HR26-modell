@@ -21,6 +21,7 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   er rettet.
 * Veggene skal ikke være tynne, heller tykke. V10 bruker minst 2 mm.
 * Farger er ikke viktige nå. Bare modeller formen.
+* Navnet skal ikke stå på akterspeilet (bare på skiltet).
 * Mast og hull for rekke og pulpit har lav prioritet. Hullene viser bare hvor
   delene skal stå; mast og rekke limes, og litt pussing og sparkel er greit.
 * Før en stor bygging vil brukeren ha spørsmålene først, og så en bekreftelse
@@ -46,6 +47,13 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   bysse, nedgang) printes i skroget uten support. Vinduene i skrogsiden blir
   åpninger. Forbedringsrundene kjøres med workflow. Rekkefølge: utsiden,
   så innredning, lokk og vinduer, så forbedringsrunder, så dokumentasjon.
+* **Status 12.11.2026 kl. 20:30: pauset igjen.** Utsiden er bygget samlet og
+  består alle krav unntatt dekkslinjen ved x ≈ 2 600–3 100 (et hakk i
+  brosjyresporet). 2 mm vegg, eksport 19 MB, avrundet overkant på
+  akterspeilet, ikke navn på akterspeilet. `hr26/cabin.py` (lokket) er skrevet,
+  men ikke koblet inn. Enderleins tegning viser at kjølen er mye større og står
+  400–680 mm lenger forut; det er neste steg. Les «Status – pauset
+  12. november» i `V10.md` før du fortsetter.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
