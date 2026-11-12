@@ -35,6 +35,20 @@ STEP_DIR = os.path.join(ROOT, "export", "step")
 BED = 256.0           # Bambu Lab A1
 BED_MARGIN = 1.5      # sikkerhetsmargin i modell-mm
 
+# STL-eksport med ABSOLUTT toleranse (modell-mm og radianer). CadQuerys
+# standard er relativ toleranse, som gjorde den 263 mm lange dekkskanten til
+# 16 rette stykker med knekk i hvert punkt (V10-analysen).
+STL_TOL = 0.01
+STL_ANG = 0.1
+
+# Faste delnumre, saa et delvis bygg (--only) ikke endrer nummereringen.
+PART_NO = {
+    "skrog": 1, "ror": 2, "mast-354mm-A1": 3, "mast-365mm-ikke-A1": 4,
+    "mastefot": 5, "masttopp": 6, "saling": 7, "bom": 8, "bom-med-seil": 9,
+    "rekkepaaler": 10, "boyemal": 11, "stativ-vugge1": 12, "stativ-vugge2": 13,
+    "stativ-bjelke": 14, "skilt": 15, "ruff-tak": 16,
+}
+
 
 # ------------------------------------------------- robuste boolske operasjoner
 NUDGES = (0.0, 0.37, -0.37, 0.73, -0.73)   # smaa forskyvninger i x, fullskala-mm
@@ -99,6 +113,11 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
 
     w = robust_union(w, A.keel(), "kjol")
     step("kjol", w)
+    name = F.transom_name()
+    if name is not None:
+        # foer fenderlisten: etterpaa gir unionen et korrupt volum
+        w = robust_union(w, name, "navn paa akterspeilet")
+        step("navn", w)
     w = robust_union(w, H.rubbing_strake(), "fenderlist")
     step("fenderlist", w)
     w = robust_union(w, D.coachroof(), "ruff")
@@ -131,13 +150,19 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
     return w
 
 
-def build_parts(hollow: bool = True, **kw):
-    """Alle deler i fullskala, i byggekoordinater."""
-    parts = {"skrog": build_hull(hollow=hollow, **kw)}
-    parts["ror"] = A.rudder()
-    parts.update(R.parts())
-    parts.update(ST.parts())
-    parts.update(PL.parts())
+def build_parts(hollow: bool = True, only=None, **kw):
+    """Alle deler i fullskala, i byggekoordinater. `only` er et sett med
+    delnavn; da bygges bare de."""
+    def want(name):
+        return not only or name in only
+
+    parts = {}
+    if want("skrog"):
+        parts["skrog"] = build_hull(hollow=hollow, **kw)
+    if want("ror"):
+        parts["ror"] = A.rudder()
+    for src in (R.parts, ST.parts, PL.parts):
+        parts.update({k: v for k, v in src().items() if want(k)})
     return parts
 
 
@@ -179,12 +204,25 @@ def fits_bed(wp: cq.Workplane):
 
 
 # ----------------------------------------------------------------- export
-def export(parts: dict, log=print):
+def _part_no(name: str, fallback: int) -> int:
+    return PART_NO.get(name, fallback)
+
+
+def write_stl(wp: cq.Workplane, fn: str):
+    """Alle solidene i `wp` som en STL, med absolutt toleranse."""
+    shapes = [v for v in wp.vals() if isinstance(v, cq.Shape)]
+    shape = shapes[0] if len(shapes) == 1 else cq.Compound.makeCompound(shapes)
+    shape.exportStl(fn, STL_TOL, STL_ANG, False, False)
+
+
+def export(parts: dict, log=print, partial: bool = False):
     os.makedirs(STL_DIR, exist_ok=True)
     os.makedirs(STEP_DIR, exist_ok=True)
-    # rydd bort STL-er fra forrige bygg, ellers blir gammel nummerering staaende
+    # Rydd bort STL-er fra forrige bygg, ellers blir gammel nummerering
+    # staaende. Ved et delvis bygg ryddes bare de delene som bygges.
+    mine = {f"{_part_no(n, 0):02d}_{n}.stl" for n in parts}
     for f in os.listdir(STL_DIR):
-        if f.endswith(".stl"):
+        if f.endswith(".stl") and (not partial or f in mine):
             os.remove(os.path.join(STL_DIR, f))
 
     # rotasjoner som legger delen gunstig paa platen: liste av (akse, grader)
@@ -219,7 +257,8 @@ def export(parts: dict, log=print):
     names = [n for n in order if n in parts] + [n for n in parts if n not in order]
 
     report = []
-    for i, name in enumerate(names, start=1):
+    for k, name in enumerate(names, start=1):
+        i = _part_no(name, 100 + k)
         wp = to_model(parts[name])
         for axis, deg in ROT.get(name, []):
             wp = wp.rotate((0, 0, 0), AXIS[axis], deg)
@@ -235,13 +274,16 @@ def export(parts: dict, log=print):
                 ang, flat, ok, dims = best, turned, ok2, dims2
         wp = flat
         fn = os.path.join(STL_DIR, f"{i:02d}_{name}.stl")
-        cq.exporters.export(wp, fn, tolerance=0.018, angularTolerance=0.12)
+        write_stl(wp, fn)
         report.append((name, dims, ang, ok, fn))
         log(
             f"  {name:<16s} {dims[0]:6.1f} x {dims[1]:6.1f} x {dims[2]:6.1f} mm"
             f"  rot {ang:4.0f} gr  {'OK' if ok else 'trenger storre plate enn A1'}"
+            f"  {os.path.getsize(fn) / 1e6:5.1f} MB"
         )
 
+    if partial:
+        return report
     asm = cq.Assembly()
     for name, wp in parts.items():
         asm.add(to_model(wp), name=name)
@@ -255,16 +297,19 @@ def main():
     ap.add_argument("--hull", action="store_true", help="bare skroget")
     ap.add_argument("--no-hollow", action="store_true", help="massivt skrog")
     ap.add_argument("--stations", type=int, default=40)
+    ap.add_argument("--only", default="",
+                    help="kommaliste med deler, f.eks. skrog,stativ-vugge1,stativ-vugge2;"
+                         " andre STL-er blir liggende")
     args = ap.parse_args()
 
     print(f"HR 26 i 1:{P.SCALE:.0f}  (LOA {P.LOA / P.SCALE:.1f} mm)")
     t = time.time()
+    only = {s.strip() for s in args.only.split(",") if s.strip()}
     if args.hull:
-        parts = {"skrog": build_hull(hollow=not args.no_hollow, n_stations=args.stations)}
-    else:
-        parts = build_parts(hollow=not args.no_hollow, n_stations=args.stations)
+        only = {"skrog"}
+    parts = build_parts(hollow=not args.no_hollow, only=only or None, n_stations=args.stations)
     print(f"Bygget paa {time.time() - t:.0f}s. Eksporterer:")
-    export(parts)
+    export(parts, partial=bool(only))
     print(
         f"Mast: {R.mast_length_model_mm():.0f} mm synlig, ovalt "
         f"{P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "

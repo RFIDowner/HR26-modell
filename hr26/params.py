@@ -56,8 +56,8 @@ DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
 STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)
 BOW_NOSE_L = 15.0            # dekkslinjen rundes av over de forreste mm
 
-HULL_WALL = 1.5 * SCALE    # skallveggtykkelse, uttrykt i fullskala-mm
-DECK_THICK = 1.6 * SCALE
+HULL_WALL = 2.0 * SCALE    # skallveggtykkelse, uttrykt i fullskala-mm
+DECK_THICK = 2.0 * SCALE   # V10: heller tykt enn tynt (eieren), foer 1,5 og 1,6 mm
 
 # ---------------------------------------------------------------- kjøl
 KEEL_LE_ROOT = 3380.0   # forkant ved rot (fra baugen)
@@ -112,7 +112,9 @@ TRANSOM_CAMBER_R = 3050.0    # akterspeilets bue i plan
 # kant mot akterspeilet blir skarp, som paa baaten.
 TRANSOM_CORNER_L = 110.0     # rundingens bredde paa akterspeilet (0 = skarpt hjoerne som foer)
 TRANSOM_CORNER_EXIT = 7.0    # restknekk mot skrogsiden, grader (gir et robust kutt)
-TRANSOM_CORNER_Z = (-220.0, -100.0)   # rundingen bygges opp mellom disse hoydene
+TRANSOM_CORNER_Z = (-240.0, -170.0)   # rundingen bygges opp mellom disse hoydene
+                             # (V10: lavere enn foer; med de nye, fyldigere spantene
+                             # ligger hjoernet ved z = -150 alt 430 ut, forbi parkeringen)
 
 # ----------------------------------------------------------------- ror
 # Akterhengt ror. Forkanten foelger akterspeilet med en liten klaring, og

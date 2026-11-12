@@ -168,12 +168,11 @@ def stemhead() -> cq.Workplane:
 
 
 def additions() -> cq.Workplane:
-    """Alt som skal unioneres inn i skroget."""
-    out = winches().union(cleats()).union(stemhead())
-    name = transom_name()
-    if name is not None:
-        out = out.union(name)
-    return out
+    """Dekksbeslagene som skal unioneres inn i skroget. Navnet paa
+    akterspeilet (transom_name) unioneres for seg, tidlig i byggingen:
+    etter at fenderlisten er lagt tvers over akterspeilet gir unionen med
+    bokstavene et korrupt volum (V10, samlet bygg)."""
+    return winches().union(cleats()).union(stemhead())
 
 
 def rudder_pin_holes() -> cq.Workplane:
