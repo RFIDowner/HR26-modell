@@ -252,21 +252,21 @@ def strake_z(x: float) -> float:
 
 
 # ------------------------------------------------- profil paa senterlinjen
-# Forstevnen over vann: z = stevnhodet * t^_STEM_EXP, t = 1 i baugen og 0 i
-# vannlinjens forkant. Formelen flater kunstig ut (vannrett) rett over DWL,
-# saa den brukes bare fram til _STEM_FIT_X1; derfra tar splinen den videre
-# inn i den sporede forfoten uten knekk.
-_STEM_EXP = 1.30
-_STEM_FIT_X1 = 850.0
+# Forstevnen over vann er en rett linje (P.STEM_LINE) mellom hoydene
+# P.STEM_LINE_Z; over den gaar splinen opp til stevnhodet (0, sheer_z(0)), og
+# under den boeyer den jevnt inn i den sporede forfoten. Knutene ved 80/180
+# og 450/750 lar boeyene ligge der de skal, saa linja er rett innen 1 mm.
 _TRACE_X1 = 2800.0      # sporet kanobunn hit; aktenfor begynner kjolens rotkurve
-_BOTTOM_KNOTS = (300, 600, 900, 1250, 1700, 2200, 2800, 3500, 4200, 5000, 5800,
-                 6500, 7100, 7500, 7800)
+_BOTTOM_KNOTS = (80, 180, 300, 450, 600, 750, 900, 1250, 1700, 2200, 2800, 3500,
+                 4200, 5000, 5800, 6500, 7100, 7500, 7800)
 
 
 def _bottom_spline():
     top = _SHEER(0.0)
-    sx = np.arange(0.0, _STEM_FIT_X1 + 1.0, 25.0)
-    sz = top * ((P.LWL_FWD - sx) / P.LWL_FWD) ** _STEM_EXP
+    (x1, z1), (x2, z2) = P.STEM_LINE
+    k = (x2 - x1) / (z2 - z1)
+    sz = np.arange(P.STEM_LINE_Z[1], P.STEM_LINE_Z[0] - 1.0, -25.0)
+    sx = x1 + k * (sz - z1)
     ux, ud = _read("uw_station.csv", "x_from_bow_mm", "depth_below_DWL_mm")
     m = (ux >= P.LWL_FWD) & (ux <= _TRACE_X1)
     tx, tz = ux[m][::6], -ud[m][::6]             # ca. 20 mm mellom punktene

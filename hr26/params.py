@@ -55,6 +55,15 @@ DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
                              # (0,83 mm i 1:30; OCC-fillet feiler her)
 STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)
 BOW_NOSE_L = 15.0            # dekkslinjen rundes av over de forreste mm
+# V10 (13.11.2026): forstevnen er RETT fra like under stevnhodet ned til ca.
+# 0,25 m over DWL (IMG_9370 og IMG_9374: rest fra rett linje 2-6 mm; 448-5
+# likesaa, 49 grader). Linja er maalt paa IMG_9370 med et kamera stilt inn
+# uten stevnen (fenderlisten, akterspeilet, stevnhodet; kvadratiske piksler):
+# 51,4 grader fra vannrett (+-1 for kameraets rulling), se
+# v10/verktoy/foto/py/stevn9370.py. Bildene gaar foran tegningene (eieren).
+# Foer: z = stevnhode * t^1,3, som buet fra 56 til 44 grader.
+STEM_LINE = ((55.0, 1100.0), (828.0, 130.0))   # to punkter (x, z) paa den rette stevnen
+STEM_LINE_Z = (260.0, 1095.0)                  # linja gjelder mellom disse hoydene
 
 HULL_WALL = 2.0 * SCALE    # skallveggtykkelse, uttrykt i fullskala-mm
 DECK_THICK = 2.0 * SCALE   # V10: heller tykt enn tynt (eieren), foer 1,5 og 1,6 mm
