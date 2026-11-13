@@ -202,7 +202,10 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   (0,2–0,4 GB) og én liten CadQuery-del med `--gb 2 --lock` (0,6–1,2 GB).
   Legg det tunge bygget i kø med et bakgrunnsskript som venter til `cs2.exe`
   er avsluttet (`tasklist //FI "IMAGENAME eq cs2.exe"`), og som så bygger og
-  kjører poengkortet.
+  kjører poengkortet. Merk: å stoppe bakgrunnsjobben i Claude Code stoppet
+  ikke selve skriptet 14.11. Det levde videre og bygde en gang til da spillet
+  ble avsluttet (resultatet ble byte-likt). La skriptet sjekke en stoppfil,
+  eller avslutt `bash`-prosessen selv.
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
 * `python tools/sammensetning.py` lager `export/visning/hr26_sammensatt.stl`:
   alle delene satt sammen i én STL, bare til å se på (eieren ba om det
