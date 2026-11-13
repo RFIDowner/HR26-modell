@@ -164,6 +164,10 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   `python tools/memcap.py --gb 5 --lock -- python skript.py ...`. Taket gir
   MemoryError i stedet for krasj, og låsen gjør at bare én CAD-jobb kjører om
   gangen. Ha høyst to agenter i gang samtidig.
+  **Fra 13.11 kl. 17:** eieren har satt sidefila fast til 32 GB (før ca.
+  15,5 GB automatisk) og sier at flere agenter går. Nå gjelder høyst fire
+  agenter samtidig. Python-jobber kjøres med `--gb 3`, CadQuery med
+  `--gb 5 --lock` (fortsatt bare én CAD-jobb om gangen).
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
 * Skroget alene bygger på ca. 150 s. `python -m hr26.build` sletter alle
   STL-er i `export/stl` før eksport. Med `--only skrog,stativ-vugge1,...`
