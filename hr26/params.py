@@ -156,14 +156,64 @@ RUDDER_X = TRANSOM_WL_X + TRANSOM_RAKE * RUDDER_TOP_Z + RUDDER_GAP   # forkant v
 RUDDER_RAKE = TRANSOM_RAKE * (RUDDER_BOT_Z - RUDDER_TOP_Z)   # forkanten forover nedover, som akterspeilet
 
 # ------------------------------------------------------- ruff-tak (lokk)
-# Ruffen er et avtakbart lokk (cabin.py) over kahytten. Skjoeten foelger
-# dekket rundt ruffens fot; innenfor staar en kant som lokket tres over.
+# Ruffen er et avtakbart lokk (cabin.py) over kahytten. Skjoeten er et plan
+# (cabin.split_z) som staar minst LID_LIFT over dekket rundt ruffens og
+# sprayhoodens fot; lokket printes staaende paa det. Paa skroget staar en
+# kant som gaar inn i et spor i lokkets underside.
 CABIN = True                 # False = ruffen i ett med skroget, uten kahytt (som foer)
-LID_LIFT = 30.0              # skjoeten over dekket (1 mm i 1:30)
-LID_WALL = 2.0 * SCALE       # veggtykkelse i lokket
-LID_CLEAR = 0.15 * SCALE     # klaring mellom lokket og kanten
+LID_LIFT = 30.0              # skjoeten minst saa hoyt over dekket (1 mm i 1:30;
+                             # midt paa blir det ca. 2 mm fordi planet er rett)
+LID_WALL = 2.0 * SCALE       # minste godstykkelse utenfor og over sporet
+LID_CLEAR = 0.25 * SCALE     # klaring paa hver side av kanten i sporet (FDM)
+LID_CLEAR_TOP = 0.3 * SCALE  # klaring over kanten i sporet
 LIP_W = 1.0 * SCALE          # kantens tykkelse
-LIP_H = 2.0 * SCALE          # kantens hoyde over skjoeten
+LIP_H = 1.3 * SCALE          # kantens hoyde over skjoeten (lav front: se cabin._groove_inset)
+LIP_X1 = 5400.0              # kanten og sporet slutter her; akterkanten er aapen (nedgangen)
+
+# ------------------------------------------------------------ innredning
+# Kahytten under lokket (interior.py), fra Enderleins tegning 448-5 (1:15) og
+# brosjyren (1:50). Hoyder over DWL, x fra baugen, y styrbord +, babord -.
+# Kahytten er et hulrom i et massivt skrog: alt som ikke er hulrom (koyer,
+# benker, skott, bunnen under durken) printes massivt med fyll, uten support.
+# Taket over hulrommet heller minst 45 grader overalt unntatt over vinduet.
+INT_SOLE_Z = -285.0          # durken i salongen (448-5)
+INT_WC_FLOOR_Z = -212.0      # durken i toalettrommet (448-5)
+INT_VBERTH_Z = 300.0         # forpiggkoya med pute (448-5: plattform +185, pute +300)
+INT_BH_T = 60.0              # skott (2 mm i 1:30)
+INT_BH_WC_FWD = 2808.0       # skott forpigg/toalettrom, senter (448-5: 2793-2822)
+INT_BH_WC_AFT = 3444.0       # skott toalettrom/salong, senter (448-5: 3437-3451)
+INT_AFT_X = 5600.0           # kahyttens akterkant (448-5: 6048, men cockpiten
+                             # i modellen begynner paa 5660)
+INT_DOOR_FWD = (-90.0, 410.0)   # doeraapning i forre skott (y), fra koya og opp
+INT_DOOR_AFT = (100.0, 540.0)   # doeraapning i aktre skott, styrbord for stoetten
+INT_SEAT_Z = 195.0           # sofaene med pute (448-5: plattform +93, pute 155-199)
+INT_SEAT_FRONT = 415.0       # sofaenes forkant fra senterlinjen (448-5: 418/425)
+INT_BACK_T = 150.0           # ryggputen, fra skrogets innside i hoyden INT_BACK_REF_Z
+INT_BACK_REF_Z = 435.0
+INT_SHELF_Z = 700.0          # hylla bak ryggputen (448-5: 683-786)
+INT_GALLEY_X0 = 4916.0       # byssa (babord) begynner (448-5; brosjyren 4900)
+INT_GALLEY_X1 = 5446.0       # komfyrskapet slutter, oppvask og kjoleboks akter for
+INT_GALLEY_FRONT = (415.0, 300.0)   # byssas forkant fra senterlinjen, for/akter X1
+INT_COUNTER_Z = 605.0        # benken i byssa (448-5)
+INT_STOVE = (4941.0, 5407.0, 505.0, 790.0, 60.0)   # x0, x1, |y|0, |y|1, nedsenket
+INT_LOCKER_X0 = 4916.0       # skap under sidedekket akter for her, til INT_AFT_X
+                             # (babord: 448-5; styrbord: antatt, baerer sidedekket)
+INT_TABLE = (3600.0, 4490.0, 355.0, 490.0)   # bord: x0, x1, halv bredde, topp
+INT_TABLE_LEAVES_UP = True   # klaffene oppe som i 448-5 og brosjyreplanen
+INT_TABLE_FOLDED_HW = 150.0  # halv bredde med klaffene nede (anslag)
+INT_TABLE_EDGE = 45.0        # bordplatens kant foer undersiden heller 45 grader
+INT_TABLE_FIN = 45.0         # halv bredde paa foten under bordet
+INT_STEP_HW = 233.0          # nedgangstrinnene, halv bredde (448-5)
+INT_STEP_PROFILE = [         # trinnenes overkant (x, z) forfra og akterover, til INT_AFT_X
+    (5130.0, 0.0), (5228.0, 0.0), (5295.0, 345.0), (5446.0, 345.0), (5446.0, 745.0),
+]
+INT_WC = (3110.0, -440.0, 200.0, 190.0, 150.0)   # toalettet: x, y, halvakser x/y, topp
+INT_WC_LOCKER_Y = 700.0      # skapet bak toalettet (babord), forkant (448-5: 662, brosjyre 740)
+INT_BASIN_FRONT = 515.0      # servantbenken (styrbord), forkant (448-5: 525, brosjyre 505)
+INT_BASIN_Z = 450.0          # servantbenkens topp (anslag)
+INT_BASIN = (3085.0, 735.0, 190.0, 120.0, 90.0)  # vasken: x, y, halvakser, dybde
+INT_MIRROR_X = (2870.0, 3380.0)  # speilskapet over servanten
+INT_POST_SOCKET = True       # hull i mastestoetten for mastefoten (masten gaar gjennom lokket)
 
 # ------------------------------------------------------------ dekkskant
 # Dekkskanten er den tynne linjen over fenderlisten i profiltegningen 1:50,
@@ -227,14 +277,27 @@ COMPANION_DEPTH = 180.0
 COMPANION_SILL = 60.0        # over dekket paa senterlinjen ved ruffens bakkant
 
 # Vinduet sitter i skrogsiden, i baandet mellom fenderlisten og dekkskanten,
-# slik profiltegningen og fotoene viser (maalt 3700-4900, z 905-1105).
-# Over- og underkant foelger de to linjene det ligger mellom.
-WIN_X0 = 3700.0
-WIN_X1 = 4900.0
+# slik profiltegningen og fotoene viser. Over- og underkant foelger de to
+# linjene det ligger mellom (448-5: underkant 932-891, overkant 1081-1067).
+# Forenden er fra 448-5 (underkant 3670, overkant 3740 - skraa). Akterenden
+# er skjult bak byssas veggskap i 448-5 og brosjyrens innredningsprofil, men
+# vises i brosjyrens seilplan 1:100 (s. 6: underkant 5365, overkant 5275,
+# forenden 3710/3780) og i katalogen 1981 (ca. 5370). Begge ender er skraa
+# (underkanten lengst); bildene viser akterenden skraa ca. 100 og forenden
+# rund, og lengden ca. 80 mm kortere. Foer V10: 3700-4900.
+WIN_X0 = 3670.0              # forenden, nederst
+WIN_X1 = 5350.0              # akterenden, nederst
+WIN_RAKE = (70.0, 95.0)      # skraa ender: overkanten staar saa mye lenger inn
+                             # (forut, akter) enn underkanten
 WIN_ABOVE_STRAKE = 70.0      # underkant over listens senter (22 mm klaring)
 WIN_BELOW_DECK = 30.0        # overkant under dekkskanten (1 mm leppe i 1:30)
-WIN_DEPTH = 15.0             # forsenkning, 0,5 mm i 1:30
+WIN_DEPTH = 15.0             # forsenkning (rammen), 0,5 mm i 1:30
 WIN_RAD = 55.0
+WIN_FRAME = 1.0 * SCALE      # med kahytt: glasset er en aapning saa mye innenfor
+                             # omrisset; overkanten havner da i dekkets underkant
+WIN_TIE = False              # True: tynn stoette midt i vinduet (skjaeres bort
+                             # etter print) - halverer brua over vinduet
+WIN_TIE_W = 1.0 * SCALE
 
 # cockpit: bronnen er dekkshalvbredden minus COCKPIT_INSET langs sidene, og
 # foelger hekkens runding akterover (COCKPIT_AFT, maalt i dekksplanen) fram

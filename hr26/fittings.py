@@ -35,8 +35,14 @@ def stanchion_holes() -> cq.Workplane:
     for x in P.STANCHION_X:
         hb = C.deck_half_breadth(x)
         y = hb - P.STANCHION_INSET
+        depth = HOLE_DEPTH
+        if getattr(P, "CABIN", False) and P.WIN_X0 - 60.0 <= x <= P.WIN_X1 + 60.0:
+            # over et aapent vindu (kahytt): blindhull i vindusoverkanten, som
+            # bare er dekkets tykkelse; et 7 mm hull ville gaatt ut i vinduet
+            depth = max(1.0 * P.SCALE,
+                        D.deck_z(x, y) - (C.sheer_z(x) - P.DECK_THICK) - 0.5 * P.SCALE)
         for sign in (1, -1):
-            h = _pin_hole(x, sign * y, d)
+            h = _pin_hole(x, sign * y, d, depth)
             out = h if out is None else out.union(h)
     return out
 

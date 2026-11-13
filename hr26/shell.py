@@ -122,6 +122,9 @@ def hollow(solid: cq.Workplane, log=None, keep=(), **kw) -> cq.Workplane:
     for i, c in enumerate(bays, start=1):
         for k in keep:
             c = c.cut(k)
+        # et kammer helt innenfor et keep-volum (kahytten) blir tomt
+        if not any(isinstance(v, cq.Shape) and v.Solids() for v in c.vals()):
+            continue
         solid = solid.cut(c)
         if log:
             log(f"    kammer {i}/{len(bays)}")

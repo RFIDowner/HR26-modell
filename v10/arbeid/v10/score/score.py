@@ -142,7 +142,7 @@ DECK_HOLE_D = 36.0              # STANCHION_D + CLEAR
 DECK_HOLE_DEPTH = 210.0
 RUDDER_PIN_Z = (-90.0, -200.0)
 RUDDER_PIN_HOLE_D = 42.0
-WIN_X = (3700.0, 4900.0)
+WIN_X = (3670.0, 5350.0)   # 1.1: the V10 windows (open, 448-5 and the sail plan); 1.0 had 3700-4900
 
 DECK_EDGE_Z = [
     (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1200.0), (2500.0, 1175.0),
@@ -1632,14 +1632,18 @@ def analyze(path, args):
     above = V[:, 2] > strake_meas(V[:, 0]) + 80.0
     xst = float(V[above, 0].max())
     loa = xst - xbow
-    beam_deck = 2.0 * float(max(st["y"].max(), D["port"]["y"].max()))
+    # 1.1: beam on the plan silhouette (as the deck outline); the virtual
+    # corner lies outside a rounded edge and is kept as information
+    beam_deck = 2.0 * float(max(np.nanmax(st["ysil"]), np.nanmax(D["port"]["ysil"])))
+    beam_virtual = 2.0 * float(max(st["y"].max(), D["port"]["y"].max()))
     beam_all = float(V[:, 1].max() - V[:, 1].min())
     draft = res["interfaces"]["rudder_pins"].get("draft_from_pins")
     lines["loa"] = dict(value=r1(loa), target=LOA, dev=r1(loa - LOA), x_bow=r1(xbow), x_transom_top=r1(xst),
                         overall_x_extent=r1(float(V[:, 0].max() - xbow)),
                         note="stem head to transom top on the centreline; overall extent includes the strake")
     lines["beam"] = dict(deck=r1(beam_deck), target=BEAM, dev=r1(beam_deck - BEAM), overall=r1(beam_all),
-                         x_at_max=r1(float(st["x"][int(np.argmax(st["y"]))]), 0))
+                         x_at_max=r1(float(st["x"][int(np.nanargmax(st["ysil"]))]), 0),
+                         virtual_corner_1_0=r1(beam_virtual))
     lines["draft"] = dict(assumed=DRAFT, from_rudder_pins=draft,
                           dev=r1(draft - DRAFT) if draft is not None else None,
                           note="keel bottom is z=0 in the STL; the pins (built at z=-90/-200) check it")

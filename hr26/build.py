@@ -18,10 +18,12 @@ import time
 import cadquery as cq
 
 from . import appendages as A
+from . import cabin as CB
 from . import curves as C
 from . import deckhouse as D
 from . import fittings as F
 from . import hull as H
+from . import interior as I
 from . import params as P
 from . import plaque as PL
 from . import rig as R
@@ -92,11 +94,19 @@ def robust_union(base, part, what: str):
     raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
 
 
-def robust_cut(base, cutter, what: str):
+def robust_cut(base, cutter, what: str, strict: bool = False):
+    """Kutt som nekter aa feile i stillhet. OCC kan gi et tomt resultat
+    (0 solider) eller et ugyldig volum uten feilmelding; da stopper vi.
+    `strict` krever ogsaa et gyldig volum (brukes for kahytten)."""
     before = _n_solids(base)
     out = base.cut(cutter)
-    if _n_solids(out) > before:
-        raise RuntimeError(f"kutt '{what}' delte modellen i {_n_solids(out)} biter")
+    n = _n_solids(out)
+    if n == 0:
+        raise RuntimeError(f"kutt '{what}' ga et tomt resultat")
+    if n > before:
+        raise RuntimeError(f"kutt '{what}' delte modellen i {n} biter")
+    if strict and not out.val().isValid():
+        raise RuntimeError(f"kutt '{what}' ga et ugyldig volum")
     return out
 
 
@@ -122,14 +132,26 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
     step("fenderlist", w)
     w = H.round_transom_top(w)
     step("akterspeilets overkant", w)
-    w = robust_union(w, D.coachroof(), "ruff")
-    step("ruff", w)
-    w = robust_union(w, D.hatches(), "luker")
-    w = robust_union(w, D.vents(), "ventiler")
-    step("luker og ventiler", w)
-    w = robust_union(w, D.coaming_block(), "cockpitkarm")
-    w = robust_union(w, D.sprayhood(), "sprayhood")
-    step("karm og sprayhood", w)
+    if P.CABIN:
+        # Ruffen er et eget lokk (16_ruff-tak, cabin.lid). Paa skroget staar
+        # bare kragen under skjoeten (ruff og sprayhood kappet ved
+        # skjoeteflaten) og kanten lokket tres over. (Aa unionere hele ruffen
+        # og saa skjaere bort lokket ga en kant med 93 mm toleranse ved
+        # x 5574, der sprayhood, ruff og karm moeter skjoeteflaten, og alle
+        # boolske operasjoner etterpaa feilet - kontroll 13.11.)
+        w = robust_union(w, D.coaming_block(), "cockpitkarm")
+        w = robust_union(w, CB.collar(), "krage og kant for lokket")
+        w = robust_union(w, D.vents(where_only="deck"), "ventil paa dekket")
+        step("krage, kant og karm", w)
+    else:
+        w = robust_union(w, D.coachroof(), "ruff")
+        step("ruff", w)
+        w = robust_union(w, D.hatches(), "luker")
+        w = robust_union(w, D.vents(), "ventiler")
+        step("luker og ventiler", w)
+        w = robust_union(w, D.coaming_block(), "cockpitkarm")
+        w = robust_union(w, D.sprayhood(), "sprayhood")
+        step("karm og sprayhood", w)
     w = robust_union(w, F.additions(), "dekksbeslag")
     step("dekksbeslag", w)
 
@@ -140,15 +162,35 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
     step("cockpit, nedgang, vinduer", w)
     w = robust_cut(w, F.cuts(), "hull for rigg og rekke")
     step("hull for rigg og rekke", w)
+    if P.CABIN:
+        # aapningen i dekket innenfor kanten, som eget kutt foer uthulingen
+        w = robust_cut(w, I.opening_cut(), "aapning i dekket", strict=True)
+        # nedgangen i lokket ser ned i kahytten, ikke paa terskelen
+        w = robust_cut(w, CB.companion_slot(), "nedgang ned i kahytten", strict=True)
+        step("aapning i dekket", w)
     if _n_solids(w) != 1:
         raise RuntimeError(f"skroget bestaar av {_n_solids(w)} solider etter sammenstilling")
 
     if hollow:
         # spares fra uthulingen: cockpitkaret (gulv og vegger), veggen bak
-        # vinduene og soylen under masten
-        w = S.hollow(w, keep=[D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()])
+        # vinduene og soylen under masten - og med kahytt hele kahyttens
+        # omraade, som er massivt rundt hulrommet (interior.py)
+        keep = [D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()]
+        if P.CABIN:
+            keep.append(I.keep_block())
+        w = S.hollow(w, keep=keep)
         step("uthult", w)
-        log(f"  plastforbruk (skall): {S.material_cm3(w):.0f} cm3")
+    if P.CABIN:
+        # kahytten med innredning, aapningen i dekket og doerene; saa
+        # vinduene som aapninger gjennom veggen (etter hulrommet, saa de
+        # bare gaar gjennom veggen)
+        w = robust_cut(w, I.cabin_void(log=log, with_opening=False), "kahytt og innredning",
+                       strict=True)
+        step("kahytt", w)
+        w = robust_cut(w, I.window_holes(), "aapne vinduer", strict=True)
+        step("aapne vinduer", w)
+    if hollow or P.CABIN:
+        log(f"  plastforbruk (skall og innredning): {S.material_cm3(w):.0f} cm3")
     return w
 
 
@@ -163,6 +205,8 @@ def build_parts(hollow: bool = True, only=None, **kw):
         parts["skrog"] = build_hull(hollow=hollow, **kw)
     if want("ror"):
         parts["ror"] = A.rudder()
+    if P.CABIN and want("ruff-tak"):
+        parts["ruff-tak"] = CB.lid()
     for src in (R.parts, ST.parts, PL.parts):
         parts.update({k: v for k, v in src().items() if want(k)})
     return parts
@@ -263,6 +307,8 @@ def export(parts: dict, log=print, partial: bool = False):
         "rekkepaaler": [("Y", 90.0)],
         "stativ-vugge1": [("Y", 90.0)],
         "stativ-vugge2": [("Y", 90.0)],
+        # lokket staar paa skjoeteplanet, som heller litt for-akter
+        "ruff-tak": [("Y", CB.print_tilt_deg())],
     }
     # mastene: lengden langs X, den brede 4 mm-siden ned, 3 mm hoy
     for name in parts:
@@ -272,6 +318,7 @@ def export(parts: dict, log=print, partial: bool = False):
 
     order = [
         "skrog",
+        "ruff-tak",
         "ror",
         *sorted(n for n in parts if n.startswith("mast-")),
         "mastefot",

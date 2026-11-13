@@ -364,10 +364,13 @@ def hatches() -> cq.Workplane:
     return out
 
 
-def vents() -> cq.Workplane:
-    """Soppventiler: en paa fordekket, en paa taket bak masten."""
+def vents(where_only: str | None = None) -> cq.Workplane:
+    """Soppventiler: en paa fordekket, en paa taket bak masten. Med
+    where_only ("deck" eller "roof") bare de som staar der."""
     out = None
     for x, where in P.VENTS:
+        if where_only is not None and where != where_only:
+            continue
         base = (deck_z(x, 0.0) if where == "deck" else roof_z(x)) - 40.0
         v = (
             cq.Workplane("XY")
@@ -384,10 +387,11 @@ def vents() -> cq.Workplane:
     return out
 
 
-def companionway_cut() -> cq.Workplane:
-    """Nedgangen: fordypning i ruffens bakkant."""
+def companionway_cut(z0: float | None = None) -> cq.Workplane:
+    """Nedgangen: fordypning i ruffens bakkant, fra terskelen (eller z0)."""
     x = P.COACH_X1
-    z0 = deck_z(x, 0.0) + P.COMPANION_SILL
+    if z0 is None:
+        z0 = deck_z(x, 0.0) + P.COMPANION_SILL
     z1 = roof_z(x) + 150.0
     b = (
         cq.Workplane("XY")
@@ -407,11 +411,13 @@ def _window_box(grow: float) -> cq.Workplane:
     """Vinduets omriss sett fra siden, ekstrudert tvers gjennom baaten.
 
     Underkanten foelger fenderlisten, overkanten dekkskanten, slik tegningen
-    viser. `grow` gjor omrisset stoerre paa alle kanter."""
+    viser. Endene kan vaere skraa (WIN_RAKE). `grow` gjor omrisset stoerre
+    paa alle kanter."""
+    rf, ra = getattr(P, "WIN_RAKE", (0.0, 0.0))
     x0, x1 = P.WIN_X0 - grow, P.WIN_X1 + grow
     lo = lambda x: C.strake_z(x) + P.WIN_ABOVE_STRAKE - grow
     hi = lambda x: C.sheer_z(x) - P.WIN_BELOW_DECK + grow
-    pts = [(x0, lo(x0)), (x1, lo(x1)), (x1, hi(x1)), (x0, hi(x0))]
+    pts = [(x0, lo(x0)), (x1, lo(x1)), (x1 - ra, hi(x1 - ra)), (x0 + rf, hi(x0 + rf))]
     b = cq.Workplane("XZ").polyline(pts).close().extrude(3000.0, both=True)
     try:
         b = b.edges("|Y").fillet(P.WIN_RAD + grow)
