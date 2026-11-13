@@ -26,6 +26,11 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   delene skal stå; mast og rekke limes, og litt pussing og sparkel er greit.
 * Før en stor bygging vil brukeren ha spørsmålene først, og så en bekreftelse
   og oppsummering før arbeidet starter.
+* Unntak for V10 (13.11.2026): «bare kjør avgjørelser på V10, V10 er tillatt
+  til det». Claude bestemmer selv i V10 etter rekkefølgen for kildene, pusher
+  til `v10` når alt er grønt («push hvis grønt») og samler spørsmålene som
+  bare eieren kan svare på til rapporten etterpå. Under natteøkter går
+  arbeidet til ukekvoten er høyst 70 %.
 
 ## V10 – glattere skrog og dekk (startet 10.11.2026)
 
