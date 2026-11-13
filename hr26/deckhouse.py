@@ -391,7 +391,7 @@ def companionway_cut(z0: float | None = None) -> cq.Workplane:
     """Nedgangen: fordypning i ruffens bakkant, fra terskelen (eller z0)."""
     x = P.COACH_X1
     if z0 is None:
-        z0 = deck_z(x, 0.0) + P.COMPANION_SILL
+        z0 = getattr(P, "COMPANION_SILL_Z", deck_z(x, 0.0) + P.COMPANION_SILL)
     z1 = roof_z(x) + 150.0
     b = (
         cq.Workplane("XY")
@@ -696,13 +696,14 @@ def footwell_cut() -> cq.Workplane:
     i plan fra FOOTWELL_X0 (brodekkets akterkant) til FOOTWELL_X1, loddrette
     vegger fra gulvet (COCKPIT_FLOOR_Z) og opp gjennom setehoeyden. Ingen
     overheng, saa den printes uten support."""
-    x0, x1, w, r = P.FOOTWELL_X0, P.FOOTWELL_X1, P.FOOTWELL_HALF_W, P.FOOTWELL_RAD
+    x0, x1, r = P.FOOTWELL_X0, P.FOOTWELL_X1, P.FOOTWELL_RAD
+    w0 = P.FOOTWELL_HALF_W
+    w1 = getattr(P, "FOOTWELL_HALF_W_AFT", w0)
     z0 = cockpit_floor_z()
     z1 = P.COCKPIT_SEAT_Z + 60.0
     b = (
         cq.Workplane("XY").workplane(offset=z0)
-        .center(0.5 * (x0 + x1), 0.0)
-        .rect(x1 - x0, 2.0 * w)
+        .polyline([(x0, -w0), (x1, -w1), (x1, w1), (x0, w0)]).close()
         .extrude(z1 - z0)
     )
     try:

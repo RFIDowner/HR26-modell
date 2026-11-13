@@ -165,10 +165,12 @@ CANOE_BOTTOM_HIDDEN = [
 # (nedenfra) er enige: forfoten staar ca. 20 mm for langt forut ved z +120 til
 # -30, og bunnen fra x 1,4 m ligger 20-45 mm for hoeyt (IMG_9374: 33-46 mm fra 1,6 til 2,8 m).
 # Bildets bunnlinje faller jevnt fra forfoten til kjolen (curves.bottom_z).
-BOTTOM_PHOTO_DZ = [          # IMG_9374 og IMG_9387 (rettet for hull i sporet) er enige
-    (830.0, 0.0), (950.0, 12.0), (1080.0, 12.0), (1200.0, 0.0), (1400.0, -19.0),
-    (1600.0, -33.0), (1800.0, -40.0), (2000.0, -43.0), (2400.0, -44.0), (2800.0, -39.0),
-    (3100.0, -35.0), (3500.0, -22.0), (4100.0, 0.0),
+BOTTOM_PHOTO_DZ = [          # trinn 5 (IMG_9374/9387), hevet 9-15 mm i trinn 6 etter nye (4)
+    # (bildet rett fra siden i vannlinjehoeyde: bunnen +8 mm ved 1,5-2,5 m og +14 ved
+    # 2,5-2,75 m for dyp, forfoten 1,3-1,7 m +8..+13 for fyldig; IMG_9389/9395 sa 3-4 cm)
+    (830.0, 0.0), (950.0, 12.0), (1080.0, 12.0), (1200.0, 0.0), (1400.0, -9.0),
+    (1600.0, -23.0), (1800.0, -30.0), (2000.0, -33.0), (2400.0, -34.0), (2800.0, -24.0),
+    (3100.0, -23.0), (3500.0, -16.0), (4100.0, 0.0),
 ]
 
 # ------------------------------------------------------------ hekk/akterspeil
@@ -213,8 +215,9 @@ TRANSOM_CORNER_Z = (-100.0, 0.0)   # rundingen bygges opp mellom disse hoydene
 RUDDER_GAP = 15.0       # klaring mellom rorets forkant og akterspeilet
 RUDDER_TE_X = 8150.0    # bakkanten er loddrett (profilen), saa korden vokser nedover
 RUDDER_TOP_Z = -60.0
-RUDDER_BOT_Z = -1047.0      # V10 trinn 6: Enderlein 448-5 (-1 047); IMG_9389 -1 025..-1 055,
-                            # nye (6) -860..-1 045 (foer -1 094, 5 cm for dypt)
+RUDDER_BOT_Z = -1015.0      # V10 trinn 6: bildene foran tegningen: nye (4) -990 (-960..-1 012),
+                            # IMG_9389 -1 025..-1 055, nye (6) -860..-1 045; Enderlein -1 047
+                            # (foer -1 094)
 RUDDER_T = 90.0
 RUDDER_X = TRANSOM_WL_X + TRANSOM_RAKE * RUDDER_TOP_Z + RUDDER_GAP   # forkant ved topp
 RUDDER_RAKE = TRANSOM_RAKE * (RUDDER_BOT_Z - RUDDER_TOP_Z)   # forkanten forover nedover, som akterspeilet
@@ -349,11 +352,13 @@ COMPANION_SILL = 60.0        # over dekket paa senterlinjen ved ruffens bakkant
 # forenden 3710/3780) og i katalogen 1981 (ca. 5370). Begge ender er skraa
 # (underkanten lengst); bildene viser akterenden skraa ca. 100 og forenden
 # rund, og lengden ca. 80 mm kortere. Foer V10: 3700-4900.
-WIN_X0 = 3670.0              # forenden, nederst
-WIN_X1 = 5350.0              # akterenden, nederst
+WIN_X0 = 3580.0              # forenden, nederst (trinn 6: nye (4) 3 590, IMG_9387 3 500-3 550; foer 3 670)
+WIN_X1 = 5150.0              # akterenden, nederst (trinn 6: nye (4) 5 113, IMG_9387 5 180-5 230,
+                             # nye (6) 5 093-5 255; foer 5 350)
 WIN_RAKE = (70.0, 95.0)      # skraa ender: overkanten staar saa mye lenger inn
                              # (forut, akter) enn underkanten
-WIN_ABOVE_STRAKE = 70.0      # underkant over listens senter (22 mm klaring)
+WIN_ABOVE_STRAKE = 50.0      # underkant over listens senter (2 mm klaring; trinn 6: i nye (4)
+                             # staar rammen rett paa listen, foer 70 = 22 mm klaring)
 WIN_BELOW_DECK = 30.0        # overkant under dekkskanten (1 mm leppe i 1:30)
 WIN_DEPTH = 15.0             # forsenkning (rammen), 0,5 mm i 1:30
 WIN_RAD = 55.0
@@ -376,17 +381,22 @@ COCKPIT_AFT = [              # bronnens bakre runding (x, halvbredde)
     (7724.0, 200.0), (7729.0, 150.0), (7733.0, 100.0), (7735.0, 50.0),
     (7735.0, 0.0),
 ]
-COCKPIT_FLOOR_Z = 470.0      # fotbronnens gulv over DWL (V10 trinn 7: Enderlein 448-5
-                             # gir 463-480 i profilen; foer 294 = hele bronnen dyp)
+COCKPIT_FLOOR_Z = 435.0      # fotbronnens gulv over DWL (V10 trinn 7: 448-5 476 - 30 i modellens
+                             # ramme, brosjyren 412-425; foer 294 = hele bronnen dyp)
 # V10 trinn 7 (13.11.2026): seter langs begge sider og paa tvers akter, en
 # smal fotbronn og et brodekk under nedgangen (bildene nye (2) og (5),
 # Enderlein 448-5 profil og plan). Setene og brodekket er massive (printes
 # uten support); bronnen over dem skjaeres bare ned til setehoeyden.
-COCKPIT_SEAT_Z = 898.0       # setenes og brodekkets overflate (448-5: linje 898 fra 6 200 til 7 500)
-FOOTWELL_X0 = 6065.0         # fotbronnens forkant = brodekkets akterkant (448-5 plan og profil)
-FOOTWELL_X1 = 7305.0         # fotbronnens akterkant; setet gaar paa tvers aktenfor (til 7 735)
-FOOTWELL_HALF_W = 330.0      # 448-5 plan: 329 (bredde ca. 660)
-FOOTWELL_RAD = 80.0          # hjoerneradius i plan
+COCKPIT_SEAT_Z = 860.0       # setenes og brodekkets overflate (448-5: 898, minus 30 fordi tegningen
+                             # ligger ca. 30 mm hoeyere enn modellen ved fenderlisten)
+FOOTWELL_X0 = 5935.0         # fotbronnens forkant = brodekkets akterkant: brodekket 275 dypt fra
+                             # COCKPIT_X0 (448-5 255-282, brosjyren 244; kahyttveggen ligger lenger
+                             # forut i modellen enn i 448-5)
+FOOTWELL_X1 = 7300.0         # fotbronnens akterkant; setet gaar paa tvers aktenfor (til 7 735)
+FOOTWELL_HALF_W = 325.0      # forut (448-5 plan 336 ved 6 300, brosjyren 308)
+FOOTWELL_HALF_W_AFT = 300.0  # akter (448-5 316 ved 7 300, brosjyren 283)
+FOOTWELL_RAD = 50.0          # hjoerneradius i plan
+COMPANION_SILL_Z = 900.0     # nedgangen aapen ned til brodekket (nye (5), 448-5: 896); foer dekk + 60
 COCKPIT_RAD = 140.0          # hjorneradius forut, i plan
 COAMING_HALF_W = 980.0       # karmens ytterkant
 COAMING_X1 = 6900.0          # karmen slutter her (den er nede i dekket fra 6 800)
