@@ -83,6 +83,13 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
 
 ## Tekniske merknader
 
+* **Minne (13.11.2026):** PC-en (16 GB RAM) har krasjet fire ganger under
+  V10, sist 13.11 kl. 00:15, da fem agenter jobbet samtidig og én kjørte
+  CadQuery-test av lokket. Loggen viste tomt minne og så feilkode 0x133. Kjør
+  derfor alle tunge Python- og CadQuery-jobber med minnetak og lås:
+  `python tools/memcap.py --gb 5 --lock -- python skript.py ...`. Taket gir
+  MemoryError i stedet for krasj, og låsen gjør at bare én CAD-jobb kjører om
+  gangen. Ha høyst to agenter i gang samtidig.
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
 * Skroget alene bygger på ca. 150 s. `python -m hr26.build` sletter alle
   STL-er i `export/stl` før eksport. Med `--only skrog,stativ-vugge1,...`
