@@ -71,11 +71,13 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   sier at skroget er for fyldig, mens en vannlinje på 448-5 sier at det
   stemmer. Les «Status – 13. november 2026» i `V10.md` (spørsmålene til
   eieren og oppskriften for trinn 3).
-* **13.11.2026 (morgen): plan for kvelden vedtatt.** Den står i
-  `v10/PLAN_13nov_kveld.md`: rett stevn (ca. 49°), fenderlisten i bue over
-  akterspeilet og hjerteform under vann akter etter IMG_9391. Formen under
-  vann er avgjort: følg bildet. Kjølens tykkelse er lukket på 240 mm. Start med
-  trinn 0 i planen.
+* **13.11.2026 (dag): planen kjørt og pushet.** Planen står i
+  `v10/PLAN_13nov_kveld.md`. Stevnen er rett (51,4°, IMG_9370), fenderlisten
+  buer 42 mm opp over akterspeilet (IMG_9391), og bunnen akter er hjerte- og
+  vinglassformet med dødtre (IMG_9391 rms 11/7 px, kanobunn 2,49 m³).
+  Poengkortet `s5_hjerte` (`score.py` 1.2) består alle krav. Kamera- og
+  bildeverktøyet ligger i `v10/verktoy/foto/py`. Les «Status – 13. november
+  2026, planen kjørt» i `V10.md` før du fortsetter.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på

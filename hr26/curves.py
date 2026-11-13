@@ -359,6 +359,9 @@ def _pchip(pairs):
 _FLARE = _pchip(P.SECTION_FLARE)
 _NEXP = _pchip(P.SECTION_N)
 _DEADRISE = _pchip(P.SECTION_DEADRISE)
+_DEADWOOD = _pchip(getattr(P, "DEADWOOD_H", [(0.0, 0.0), (1.0, 0.0)]))
+_DWW_TAB = getattr(P, "DEADWOOD_W", 180.0)
+_DWW = _pchip(_DWW_TAB) if isinstance(_DWW_TAB, (list, tuple)) else (lambda x, w=float(_DWW_TAB): w)
 
 
 def _smin(a: float, b: float, p: float = 6.0) -> float:
@@ -398,7 +401,12 @@ def _section_geom(x: float) -> dict:
         return g
     t = x / P.LOA
     k = _nose(x)
-    zb = bottom_z(x)
+    # Senterlinjen (profilen) er zp. Akter bygges den konvekse kanobunnen paa
+    # et kjolpunkt DEADWOOD_H hoeyere, og bunnen trekkes ned til senterlinjen
+    # etterpaa (doedtre med hul overgang, se params.DEADWOOD_H).
+    zp = bottom_z(x)
+    dwh = max(_DEADWOOD(x), 0.0)
+    zb = zp + dwh
     zs = sheer_z(x)
     hb = max(deck_half_breadth(x) * k, 1e-3)
     cam = deck_camber(x) * k
@@ -456,6 +464,10 @@ def _section_geom(x: float) -> dict:
         foot = F + rs * np.c_[np.cos(ang), np.sin(ang)]
         foot[0] = (0.0, zb)
         pts = np.vstack([foot[:-1], pts[keep]])
+    if dwh > 0.5:
+        tt = np.clip(pts[:, 0] / _DWW(x), 0.0, 1.0)
+        pts[:, 1] -= dwh * (1.0 - tt * tt) ** 2
+        pts[0] = (0.0, zp)
     seg = np.hypot(np.diff(pts[:, 0]), np.diff(pts[:, 1]))
     s = np.r_[0.0, np.cumsum(seg)]
 
@@ -478,7 +490,7 @@ def _section_geom(x: float) -> dict:
     t2 /= np.linalg.norm(t2)
     ca = float(np.clip((T1 - P1) @ (T2 - P1) / (np.linalg.norm(T1 - P1) * np.linalg.norm(T2 - P1)), -1, 1))
     w = math.sin(0.5 * math.acos(ca))
-    g = dict(x=x, pts=pts, s=s, K=np.array([0.0, zb]), D=D, T1=T1, t1=t1, P1=P1,
+    g = dict(x=x, pts=pts, s=s, K=np.array([0.0, zp]), D=D, T1=T1, t1=t1, P1=P1,
              T2=T2, t2=t2, w=w, R=R, L=L, hb=hb, bd=bd, zs=zs, zb=zb, cam=cam,
              phi=phi, beta=beta, n=n, rs=rs, a=a, c=c)
     if len(_GEOM) > 50000:
@@ -600,6 +612,21 @@ def section_inner(x: float, wall: float, deck_t: float, n: int = 22):
     else:
         start = np.array([0.0, inner[0, 1]])
     pts = np.vstack([start, inner[k:]])
+    # doedtreet (DEADWOOD_H) er massivt: hulrommet faar et flatt gulv en vegg
+    # over kjolpunktet til den konvekse kanobunnen. Ellers gaar den hule
+    # overgangen inn i den smale finnen, og kordene (n punkter) kutter veggen.
+    g = _section_geom(float(x))
+    if g is not None and g.get("zb", g["K"][1]) - g["K"][1] > 0.5:
+        zf = float(g["zb"]) + wall
+        up = np.where(pts[:, 1] >= zf)[0]
+        if len(up) == 0:
+            return None
+        j = int(up[0])
+        if j > 0:
+            a, b = pts[j - 1], pts[j]
+            f = (zf - a[1]) / (b[1] - a[1])
+            yc = a[0] + f * (b[0] - a[0])
+            pts = np.vstack([[0.0, zf], [yc, zf], pts[j:]])
     # kapp under dekket: behold z < zs, legg til krysningen
     below = pts[:, 1] < zs
     if below.sum() < 2:

@@ -131,10 +131,17 @@ dekksplanen 1:50.
 
 ![Modellens dekksutlinje og brønn lagt over dekksplanen 1:50](docs/images/overlegg-plan.jpg)
 
-**Merk om deplasementet:** modellen har et beregnet undervannsvolum på ca. 3,9 m³,
-mens brosjyren oppgir 2,5 tonn. Avviket kommer av at profiltegningen gir en
-forholdsvis dyp og flat kanobunn. For en utstillingsmodell betyr det ingenting —
-formen er hentet fra tegningen — men tallet skal ikke brukes til hydrostatikk.
+**Merk om formen under vann (V10, 13.11.2026):** bildene av båten går foran
+tegningene når de er uenige. Akterfra (IMG_9391) smalner bunnen inn som bunnen
+av et hjerte, med V-bunn og en hul overgang (dødtre) inn mot roret
+(`DEADWOOD_H`, `DEADWOOD_W`, `SECTION_DEADRISE`, `SECTION_N`). Formen er
+tilpasset bildene akterfra og forfra samtidig (`v10/verktoy/foto/py/opt_hjerte.py`).
+Kanobunnen har nå ca. 2,5 m³ under vannlinjen (før 3,7). Med kjøl og ror er
+modellen fortsatt noe fyldigere enn deplasementet på Enderleins tegning
+(2,36 m³), så tallet skal ikke brukes til hydrostatikk.
+
+Forstevnen er rett (ca. 51° mot vannlinjen, målt på IMG_9370), og
+fenderlisten buer 42 mm opp midt på akterspeilet (IMG_9391).
 
 ---
 
@@ -499,9 +506,8 @@ Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
   hekken, men under 50 mm høy etter profilen (under 2 mm i 1:30), med
   pushpiten oppå. Den er utelatt; karmen slutter der den går i ett med dekket
   (6 900 mm), og akterdekket ligger i dekkshøyde.
-* Skrogformen under vann akter (V10) venter på mål fra båten: Enderleins
-  tegning, deplasementet på tegningen og bildet akterfra er ikke enige. Se
-  `V10.md`.
+* Formen under vann akter følger bildene (V10, 13.11). Et mål med
+  målebånd ved båten kan bekrefte den; se `V10.md`.
 * Alle deler er lukkede nett; eksporten fjerner trekanter med null areal.
   Kjør `python tools/meshcheck.py export/stl/*.stl` for å se status.
 

@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.1 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette
+VERSION = "1.2 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -1192,6 +1192,10 @@ def hull_skin_mask(cen, fn, ext):
     m &= (x > 150.0) & (x < transom_x(z, y) - 100.0)
     m &= z < sheer_meas(x) - 60.0
     m &= ~((np.abs(y) < 300.0) & (z < bottom_meas(x) + 120.0) & (x > 3300.0) & (x < 5950.0))
+    # 1.2 (13.11 kveld): doedtreets hule overgang akter (DEADWOOD_H/W) er en bevisst
+    # liten radius (ca. 3 mm i 1:30), som kjolroten over; tessellert med 0,15 rad gir
+    # den knekker paa 5-9 grader uten at flaten er ujevn. Holdes utenfor som kjolroten.
+    m &= ~((np.abs(y) < 350.0) & (z < 0.0) & (x > 5900.0))
     m &= ~((z > zk - 107.5) & (z < zk + 77.5))
     m &= ~((x > WIN_X[0] - 50) & (x < WIN_X[1] + 50) & (z > zk + 40.0))
     m &= (fn[:, 1] * np.sign(y) > 0.05) | (fn[:, 2] < -0.5)

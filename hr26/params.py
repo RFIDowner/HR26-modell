@@ -43,14 +43,31 @@ SECTION_FLARE = [            # utfall ved dekkskanten, grader fra loddrett
     (0.00, 24.0), (0.10, 19.0), (0.20, 13.5), (0.30, 11.0), (0.45, 9.5),
     (0.60, 9.0), (0.75, 9.0), (0.90, 10.0), (1.00, 10.5),
 ]
+# V10 trinn 3 (13.11.2026 kveld): formen under vann foelger bildene (eieren:
+# bildene gaar foran tegningene). Akterfra (IMG_9391) smalner bunnen inn som
+# bunnen av et hjerte: fyldige skuldre ved vannlinjen, V-bunn og en hul
+# overgang (doedtre) inn mot senterlinjen og roret. Forfra (IMG_9388) peker
+# samme vei. Tabellene under er tilpasset begge bildene og kanobunnens volum
+# samlet (v10/verktoy/foto/py/opt_hjerte.py): IMG_9391 rms 11/7 px (foer
+# 159/133), IMG_9388 -16/-13 px (foer -23/-17), kanobunn 2,49 m3 (foer 3,67),
+# skrogsiden over fenderlisten flytter seg under 1 mm.
 SECTION_N = [                # superellipsens eksponent: 2 = ellipse,
-    (0.00, 2.4), (0.15, 3.1), (0.35, 3.4),       # hoyere = fastere slag
-    (0.60, 3.5), (0.80, 3.3), (1.00, 3.1),
+    (0.00, 2.4), (0.15, 3.1), (0.30, 3.4),       # hoyere = fastere slag
+    (0.45, 6.0), (0.80, 4.7), (1.00, 5.4),
 ]
 SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
-    (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # flat kanobunn akter
-    (0.27, 0.0), (1.00, 0.0),
+    (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # nesten flat foran kjolen,
+    (0.30, 0.0), (0.45, 4.9), (0.60, 21.5),       # V midtskips og akter
+    (0.75, 20.3), (0.90, 15.4), (1.00, 8.5),
 ]
+# Doedtre (vinglass-spant): spantets konvekse kanobunn bygges paa et kjolpunkt
+# DEADWOOD_H over senterlinjen, og bunnen trekkes ned til senterlinjen med
+# (1 - (y/DEADWOOD_W)^2)^2: en hul overgang. Gir hjertets spiss akterfra.
+DEADWOOD_H = [               # (x fra baugen, hoeyde over senterlinjen), mm
+    (2900.0, 0.0), (3600.0, 57.2), (5900.0, 57.2), (6800.0, 124.0),
+    (7400.0, 181.8), (7800.0, 198.6), (8000.0, 198.6),
+]
+DEADWOOD_W = [(5900.0, 163.2), (6800.0, 184.0)]   # halvbredden der overgangen er ferdig (x, mm)
 DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
                              # (0,83 mm i 1:30; OCC-fillet feiler her)
 STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)
@@ -98,8 +115,9 @@ KEEL_FILLET_LIFT = 10.0      # hulkilene i profil regnes mot kanobunnen + dette,
                              # skroget med 12-14 grader i stedet for aa tangere det (robust union)
 KEEL_ROOT_UP = 150.0         # hvor langt kjolen stikker opp i skroget over kanobunnen (for union)
 KEEL_DZ = 25.0               # avstand mellom de vannrette snittene i loften
-KEEL_FILLET = 90.0      # avrunding mot skroget: hoyden paa utvidelsen nederst ved roten
-                        # (kjolen blir 0,75 x dette bredere paa hver side der den moeter skroget)
+KEEL_FILLET = 0.0       # avrunding mot skroget: hoyden paa utvidelsen nederst ved roten
+                        # (kjolen blir 0,75 x dette bredere paa hver side der den moeter skroget).
+                        # V10 trinn 3: 0, doedtreets hule overgang (DEADWOOD_H) er avrundingen naa (foer 90)
 # Bare til kanobunnens spline (curves._bottom_spline) og eldre skript: roten
 # slik den var foer V10. Endres de, flytter kanobunnen seg.
 KEEL_LE_ROOT = 3380.0
@@ -107,26 +125,24 @@ KEEL_TE_ROOT = 5800.0
 KEEL_LE_TIP = 4430.0    # omtrent der den flate bunnen begynner; IKKE brukt av modellen
 KEEL_TE_TIP = 5725.0    # bakkantlinjen ved bunnen; IKKE brukt av modellen (foelger ikke KEEL_*_LINE)
 
-# Kanobunnen paa senterlinjen der profiltegningen ikke viser den: bak kjolen,
-# og akter der propellen og roret dekker den (det sporede omrisset der er
-# propell og ror, ikke bunnen). Verdiene er V9-kurven; de holder kjolroten
-# (bottom_z midt paa roten) og akterspeilets underkant (ca. -250) der de var.
-# V10 (13.11): Enderlein og brosjyren viser en nesten flat, dyp kanobunn akter
-# helt til akterspeilets fot (ca. -410), og tegningens DEPL. 2,36 m3 gir et
-# kanobunnvolum paa ca. 2,0-2,2 m3; modellen har ca. 3,4 m3. Forslagene
-# (v10/rapporter/13nov) motsier en strekprikket vannlinje paa 448-5 ved durken,
-# saa formen under vann akter venter paa et maal fra baaten (V10.md).
-# Fra 7 650 fortsetter de V9-kurvens jevne stigning: V9 knakk ved 7 800, en
-# endeeffekt av glattingen (de to siste tabellpunktene ble ikke glattet).
-# curves.bottom_z legger en glatt spline gjennom disse, forstevnen og den
-# sporede forfoten. (x fra baugen, z over DWL)
+# Kanobunnen paa senterlinjen der profiltegningen 1:50 ikke viser den
+# (curves.bottom_z legger en glatt spline gjennom disse, forstevnen og den
+# sporede forfoten; x fra baugen, z over DWL).
+# V10 (13.11.2026): aktenfor kjolen er linjen maalt paa begge tegningene.
+# Brosjyren og Enderlein 448-5 viser en nesten rett, dyp senterlinje helt til
+# akterspeilet (brosjyren -437 til -449, Enderlein omregnet -449 ved 6 000 og
+# -410 ved akterspeilets fot); V9-kurven steg til -251 og hadde ingen kilde.
+# Verdiene er Enderleins linje i modellens ramme (z_modell = (z_E - 25,5) /
+# 0,968), innen 10 mm av brosjyren til x = 7 000 og 23 mm akter. Under kjolen
+# (skjult paa begge) en jevn bue til ca. -465. Bildene motsier ikke dette:
+# akterfra skjules den dype senterlinjen bak roret (doedtreet over).
 CANOE_BOTTOM_HIDDEN = [
-    (3250.0, -455.3), (3500.0, -480.0), (3750.0, -496.5), (4000.0, -504.1),
-    (4250.0, -505.6), (4500.0, -503.0), (4590.0, -501.4), (4750.0, -498.6),
-    (5000.0, -494.7), (5250.0, -492.4), (5500.0, -492.2), (5750.0, -492.5),
-    (6000.0, -491.3), (6250.0, -485.0), (6500.0, -471.5), (6750.0, -448.8),
-    (7000.0, -414.2), (7250.0, -368.7), (7500.0, -314.6), (7650.0, -279.5),
-    (7800.0, -240.6), (7950.0, -199.1),
+    (3250.0, -455.3), (3500.0, -470.0), (3750.0, -465.0), (4000.0, -465.0),
+    (4250.0, -465.0), (4500.0, -465.0), (4590.0, -465.0), (4750.0, -465.0),
+    (5000.0, -463.0), (5250.0, -460.0), (5500.0, -453.4), (5750.0, -450.1),
+    (6000.0, -446.8), (6250.0, -445.2), (6500.0, -439.7), (6750.0, -437.4),
+    (7000.0, -433.1), (7250.0, -424.4), (7500.0, -415.5), (7650.0, -410.7),
+    (7800.0, -409.6), (7950.0, -408.5),
 ]
 
 # ------------------------------------------------------------ hekk/akterspeil
@@ -157,9 +173,10 @@ TRANSOM_CORNER_EXIT = 7.0    # restknekk mot skrogsiden, grader (gir et robust k
 TRANSOM_TOP_R = 20.0         # avrundet overkant mot dekket (0,67 mm i 1:30); 0 = skarp
 TRANSOM_TOP_EXIT = 20.0      # restknekk mot dekket og akterspeilet, grader (8 og 30 ga ikke-manifold STL)
 TRANSOM_TOP_TAPER = 150.0    # rundingen avtar mot hjoernene over saa mange mm
-TRANSOM_CORNER_Z = (-240.0, -170.0)   # rundingen bygges opp mellom disse hoydene
-                             # (V10: lavere enn foer; med de nye, fyldigere spantene
-                             # ligger hjoernet ved z = -150 alt 430 ut, forbi parkeringen)
+TRANSOM_CORNER_Z = (-100.0, 0.0)   # rundingen bygges opp mellom disse hoydene
+                             # (V10 trinn 3: hjerteformen gjoer akterspeilet smalt under
+                             # ca. -100, saa hjoernene rundes fra vannlinjestripen og opp og
+                             # kanten mot bunnen blir skarp, som paa IMG_9391; foer -240/-170)
 
 # ----------------------------------------------------------------- ror
 # Akterhengt ror. Forkanten foelger akterspeilet med en liten klaring, og

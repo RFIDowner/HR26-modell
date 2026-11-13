@@ -112,9 +112,12 @@ def hull_solid(n_stations: int = 34, n_pts: int = 28) -> cq.Solid:
     wires = [_section_wire(x, n_pts) for x in xs]
     loft = cq.Solid.makeLoft(wires, ruled=False)
     cut = cq.Workplane("XY").newObject([loft]).cut(transom_cutter())
-    solids = cut.val().Solids()
-    if len(solids) != 1:
-        raise RuntimeError(f"akterspeilkuttet ga {len(solids)} solider")
+    # Ved akterspeilets fot (doedtreet, V10 trinn 3) kan kuttet etterlate en
+    # loesrevet flis paa noen mm (0,1 mm i 1:30); den kastes. Alt stoerre er feil.
+    solids = sorted(cut.val().Solids(), key=lambda s: s.Volume(), reverse=True)
+    rest = sum(s.Volume() for s in solids[1:])
+    if not solids or rest > 1e-5 * solids[0].Volume():
+        raise RuntimeError(f"akterspeilkuttet ga {len(solids)} solider (rest {rest:.0f} mm3)")
     return solids[0]
 
 
@@ -343,9 +346,10 @@ def _loft3(wires) -> cq.Solid:
 
 _CUT_FAR_X = 8400.0           # kuttet gaar saa langt akter
 _CUT_FAR_Y = 1400.0           # og saa langt ut til sidene
-_CUT_LEVELS = (-450.0, 1150.0, 50.0)   # vannrette snitt: fra, til, steg (under bunnen
-                                        # og over dekket i hekken)
-_CUT_PARK_Y = 450.0           # der det ikke rundes, tangerer buen akterspeilet her (utenfor skroget)
+_CUT_LEVELS = (-550.0, 1150.0, 50.0)   # vannrette snitt: fra, til, steg (under bunnen
+                                        # og over dekket i hekken; V10 trinn 3: fra -450, doedtreets fot er -410)
+_CUT_PARK_Y = 700.0           # der det ikke rundes, tangerer buen akterspeilet her (utenfor skroget;
+                              # V10 trinn 3: 700, hjoernet ligger 600 ut ved DWL, foer 450)
 _CUT_RUN = 80.0               # forkanten fortsetter saa langt rett ut forbi buen
 
 
