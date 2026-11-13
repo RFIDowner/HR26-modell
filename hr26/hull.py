@@ -213,9 +213,11 @@ def _strake_path(step: float = 20.0):
         arc = np.array([_arc_point(zs, yt, R, a * (1.0 - i / n_arc))[0] for i in range(n_arc + 1)])
     n_tr = max(4, int(math.ceil(yt / step)))
     ys = yt * (1.0 - np.arange(1, n_tr + 1) / n_tr)
-    tr = np.array([[C.transom_x(zs, y), y] for y in ys])
-    stern = np.vstack([arc, tr])
-    stern = np.c_[stern, np.full(len(stern), zs)]
+    # over akterspeilet buer listen opp mot midten (IMG_9391); loeftet er 0
+    # med vannrett tangent der hjoernebuen moeter akterspeilet
+    zt = zs + P.STRAKE_TRANSOM_RISE * (1.0 - (ys / yt) ** 2) ** 2
+    tr = np.array([[C.transom_x(z, y), y, z] for y, z in zip(ys, zt)])
+    stern = np.vstack([np.c_[arc, np.full(len(arc), zs)], tr])
 
     # overgang: kutt siden og buen 50 mm fra knekken, bind sammen med Hermite
     s_st = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(stern, axis=0), axis=1))]

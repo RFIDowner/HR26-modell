@@ -410,6 +410,9 @@ STRAKE_BURY = 30.0      # hvor langt baksiden gaar inn i skroget
 STRAKE_X0 = 200.0       # starter her - helt i stevnen er skroget for spisst
 STRAKE_TAPER = 250.0    # forenden dykker jevnt inn i skroget over denne lengden
 STRAKE_STEP = 100.0     # avstand mellom listens tverrsnitt (glatt loft mellom dem)
+STRAKE_TRANSOM_RISE = 42.0   # V10 (13.11): listen buer saa mye opp midt paa akterspeilet,
+                             # form (1 - (y/yt)^2)^2; IMG_9391 gir 42 +- 1,4 mm
+                             # (v10/verktoy/foto/py/liste9391.py; vannrett liste: rms 10 px, buet: 2,6 px)
 
 # ------------------------------------------------------------------ rigg
 BOOM_Z = 1500.0               # bommens høyde over dekk ved masten
