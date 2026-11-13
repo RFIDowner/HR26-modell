@@ -227,6 +227,13 @@ av fyllet (se under). Én rull på 1 kg holder med god margin.
   1,9°). Ingen brim — kjølen gir god vedheft.
 * Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
 
+**Prøvebiter først (V10).** `export/test/` har tre små biter skåret ut av de
+ferdige delene (lag dem på nytt med `python tools/proevebiter.py`):
+`test-vindusbro.stl` (66 × 14 × 16 mm, stående med brim) viser om
+sidedekket klarer broen over det åpne vinduet, og `test-lokk-skrog.stl` +
+`test-lokk-tak.stl` (23 × 60 × 6 mm) viser om taket glir ned over kanten. En
+times print før en på 16.
+
 **16 Ruff-tak** — taket på ruffen er et eget lokk (V10), med luker, ventil og
 sprayhood. Løftes det av, ser man ned i kahytten.
 * Ligger ferdig orientert på skjøteflaten, som er plan. **Ingen støtte.**
