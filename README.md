@@ -506,8 +506,8 @@ Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
 
 ## Videre arbeid
 
-* Cockpiten er forenklet — brønnen har bunn og vegger og følger hekkens
-  runding, men ingen brodekk, benker eller luker.
+* Cockpiten har seter, fotbrønn og brodekk (V10 trinn 7), men ingen luker i
+  setene. Cockpitkarmen og dekkskanten ved vinduet («kanten») er neste trinn.
 * Roret er bare bladet under vannlinjen. På originalen går rorhodet opp til
   dekkshøyde, med rorkulten inn over akterdekket.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville

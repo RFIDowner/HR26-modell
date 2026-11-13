@@ -381,22 +381,23 @@ COCKPIT_AFT = [              # bronnens bakre runding (x, halvbredde)
     (7724.0, 200.0), (7729.0, 150.0), (7733.0, 100.0), (7735.0, 50.0),
     (7735.0, 0.0),
 ]
-COCKPIT_FLOOR_Z = 435.0      # fotbronnens gulv over DWL (V10 trinn 7: 448-5 476 - 30 i modellens
-                             # ramme, brosjyren 412-425; foer 294 = hele bronnen dyp)
+COCKPIT_FLOOR_Z = 455.0      # fotbronnens gulv over DWL (V10 trinn 7: 448-5 474 - ca. 20 i modellens
+                             # ramme (kontroll chk_ck); foer 294 = hele bronnen dyp)
 # V10 trinn 7 (13.11.2026): seter langs begge sider og paa tvers akter, en
 # smal fotbronn og et brodekk under nedgangen (bildene nye (2) og (5),
 # Enderlein 448-5 profil og plan). Setene og brodekket er massive (printes
 # uten support); bronnen over dem skjaeres bare ned til setehoeyden.
-COCKPIT_SEAT_Z = 860.0       # setenes og brodekkets overflate (448-5: 898, minus 30 fordi tegningen
-                             # ligger ca. 30 mm hoeyere enn modellen ved fenderlisten)
+COCKPIT_SEAT_Z = 880.0       # setenes og brodekkets overflate (448-5: 897, minus ca. 20: listen i
+                             # 448-5 ligger 13-26 mm hoeyere enn modellen ved cockpiten, chk_ck)
 FOOTWELL_X0 = 5935.0         # fotbronnens forkant = brodekkets akterkant: brodekket 275 dypt fra
                              # COCKPIT_X0 (448-5 255-282, brosjyren 244; kahyttveggen ligger lenger
                              # forut i modellen enn i 448-5)
 FOOTWELL_X1 = 7300.0         # fotbronnens akterkant; setet gaar paa tvers aktenfor (til 7 735)
 FOOTWELL_HALF_W = 325.0      # forut (448-5 plan 336 ved 6 300, brosjyren 308)
-FOOTWELL_HALF_W_AFT = 300.0  # akter (448-5 316 ved 7 300, brosjyren 283)
+FOOTWELL_HALF_W_AFT = 308.0  # akter (448-5 313, brosjyren 298, nye (2) ca. 328 forut)
 FOOTWELL_RAD = 50.0          # hjoerneradius i plan
-COMPANION_SILL_Z = 900.0     # nedgangen aapen ned til brodekket (nye (5), 448-5: 896); foer dekk + 60
+COMPANION_SILL_Z = 920.0     # nedgangen aapen ned til en teakterskel 40 over brodekket (nye (5));
+                             # foer dekk + 60
 COCKPIT_RAD = 140.0          # hjorneradius forut, i plan
 COAMING_HALF_W = 980.0       # karmens ytterkant
 COAMING_X1 = 6900.0          # karmen slutter her (den er nede i dekket fra 6 800)

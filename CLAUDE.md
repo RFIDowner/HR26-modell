@@ -128,6 +128,16 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   avgjør trinn 6) og `n6_*` (akterhjørnet, roret og kjølen). Trinn 7:
   cockpit med seter, fotbrønn og brodekk (nye 2 og 5, Enderlein 448-5).
   Modellen har bare en flat brønn.
+* **13.11.2026 kl. 19: trinn 6 og 7 ferdige og pushet. Pause for natten.**
+  Bunnen er 9–15 mm opp etter «nye 4», roret −1 015 og vinduet 3 580–5 150 og
+  20 mm lavere. Cockpiten har seter og brodekk på z 880, fotbrønn
+  5 935–7 300 med gulv på 455, og nedgangen er åpen ned til 920. Kjølen og
+  akterspeilet står. Poengkortet `s8b_cockpit` består alle krav.
+  **Neste: «kanten»** (kant, kant2 og kant3): dekkskanten er høyere over
+  vinduet, har en knekk ved vinduets akterende og faller mot rekkepålen og
+  tanklokket. I tillegg cockpitkarmens høyde, steget og avrundingene. Les
+  «Status – 13. november 2026 kl. 19» i `V10.md`. Bildet IMG_9304 heter nå
+  `kant2.jpg`. `kant.jpeg` (barnet) og `kant3.jpeg` holdes utenfor git.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
@@ -142,7 +152,10 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   * IMG_9389: skrått bakfra
   * IMG_9387, 9374 og 9370: fra siden
   * IMG_9395: baugen nedenfra
-  * IMG_9304 og 9372: dekket ovenfra
+  * kant2.jpg (før IMG_9304) og IMG_9372: dekket ovenfra
+  * nye4_babord_side (fra siden, beste kamera), nye6_akterhjorne,
+    nye1_akter_nedenfra og nye2_cockpit_ovenfra (13.11). kant3.jpeg:
+    dekkskanten ved vinduet (privat, ikke i git)
 * Samme mappe har Bambu-modellen. Den er bra for utseende og for posisjoner
   langs båten, men ikke for bredder.
 * Verftets side for HR 26 (hallberg-rassy.com, «previous models») har
