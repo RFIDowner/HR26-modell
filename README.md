@@ -143,6 +143,13 @@ modellen fortsatt noe fyldigere enn deplasementet på Enderleins tegning
 Forstevnen er rett (ca. 51° mot vannlinjen, målt på IMG_9370), og
 fenderlisten buer 42 mm opp midt på akterspeilet (IMG_9391).
 
+Akterspeilet er en spiss V med skarpt hjørne mot låringene, slik eieren
+markerte det på IMG_9391 og et uavhengig kantsøk bekreftet: ca. 1,1 m bredt
+0,2 m over vannlinjen, ca. 0,4 m i vannlinjen og 8–14 cm ved roret
+(`v10/verktoy/foto/py/opt_hjorne.py`, `TRANSOM_CORNER_L` = 0). Kanobunnen har
+nå ca. 2,4 m³ under vannlinjen. Modellens vannlinje stemmer med vannflaten der
+båten flyter (IMG_9370), innen ±2 cm.
+
 ---
 
 ## Kjør

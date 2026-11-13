@@ -78,6 +78,16 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   Poengkortet `s5_hjerte` (`score.py` 1.2) består alle krav. Kamera- og
   bildeverktøyet ligger i `v10/verktoy/foto/py`. Les «Status – 13. november
   2026, planen kjørt» i `V10.md` før du fortsetter.
+* **13.11.2026 (kveld): trinn 4, akterspeilets hjørne.** Eierens blå prikker
+  på IMG_9391 (bekreftet av et blindt kantsøk) viser at akterspeilet er en
+  spiss V med skarpt hjørne: ca. 200 mm halvbredde i DWL mot 600 i modellen
+  før. Formen akter er tilpasset hjørnet, omrisset og glatte kurver
+  (`opt_hjorne.py`), `TRANSOM_CORNER_L` er 0 (det rundede kuttet gir hull i
+  STL-en når akterspeilet er smalt) og `STL_ANG` er 0,12. Poengkortet
+  `s6_hjorne` (`score.py` 1.3) består alle krav. Modellens DWL stemmer med
+  vannet i IMG_9370 innen ±2 cm; stripen er bare maling, men er brukt som
+  høydemål akter (±4 cm). Les «Status – 13. november 2026, trinn 4» i
+  `V10.md`.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på

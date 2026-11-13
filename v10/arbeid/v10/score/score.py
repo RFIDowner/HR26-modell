@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.2 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette
+VERSION = "1.3 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -855,9 +855,16 @@ def strake_at(sec, x, zc, side=1):
     h1 = i
     while h1 < len(zg) - 1 and ok[h1 + 1] and r[h1 + 1] > 0.5 * r[i]:
         h1 += 1
+    zf = float(0.5 * (zg[h0] + zg[h1]))
+    # 1.3 (13.11 kveld): baandet maa henge sammen med sin egen ytterflate. Ligger
+    # ytterflatens midte mer enn en halv listehoeyde fra baandets midte, har
+    # terskelen (3 mm over grunnlinjen) fulgt tesselleringsstoey i siden under
+    # listen, og stasjonen er ikke paalitelig (x 6000 i s6: baandet 66 mm av,
+    # ytterflaten 2 mm, skrogsiden uendret innen 0,5 mm).
+    consistent = abs(0.5 * (za + zb) - zf) < 0.5 * STRAKE_H
     return dict(z_center=float(0.5 * (za + zb)), height=float(zb - za), proud=float(r[i]),
-                z_bottom=float(za), z_top=float(zb), z_face=float(0.5 * (zg[h0] + zg[h1])),
-                fit_rms=fit_rms, reliable=bool(fit_rms < 2.5 and (zb - za) < 2.0 * STRAKE_H))
+                z_bottom=float(za), z_top=float(zb), z_face=zf,
+                fit_rms=fit_rms, reliable=bool(fit_rms < 2.5 and (zb - za) < 2.0 * STRAKE_H and consistent))
 
 
 def station_sweep(slx, xs, fn=None):
@@ -1536,6 +1543,11 @@ def analyze(path, args):
     skin = hull_skin_mask(cen, fn, ext)
     deck = deck_mask(cen, fn, ext)
     mq, dih = mesh_quality(topo, fn, aspect, lmax, skin)
+    if getattr(args, "dump_dihedral", None):
+        both = skin[topo["f1"]] & skin[topo["f2"]]
+        mid = 0.5 * (cen[topo["f1"][both]] + cen[topo["f2"][both]])
+        sel = dih > 5.0
+        np.save(args.dump_dihedral, np.c_[mid[sel], dih[sel]])
     res["mesh"] = dict(triangles=int(len(T)), file_mb=r1(fsize / 1e6, 2), vertices=int(len(Vm)),
                        degenerate_triangles=int((area < 1e-10).sum()), **mq,
                        note="skin = hull topsides and bottom outside the strake band, keel root, window recess, "
@@ -2352,6 +2364,8 @@ def main(argv=None):
     ap.add_argument("--photos", default="C:/Users/stig/Documents/Seilbåt")
     ap.add_argument("--no-render", action="store_true")
     ap.add_argument("--jobs", type=int, default=6)
+    ap.add_argument("--dump-dihedral", default=None,
+                    help="skriv (x, y, z, grader) for skinnkanter over 5 grader til denne .npy-fila")
     args = ap.parse_args(argv)
     if args.name is None:
         args.name = os.path.splitext(os.path.basename(args.stl))[0]

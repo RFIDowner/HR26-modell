@@ -41,7 +41,8 @@ BED_MARGIN = 1.5      # sikkerhetsmargin i modell-mm
 # standard er relativ toleranse, som gjorde den 263 mm lange dekkskanten til
 # 16 rette stykker med knekk i hvert punkt (V10-analysen).
 STL_TOL = 0.02
-STL_ANG = 0.15        # 0,02 mm / 0,15 rad: ca. 19 MB for skroget, 0,3 % knekker over 5 grader
+STL_ANG = 0.12        # 0,02 mm / 0,12 rad (V10 trinn 4, foer 0,15): finere i de krumme
+                      # laaringene akter; ca. 23 MB for skroget
 
 # Faste delnumre, saa et delvis bygg (--only) ikke endrer nummereringen.
 PART_NO = {

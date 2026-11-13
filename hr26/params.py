@@ -51,23 +51,31 @@ SECTION_FLARE = [            # utfall ved dekkskanten, grader fra loddrett
 # samlet (v10/verktoy/foto/py/opt_hjerte.py): IMG_9391 rms 11/7 px (foer
 # 159/133), IMG_9388 -16/-13 px (foer -23/-17), kanobunn 2,49 m3 (foer 3,67),
 # skrogsiden over fenderlisten flytter seg under 1 mm.
+# V10 trinn 4 (13.11 kveld): akterspeilets hjoerne (eierens prikker paa
+# IMG_9391, bekreftet av et uavhengig kantsoek) er en spiss V: halvbredde ca.
+# 570 mm 0,2 m over DWL og 40-70 mm ved roret. Tabellene fra t 0,75 og
+# doedtreet fra x 6 800 er tilpasset hjoernet, omrisset akterfra og forfra og
+# glatte kurver (v10/verktoy/foto/py/opt_hjorne.py glatt=10 uten95 n80max=5.0):
+# hjoernet rms 10/9 mm, IMG_9391 12/14 px, kanobunn 2,40 m3 (foer 2,49). Slaget ved
+# t 0,80 er holdt mykt (n <= 5), ellers blir slaget midt akter kantete.
 SECTION_N = [                # superellipsens eksponent: 2 = ellipse,
     (0.00, 2.4), (0.15, 3.1), (0.30, 3.4),       # hoyere = fastere slag
-    (0.45, 6.0), (0.80, 4.7), (1.00, 5.4),
+    (0.45, 6.0), (0.80, 5.0), (0.90, 6.7), (0.95, 7.4), (1.00, 8.0),
 ]
 SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
     (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # nesten flat foran kjolen,
     (0.30, 0.0), (0.45, 4.9), (0.60, 21.5),       # V midtskips og akter
-    (0.75, 20.3), (0.90, 15.4), (1.00, 8.5),
+    (0.75, 22.8), (0.90, 19.1), (0.95, 23.9), (1.00, 28.8),
 ]
 # Doedtre (vinglass-spant): spantets konvekse kanobunn bygges paa et kjolpunkt
 # DEADWOOD_H over senterlinjen, og bunnen trekkes ned til senterlinjen med
 # (1 - (y/DEADWOOD_W)^2)^2: en hul overgang. Gir hjertets spiss akterfra.
 DEADWOOD_H = [               # (x fra baugen, hoeyde over senterlinjen), mm
-    (2900.0, 0.0), (3600.0, 57.2), (5900.0, 57.2), (6800.0, 124.0),
-    (7400.0, 181.8), (7800.0, 198.6), (8000.0, 198.6),
+    (2900.0, 0.0), (3600.0, 57.2), (5900.0, 57.2), (6800.0, 98.1),
+    (7400.0, 237.8), (7800.0, 328.9), (8000.0, 328.9),
 ]
-DEADWOOD_W = [(5900.0, 163.2), (6800.0, 184.0)]   # halvbredden der overgangen er ferdig (x, mm)
+DEADWOOD_W = [(5900.0, 163.2), (6800.0, 153.8), (7400.0, 104.8),   # halvbredden der overgangen
+              (7800.0, 74.0)]                                      # er ferdig (x, mm)
 DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
                              # (0,83 mm i 1:30; OCC-fillet feiler her)
 STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)
@@ -168,7 +176,10 @@ TRANSOM_CAMBER_R = 3050.0    # akterspeilets bue i plan
 # hjoernet og moeter skrogsiden med en liten restknekk. Baandet er dermed like
 # bredt hele veien opp. Under vannlinjen trappes rundingen ned, og bunnens
 # kant mot akterspeilet blir skarp, som paa baaten.
-TRANSOM_CORNER_L = 110.0     # rundingens bredde paa akterspeilet (0 = skarpt hjoerne som foer)
+TRANSOM_CORNER_L = 0.0       # rundingens bredde paa akterspeilet (0 = skarpt hjoerne som foer)
+                             # V10 trinn 4: 0 (foer 110). Hjoernet er en skarp knekk med 1-2 cm
+                             # radius i IMG_9391, og det rundede kuttet gir hull i STL-en
+                             # (25/60/110: 700+ daarlige kanter) naar akterspeilet er smalt
 TRANSOM_CORNER_EXIT = 7.0    # restknekk mot skrogsiden, grader (gir et robust kutt)
 TRANSOM_TOP_R = 20.0         # avrundet overkant mot dekket (0,67 mm i 1:30); 0 = skarp
 TRANSOM_TOP_EXIT = 20.0      # restknekk mot dekket og akterspeilet, grader (8 og 30 ga ikke-manifold STL)
