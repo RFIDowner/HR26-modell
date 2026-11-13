@@ -120,6 +120,14 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     underkant ned til kjølbunnen midt på kjølen (modellen har 2 200 mm).
     Roret er trolig 5 cm for dypt (−1 094 mot ca. −1 045) og tas med i
     trinn 6.
+* **13.11.2026 kl. 17: «bare å kjøre» (trinn 6 + 7).** Eieren la til nye bilder
+  i `docs/foto` (`nye (1)`–`(6)`, `IMG_9526`). Originalene ligger i
+  `~/Documents/Seilbåt/nye_2026-11-13`. `IMG_9526` har GPS og viser et barn, og
+  `nye (3)`/`(5)` viser personer, så de skal IKKE i det offentlige repoet
+  uten at eieren sier ja. Målere: `v10/verktoy/foto/py/n4_*` (fra siden,
+  avgjør trinn 6) og `n6_*` (akterhjørnet, roret og kjølen). Trinn 7:
+  cockpit med seter, fotbrønn og brodekk (nye 2 og 5, Enderlein 448-5).
+  Modellen har bare en flat brønn.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
