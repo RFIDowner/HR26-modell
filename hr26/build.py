@@ -53,6 +53,7 @@ PART_NO = {
 
 
 # ------------------------------------------------- robuste boolske operasjoner
+DEBRIS_CM3 = 0.001     # 1 mm3 i 1:30: mindre loesrevne biter etter et kutt er fliser
 NUDGES = (0.0, 0.37, -0.37, 0.73, -0.73)   # smaa forskyvninger i x, fullskala-mm
 
 
@@ -104,7 +105,18 @@ def robust_cut(base, cutter, what: str, strict: bool = False):
     if n == 0:
         raise RuntimeError(f"kutt '{what}' ga et tomt resultat")
     if n > before:
-        raise RuntimeError(f"kutt '{what}' delte modellen i {n} biter")
+        # Loesrevne fliser uten volum (flater som nesten faller sammen) kastes;
+        # alt med mer enn DEBRIS_CM3 volum er en ekte deling og stopper bygget.
+        sol = sorted(out.val().Solids(), key=lambda s: -s.Volume())
+        tiny = [s for s in sol[before:] if s.Volume() < DEBRIS_CM3 * 1000.0 * P.SCALE ** 3]
+        if len(tiny) == n - before:
+            print(f"  kutt '{what}': kastet {len(tiny)} loesreven(e) flis(er) uten volum "
+                  f"({sum(s.Volume() for s in tiny) / P.SCALE ** 3:.4f} mm3 i 1:30)")
+            out = cq.Workplane("XY").newObject(
+                [sol[0] if before == 1 else cq.Compound.makeCompound(sol[:before])])
+            n = before
+        else:
+            raise RuntimeError(f"kutt '{what}' delte modellen i {n} biter")
     if strict and not out.val().isValid():
         raise RuntimeError(f"kutt '{what}' ga et ugyldig volum")
     return out
@@ -262,7 +274,8 @@ def write_stl(wp: cq.Workplane, fn: str):
     _drop_collapsed_triangles(fn)
 
 
-STL_WELD = 1e-5       # modell-mm: punkter naermere enn dette er samme punkt
+STL_WELD = 1e-4       # modell-mm (0,1 mikrometer): punkter naermere enn dette er samme punkt
+                      # (samme toleranse som tools/meshcheck.py)
 
 
 def _drop_collapsed_triangles(fn: str) -> int:

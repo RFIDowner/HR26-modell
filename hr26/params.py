@@ -69,8 +69,11 @@ DECK_THICK = 2.0 * SCALE   # V10: heller tykt enn tynt (eieren), foer 1,5 og 1,6
 # formen kvalitativt, men maaler den ikke. Kantene er rette linjer
 # (x = x0 + k * z); hjoerner og hulkiler rundes i appendages.keel(), og
 # hulkilene regnes mot curves.bottom_z, saa roten foelger kanobunnen.
-# Enderleins z er maalt fra hans DWL; datumforskjellen mot modellen
-# (0-45 mm) maa vaere den samme for kanobunnen og kjolen.
+# Kjolens linjer staar i Enderleins egen hoyderamme (z fra hans DWL), utvidet
+# ned til oppgitt dypgang 1 400. Kontrollen 13.11 fant at Enderlein og
+# brosjyren passer best med z_E = 0,968 * z_modell + 25,5 (ca. 26 mm ved DWL,
+# ca. 40 mm ved kanobunnen, ca. 70 mm ved kjolbunnen). Tas den i bruk for
+# kanobunnen, maa kjolens linjer og INT_*-hoydene flyttes i samme commit.
 KEEL_LE_LINE = ((3537.0, -700.0), (3992.0, -1200.0))   # to punkter paa forkanten (x, z)
 KEEL_TE_LINE = ((5658.0, -800.0), (5714.0, -1300.0))   # to punkter paa bakkanten (x, z)
 KEEL_TIP_Z = -DRAFT          # flat bunn; Enderlein -1 326 under sin DWL, utvidet til oppgitt dypgang
@@ -99,6 +102,11 @@ KEEL_TE_TIP = 5725.0    # bakkantlinjen ved bunnen; IKKE brukt av modellen (foel
 # og akter der propellen og roret dekker den (det sporede omrisset der er
 # propell og ror, ikke bunnen). Verdiene er V9-kurven; de holder kjolroten
 # (bottom_z midt paa roten) og akterspeilets underkant (ca. -250) der de var.
+# V10 (13.11): Enderlein og brosjyren viser en nesten flat, dyp kanobunn akter
+# helt til akterspeilets fot (ca. -410), og tegningens DEPL. 2,36 m3 gir et
+# kanobunnvolum paa ca. 2,0-2,2 m3; modellen har ca. 3,4 m3. Forslagene
+# (v10/rapporter/13nov) motsier en strekprikket vannlinje paa 448-5 ved durken,
+# saa formen under vann akter venter paa et maal fra baaten (V10.md).
 # Fra 7 650 fortsetter de V9-kurvens jevne stigning: V9 knakk ved 7 800, en
 # endeeffekt av glattingen (de to siste tabellpunktene ble ikke glattet).
 # curves.bottom_z legger en glatt spline gjennom disse, forstevnen og den

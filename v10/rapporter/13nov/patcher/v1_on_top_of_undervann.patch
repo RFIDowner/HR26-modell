@@ -1,0 +1,48 @@
+--- a/hr26/curves.py
++++ b/hr26/curves.py
+@@ -360,6 +360,8 @@
+ _NEXP = _pchip(P.SECTION_N)
+ _DEADRISE = _pchip(P.SECTION_DEADRISE)
+ _DEADWOOD = _pchip(getattr(P, "DEADWOOD_H", [(0.0, 0.0), (1.0, 0.0)]))
++_DWW_TAB = getattr(P, "DEADWOOD_W", 180.0)
++_DWW = _pchip(_DWW_TAB) if isinstance(_DWW_TAB, (list, tuple)) else (lambda x, w=float(_DWW_TAB): w)
+ 
+ 
+ def _smin(a: float, b: float, p: float = 6.0) -> float:
+@@ -463,7 +465,7 @@
+         foot[0] = (0.0, zb)
+         pts = np.vstack([foot[:-1], pts[keep]])
+     if dwh > 0.5:
+-        tt = np.clip(pts[:, 0] / P.DEADWOOD_W, 0.0, 1.0)
++        tt = np.clip(pts[:, 0] / _DWW(x), 0.0, 1.0)
+         pts[:, 1] -= dwh * (1.0 - tt * tt) ** 2
+         pts[0] = (0.0, zp)
+     seg = np.hypot(np.diff(pts[:, 0]), np.diff(pts[:, 1]))
+--- a/hr26/params.py
++++ b/hr26/params.py
+@@ -53,7 +53,7 @@
+ # over fenderlisten flytter spantene seg under 2 mm.
+ SECTION_N = [                # superellipsens eksponent: 2 = ellipse,
+     (0.00, 2.4), (0.15, 3.1), (0.30, 3.4),       # hoyere = fastere slag
+-    (0.45, 4.0), (0.80, 4.0), (1.00, 3.8),
++    (0.45, 4.5), (0.80, 4.5), (1.00, 4.2),       # (verify-undervann V1: holder vannlinjen og skrogsiden)
+ ]
+ SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
+     (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # nesten flat foran kjolen,
+@@ -66,11 +66,12 @@
+ # en lys, nesten loddrett flate under slaget (IMG_9387). Spantets konvekse
+ # kanobunn bygges paa et kjolpunkt DEADWOOD_H over senterlinjen, og bunnen
+ # trekkes ned til senterlinjen med (1 - (y/DEADWOOD_W)^2)^2: en hul overgang.
+-DEADWOOD_H = [               # (x fra baugen, hoeyde over senterlinjen), mm
+-    (5600.0, 0.0), (5900.0, 0.0), (6800.0, 100.0), (7400.0, 170.0),
+-    (7800.0, 210.0), (8000.0, 210.0),
++DEADWOOD_H = [               # (x fra baugen, hoeyde over senterlinjen), mm; fra 2 900 ogsaa
++    (2900.0, 0.0), (3600.0, 80.0), (5900.0, 80.0),  # hul garboard midtskips (V1, IMG_9391)
++    (6800.0, 100.0), (7400.0, 170.0), (7800.0, 210.0), (8000.0, 210.0),
+ ]
+-DEADWOOD_W = 180.0           # halvbredden der overgangen er ferdig (6 mm i 1:30)
++DEADWOOD_W = [(5900.0, 200.0), (6800.0, 120.0)]   # halvbredde (x, mm): smal akter, ellers
++                             # synes skroget ved siden av roret (IMG_9391 rad 950-1000)
+ DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
+                              # (0,83 mm i 1:30; OCC-fillet feiler her)
+ STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)

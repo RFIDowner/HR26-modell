@@ -180,12 +180,14 @@ diametre, som er definert i modell-millimeter og ganget opp.
 
 ## Delene
 
-Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
-1,24 g/cm³ — legg til litt for støtte og skjørt.
+Seksten filer i `export/stl/`. Materialtallene er reell geometri ganget med
+1,24 g/cm³ — legg til litt for støtte og skjørt. Skroget og ruff-taket har
+massive partier (innredningen og lokket) som printes med glissent fyll, så de
+bruker en god del mindre plast enn tallet sier; se slicerens anslag.
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,9 × 205,9 × 104,8 | 228 cm³ / 283 g |
+| 01 | `01_skrog.stl` | 205,5 × 205,5 × 89,2 | 317 cm³ geometri, mindre med fyll |
 | 02 | `02_ror.stl` | 34,5 × 3,2 × 16,4 | 1,0 cm³ / 1 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
@@ -196,30 +198,41 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 09 | `09_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
 | 10 | `10_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
 | 11 | `11_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
-| 12 | `12_stativ-vugge1.stl` | 79,7 × 94,6 × 6,0 | 36,0 cm³ / 45 g |
-| 13 | `13_stativ-vugge2.stl` | 77,1 × 106,4 × 6,0 | 37,0 cm³ / 46 g |
+| 12 | `12_stativ-vugge1.stl` | 80,1 × 95,6 × 6,0 | 36,1 cm³ / 45 g |
+| 13 | `13_stativ-vugge2.stl` | 77,2 × 106,8 × 6,0 | 38,0 cm³ / 47 g |
 | 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 56,9 cm³ / 71 g |
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,7 cm³ / 18 g |
+| 16 | `16_ruff-tak.stl` | 125,3 × 74,6 × 20,5 | 60,6 cm³ geometri, mindre med fyll |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 283 g,
-stativet 161 g, resten under 35 g. Én rull på 1 kg holder med god margin.
+Stativet er 163 g og de små delene under 35 g. Skroget og ruff-taket avhenger
+av fyllet (se under). Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
 **01 Skrog** — den store jobben, 12–16 timer.
 * Ligger ferdig orientert: kjølen ned, rotert 45°, 206 × 206 mm av platen.
-* **Infill 0 %.** Skroget er uthult med minst 1,5 mm vegg (1,9 mm nominelt,
-  3,4 mm i baugkilen), og innvendige spant hver 26 mm bærer dekket. Setter du
-  infill blir det bare tyngre og tregere. Innsiden er skrogsnittet flyttet
-  innover langs normalen med litt margin, så veggen holder tykkelsen også der
-  skroget er en tynn kile — den gamle, skalerte innsiden ga 0,2–0,5 mm vegg i
-  baugen og et hull i stevnen ved vannlinjen.
-* Støtte på, bare under skroget ved baug og hekk. Ingen støtte trengs oppe:
-  dekket og cockpitgulvet spenner mellom spantene (26 mm), det broer PLA fint.
-* Lag 0,12–0,16 mm. Ingen brim — kjølen gir god vedheft, og det er plass til
-  brim om du vil ha det.
+* **Infill 15 % (gyroid eller grid).** Midt i skroget er kahytten med
+  innredningen (V10): durk, køyer, sofaer, bysse, skott og skap er massivt
+  materiale som står på fyllet under seg. Forut og akter er skroget uthult med
+  2 mm vegg og innvendige spant hver 26 mm; der er hulrommene lukkede, så
+  slicerens fyll havner ikke i dem.
+* **Støtte bare fra platen** («kun på plate»). Da får skrogbunnen ved baug og
+  hekk og det store hjørnet nederst på kjølens forkant støtte, men ingenting
+  kommer inn i kahytten. Inne i kahytten heller alle tak 45° eller mindre.
+  Det eneste som bygger bro er sidedekket over de åpne vinduene, ca. 42 mm.
+  Henger broen, sett `WIN_TIE = True` i `hr26/params.py` og bygg på nytt: da
+  får hvert vindu en tynn støtte midt i som skjæres bort etterpå.
+* Lag 0,12 mm gir renest skjøt mot ruff-taket (kragen under taket heller
+  1,9°). Ingen brim — kjølen gir god vedheft.
 * Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
+
+**16 Ruff-tak** — taket på ruffen er et eget lokk (V10), med luker, ventil og
+sprayhood. Løftes det av, ser man ned i kahytten.
+* Ligger ferdig orientert på skjøteflaten, som er plan. **Ingen støtte.**
+* Infill 15 %. Lokket er massivt med et spor i undersiden som tres ned over
+  en 1,0 × 1,3 mm kant rundt åpningen i dekket, med 0,22–0,25 mm klaring.
+  Går det tregt, puss kanten lett. Lokket skal ikke limes.
 
 **02 Ror** — printes liggende, 3 mm tykt. Støtte av. Forkanten følger
 akterspeilets helning, og de to tappene på den passer i hullene i akterspeilet
@@ -229,7 +242,8 @@ rett under vannlinjen.
 253,2 × 253,2 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
 Ingen plass til brim. Se «Masten».
 
-**04 Mast, 365 mm, ikke A1** — med 11 mm sokkel ned i ruffen. Trenger en
+**04 Mast, 365 mm, ikke A1** — med 11 mm sokkel gjennom ruff-taket og ned i
+mastestøtten i kahytten. Trenger en
 plate med minst 365 mm langs én akse eller 261 × 261 mm diagonalt. Se «Masten».
 
 **05–08 Riggbeslag** — små, flate, ligger rett på platen. Ingen støtte.
@@ -260,7 +274,7 @@ lettelseshull. 15 % infill holder. Tre vuggene ned på tappene.
 * **Livliner:** tynt tauverk eller tråd, opptil 0,4 mm. Tres gjennom øynene på
   rekkepålene — se under.
 
-Rekkepålene printes (del 08) og trenger ikke messingtråd.
+Rekkepålene printes (del 10) og trenger ikke messingtråd.
 
 ---
 
@@ -387,13 +401,18 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 
 * Orientering: stående, kjølen ned — STL-en ligger allerede riktig.
 * Plassering: rotert 45°, opptar 206 × 206 mm av platen.
-* Støtte: **bare under skroget**. I Bambu Studio: støttetype «tre (auto)»,
-  «kun på plate» avslått er ikke nødvendig — kjølen står på platen, og det
-  eneste som trenger støtte er den lille undersiden ved hekk og baug.
-* Skroget er allerede uthult med minst 1,5 mm vegg og innvendige spant hver 26 mm.
-  **Sett infill til 0 %** — spantene bærer dekket.
+* Støtte: **bare fra platen**. I Bambu Studio: støttetype «tre (auto)» og
+  «kun på plate» på. Kjølen står på platen; undersiden ved hekk og baug og
+  kjølens nedre forkant trenger støtte, kahytten ikke.
+* Infill 15 %: innredningen i kahytten står på fyllet. Forut og akter er
+  skroget uthult med 2 mm vegg og spant hver 26 mm.
+* Støtte bare fra platen, så ingenting kommer inn i kahytten.
 * Lag: 0,12–0,16 mm. Fin dyse (0,2 mm) gir tydeligere fenderlist og vinduer.
 * Ingen brim nødvendig; kjølen gir god vedheft. Vil du ha brim, er det plass.
+
+**Ruff-taket (16)**
+
+Ligger på skjøteflaten. Ingen støtte, 15 % infill.
 
 **De små delene**
 
@@ -433,13 +452,8 @@ Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
 en annen farge enn platen — svart tekst på hvit plate ser bra ut, og på A1
 er det bare å bytte rull manuelt når printeren stopper.
 
-Båtens navn står også **i relieff på akterspeilet**, 0,35 mm opphøyd, slik
-en Hallberg-Rassy bærer navnet sitt. Akterspeilet heller 8°, så bokstavene
-står med et lite utheng oppover — det printes fint uten støtte. Bokstavene
-følger akterspeilets bue, så relieffet er like høyt over hele navnet.
-
-Navnet ligger i `BOAT_NAME` i `hr26/params.py` og brukes begge steder. Sett
-det til `""` for å droppe det. Resten av skiltteksten ligger i
+Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
+`NAME_ON_TRANSOM = False`). Det ligger i `BOAT_NAME` i `hr26/params.py`. Resten av skiltteksten ligger i
 `hr26/plaque.py` som `TYPE_LINE`, `LINES` og `SCALE_LINE`.
 
 ---
@@ -447,14 +461,16 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 ## Montering
 
 1. Rens hullene i dekket med et 1,6 mm bor for hånd.
-2. Klipp rekkepålene av sprua (del 08), puss tappen flat, og lim dem i hullene.
+2. Klipp rekkepålene av sprua (del 10), puss tappen flat, og lim dem i hullene.
    Sørg for at øynene peker for-akter, ellers går ikke livlinene gjennom.
 3. Bøy pulpit og pushpit av 1,0 mm messingtråd rundt tappene på bøyemalen
-   (del 09) og lim dem i.
-4. Lim mastefoten i utsparingen i ruffen.
+   (del 11) og lim dem i.
+4. Lim mastefoten i utsparingen på ruff-taket (del 16). Lokket tres ned over
+   kanten rundt åpningen i dekket og limes ikke, så det kan løftes av.
 5. Tre salingen på masten til ca. 213 mm over foten, og masttoppen i enden.
    Alle beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
-6. Sett masten i foten. Stag og vant: tynn tråd fra masttoppen til
+6. Sett masten i foten. A1-masten står i mastefoten på lokket og følger med
+   når lokket løftes av; 365-masten går gjennom lokket og ned i mastestøtten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
 7. Roret: tappene passer i de to hullene i akterspeilet, rett under
    vannlinjen. Forkanten skal ligge parallelt med akterspeilet.
@@ -472,18 +488,15 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
-* Ruffens front er en rett 45°-flate. På originalen er den avrundet.
 * Rundt akterdekket har tegningen en lav kant — karmen fortsetter rundt
   hekken, men under 50 mm høy etter profilen (under 2 mm i 1:30), med
   pushpiten oppå. Den er utelatt; karmen slutter der den går i ett med dekket
   (6 900 mm), og akterdekket ligger i dekkshøyde.
-* Ruffen er massiv over dekket; skroget er uthult bare under dekket. Det
-  koster noen gram plast, men gir en stiv og enkel print.
-* Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 4 ikke-manifolde kanter av 214 000 — rester etter boolske
-  operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
-  import. Alle øvrige deler er helt lukkede. Kjør
-  `python tools/meshcheck.py export/stl/*.stl` for å se status.
+* Skrogformen under vann akter (V10) venter på mål fra båten: Enderleins
+  tegning, deplasementet på tegningen og bildet akterfra er ikke enige. Se
+  `V10.md`.
+* Alle deler er lukkede nett; eksporten fjerner trekanter med null areal.
+  Kjør `python tools/meshcheck.py export/stl/*.stl` for å se status.
 
 ### Plass til større målestokk
 
