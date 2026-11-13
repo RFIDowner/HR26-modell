@@ -204,6 +204,10 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   er avsluttet (`tasklist //FI "IMAGENAME eq cs2.exe"`), og som så bygger og
   kjører poengkortet.
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
+* `python tools/sammensetning.py` lager `export/visning/hr26_sammensatt.stl`:
+  alle delene satt sammen i én STL, bare til å se på (eieren ba om det
+  14.11.2026). Lett jobb (1,2 GB, 30 s), fordi skroget hentes fra den ferdige
+  STL-en. Fila ligger utenfor git; lag den på nytt etter hvert bygg.
 * Skroget alene bygger på ca. 150 s. `python -m hr26.build` sletter alle
   STL-er i `export/stl` før eksport. Med `--only skrog,stativ-vugge1,...`
   bygges og eksporteres bare de delene, og de andre fila blir liggende.

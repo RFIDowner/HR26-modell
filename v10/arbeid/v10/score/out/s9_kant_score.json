@@ -4,7 +4,7 @@
   "name": "s9_kant",
   "script": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\v10\\arbeid\\v10\\score\\score.py",
   "version": "1.5 (2026-11-13)",
-  "run_at": "2026-11-14T00:24:45",
+  "run_at": "2026-11-14T00:52:33",
   "stl_format": "binary",
   "frame": "plate",
   "rotation_deg": 45.0,
@@ -15,10 +15,10 @@
   "bow_tip_x": 4.0,
   "x_shift_vs_bow_anchor": -0.0,
   "dwl_model_z": 46.667,
-  "analysis_s": 7.5,
+  "analysis_s": 6.7,
   "ref": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\v10\\arbeid\\v10\\score\\out\\s8b_cockpit_score.json",
   "png": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\v10\\arbeid\\v10\\score\\out\\s9_kant_score.png",
-  "runtime_s": 14.8
+  "runtime_s": 11.9
  },
  "mesh": {
   "triangles": 428796,

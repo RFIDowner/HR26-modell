@@ -189,6 +189,20 @@ Alle mål ligger øverst i `hr26/params.py`. Vil du ha en annen målestokk er de
 nok å endre `SCALE` — alt annet følger med, inkludert veggtykkelser og hull­
 diametre, som er definert i modell-millimeter og ganget opp.
 
+### Se hele modellen satt sammen
+
+```
+python tools/memcap.py --gb 3 --lock -- python tools/sammensetning.py
+```
+
+lager `export/visning/hr26_sammensatt.stl`: skrog, ruff-tak, ror, mast med
+beslag, bom, rekkepåler, stativ og skilt i én fil i 1:30, stående på stativet
+(272 × 146 × 475 mm). Den er bare til å se på i en STL-viser eller sliceren,
+ikke til print. Skroget hentes fra `export/stl/01_skrog.stl`, så det tar et
+halvt minutt. `--uten-lokk` viser kahytten, `--uten-rigg` og `--uten-stativ`
+gir bare skroget, og `--seil` setter på bommen med surret seil. Pulpit,
+pushpit og livliner er ikke med. Fila sjekkes ikke inn.
+
 ### Moduler
 
 | Fil | Ansvar |
@@ -206,6 +220,7 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | `build.py` | setter sammen, orienterer for print, eksporterer. Boolske operasjoner som ikke gir ett volum stopper bygget i stedet for å miste deler i stillhet |
 | `tools/render.py` | kontrollbilder av STL |
 | `tools/meshcheck.py` | sjekker at STL-ene er lukkede |
+| `tools/sammensetning.py` | én STL med alle delene satt sammen, bare til å se på |
 
 ---
 
