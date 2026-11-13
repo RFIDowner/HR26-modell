@@ -59,6 +59,15 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   men ikke koblet inn. Enderleins tegning viser at kjølen er mye større og står
   400–680 mm lenger forut; det er neste steg. Les «Status – pauset
   12. november» i `V10.md` før du fortsetter.
+* **13.11.2026 (natteøkt, Claude med fullmakt): kjøl, kahytt og lokk
+  ferdig.** Pushet til `v10`: kjølen etter Enderlein 448-5, rettet
+  dekkslinje, avtakbart ruff-tak (`16_ruff-tak.stl`), kahytt med innredning
+  uten support, åpne vinduer, vugger som passer, README og eierguide
+  oppdatert. Poengkortet består alle krav. **Formen under vann akter venter på
+  et mål fra eieren**: tegningens deplasement (2,36 m³) og bildet akterfra
+  sier at skroget er for fyldig, mens en vannlinje på 448-5 sier at det
+  stemmer. Les «Status – 13. november 2026» i `V10.md` (spørsmålene til
+  eieren og oppskriften for trinn 3).
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
