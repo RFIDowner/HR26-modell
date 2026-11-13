@@ -213,7 +213,8 @@ TRANSOM_CORNER_Z = (-100.0, 0.0)   # rundingen bygges opp mellom disse hoydene
 RUDDER_GAP = 15.0       # klaring mellom rorets forkant og akterspeilet
 RUDDER_TE_X = 8150.0    # bakkanten er loddrett (profilen), saa korden vokser nedover
 RUDDER_TOP_Z = -60.0
-RUDDER_BOT_Z = -1094.0
+RUDDER_BOT_Z = -1047.0      # V10 trinn 6: Enderlein 448-5 (-1 047); IMG_9389 -1 025..-1 055,
+                            # nye (6) -860..-1 045 (foer -1 094, 5 cm for dypt)
 RUDDER_T = 90.0
 RUDDER_X = TRANSOM_WL_X + TRANSOM_RAKE * RUDDER_TOP_Z + RUDDER_GAP   # forkant ved topp
 RUDDER_RAKE = TRANSOM_RAKE * (RUDDER_BOT_Z - RUDDER_TOP_Z)   # forkanten forover nedover, som akterspeilet
@@ -375,7 +376,17 @@ COCKPIT_AFT = [              # bronnens bakre runding (x, halvbredde)
     (7724.0, 200.0), (7729.0, 150.0), (7733.0, 100.0), (7735.0, 50.0),
     (7735.0, 0.0),
 ]
-COCKPIT_FLOOR_Z = 294.0      # bronnens gulv over DWL
+COCKPIT_FLOOR_Z = 470.0      # fotbronnens gulv over DWL (V10 trinn 7: Enderlein 448-5
+                             # gir 463-480 i profilen; foer 294 = hele bronnen dyp)
+# V10 trinn 7 (13.11.2026): seter langs begge sider og paa tvers akter, en
+# smal fotbronn og et brodekk under nedgangen (bildene nye (2) og (5),
+# Enderlein 448-5 profil og plan). Setene og brodekket er massive (printes
+# uten support); bronnen over dem skjaeres bare ned til setehoeyden.
+COCKPIT_SEAT_Z = 898.0       # setenes og brodekkets overflate (448-5: linje 898 fra 6 200 til 7 500)
+FOOTWELL_X0 = 6065.0         # fotbronnens forkant = brodekkets akterkant (448-5 plan og profil)
+FOOTWELL_X1 = 7305.0         # fotbronnens akterkant; setet gaar paa tvers aktenfor (til 7 735)
+FOOTWELL_HALF_W = 330.0      # 448-5 plan: 329 (bredde ca. 660)
+FOOTWELL_RAD = 80.0          # hjoerneradius i plan
 COCKPIT_RAD = 140.0          # hjorneradius forut, i plan
 COAMING_HALF_W = 980.0       # karmens ytterkant
 COAMING_X1 = 6900.0          # karmen slutter her (den er nede i dekket fra 6 800)

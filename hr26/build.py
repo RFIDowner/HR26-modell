@@ -204,6 +204,8 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
     step("dekksbeslag", w)
 
     w = robust_cut(w, D.cockpit_cut(), "cockpit")
+    if hasattr(P, "COCKPIT_SEAT_Z"):
+        w = robust_cut(w, D.footwell_cut(), "fotbronn")
     w = robust_cut(w, D.companionway_cut(), "nedgang")
     win_cut, win_keep = D.hull_windows()
     w = robust_cut(w, win_cut, "vinduer")

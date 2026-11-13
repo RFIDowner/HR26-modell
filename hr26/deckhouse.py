@@ -681,8 +681,32 @@ def cockpit_tub(grow: float) -> cq.Workplane:
 def cockpit_cut() -> cq.Workplane:
     """Cockpitbronnen: rett forkant, sider som foelger dekkskanten og en
     rundet bakkant som foelger hekken. Skjaeres bare opp til karmtoppen under
-    sprayhooden, saa uthenget blir staaende."""
-    z0 = cockpit_floor_z()
+    sprayhooden, saa uthenget blir staaende. Fra V10 trinn 7 skjaeres den bare
+    ned til setehoeyden (COCKPIT_SEAT_Z): setene langs sidene, setet paa
+    tvers akter og brodekket forut staar igjen som massive flater, og
+    fotbronnen (footwell_cut) skjaeres ned til gulvet."""
+    z0 = getattr(P, "COCKPIT_SEAT_Z", cockpit_floor_z())
     prism = _plan_prism_well(_cockpit_stb(0.0), P.COCKPIT_X0, P.COCKPIT_RAD, z0, 2600.0)
     top = _roof_body(P.COCKPIT_X0 - 300.0, P.LOA + 200.0, _cockpit_lid_z, 1500.0, 2600.0, camber=0.0)
     return prism.intersect(top)
+
+
+def footwell_cut() -> cq.Workplane:
+    """Fotbronnen mellom setene (V10 trinn 7): rektangel med rundede hjoerner
+    i plan fra FOOTWELL_X0 (brodekkets akterkant) til FOOTWELL_X1, loddrette
+    vegger fra gulvet (COCKPIT_FLOOR_Z) og opp gjennom setehoeyden. Ingen
+    overheng, saa den printes uten support."""
+    x0, x1, w, r = P.FOOTWELL_X0, P.FOOTWELL_X1, P.FOOTWELL_HALF_W, P.FOOTWELL_RAD
+    z0 = cockpit_floor_z()
+    z1 = P.COCKPIT_SEAT_Z + 60.0
+    b = (
+        cq.Workplane("XY").workplane(offset=z0)
+        .center(0.5 * (x0 + x1), 0.0)
+        .rect(x1 - x0, 2.0 * w)
+        .extrude(z1 - z0)
+    )
+    try:
+        b = b.edges("|Z").fillet(r)
+    except Exception:  # pragma: no cover
+        pass
+    return b
