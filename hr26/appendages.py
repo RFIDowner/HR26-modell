@@ -50,12 +50,15 @@ def _foil_wire(x_le: float, z: float, chord: float, thick: float) -> cq.Wire:
 
 
 def _offset_foil_wire(x_le: float, z: float, chord: float, thick: float, off: float) -> cq.Wire:
-    """Profilet forskjoevet `off` utover langs normalen i snittplanet."""
+    """Profilet forskjoevet `off` utover langs normalen i snittplanet. Mot for-
+    og bakkanten avtar forskyvningen til null (sin-vekt), saa hulkilen mot
+    skroget ikke gjoer kjolen lengre enn omrisset i profil."""
     pts = np.array(_foil(chord, thick))
     if off > 0.0:
         d = np.roll(pts, -1, axis=0) - np.roll(pts, 1, axis=0)
         d /= np.linalg.norm(d, axis=1, keepdims=True)
-        pts = pts + off * np.c_[-d[:, 1], d[:, 0]]      # utover: profilet gaar med klokka
+        w = np.sin(np.pi * np.clip(pts[:, 0] / chord, 0.0, 1.0)) ** 0.5
+        pts = pts + (off * w)[:, None] * np.c_[-d[:, 1], d[:, 0]]   # utover: profilet gaar med klokka
     v = [cq.Vector(x_le + px, py, z) for (px, py) in pts]
     return cq.Wire.assembleEdges([cq.Edge.makeSpline(v + [v[0]])])
 
@@ -76,63 +79,159 @@ def _keel_fillet_offset(d: float) -> float:
     return a * (1.0 - d / r) ** k
 
 
+# ------------------------------------------------------- kjolens omriss
+# Omrisset i senterplanet bygges som en polylinje: kanobunnen (curves.bottom_z)
+# -> hulkil -> rett forkant -> rundet hjoerne -> flat bunn -> rundet hjoerne ->
+# rett bakkant -> hulkil -> kanobunnen. Hjoernene er eksakte sirkelbuer.
+# Hulkilenes sentrum ligger KEEL_*_FILLET_R fra kantlinjen og fra den sampel-
+# tatte kanobunnen, saa roten foelger kanobunnen uansett hvordan den endres.
+def _arc(c, p0, p1, n: int = 16):
+    a0 = math.atan2(p0[1] - c[1], p0[0] - c[0])
+    a1 = math.atan2(p1[1] - c[1], p1[0] - c[0])
+    da = (a1 - a0 + math.pi) % (2.0 * math.pi) - math.pi      # korteste vei
+    r = math.hypot(p0[0] - c[0], p0[1] - c[1])
+    return [(c[0] + r * math.cos(a0 + da * i / n), c[1] + r * math.sin(a0 + da * i / n)) for i in range(n + 1)]
+
+
+class _KeelProfile:
+    def __init__(self):
+        zb = P.KEEL_TIP_Z
+        self.zb = zb
+        fwd = self._edge_chain(P.KEEL_LE_LINE, P.KEEL_LE_TIP_R, P.KEEL_LE_FILLET_R, -1.0)
+        aft = self._edge_chain(P.KEEL_TE_LINE, P.KEEL_TE_TIP_R, P.KEEL_TE_FILLET_R, +1.0)
+        self.fwd = np.array(fwd)          # fra kanobunnen ned til bunnen
+        self.aft = np.array(aft)
+        self.x_fwd, self.x_aft = self.fwd[0, 0], self.aft[0, 0]
+
+    @staticmethod
+    def _edge_chain(line, r_tip, r_fil, side):
+        """En kant (side -1 forkant, +1 bakkant) fra kanobunnen til bunnen."""
+        (xa, za), (xb, zb_) = line
+        d = np.array([xb - xa, zb_ - za], float)
+        d /= np.linalg.norm(d)
+        if d[1] > 0.0:
+            d = -d                                        # nedover
+        p = np.array([xa, za], float)
+        zb = P.KEEL_TIP_Z
+        # hjoernet mot bunnen: bunnen gaar innover (-side) fra kanten
+        q = p + d * (zb - p[1]) / d[1]
+        bdir = np.array([-side, 0.0])
+        th = math.acos(float(np.clip(d @ bdir, -1.0, 1.0)))
+        t = r_tip * math.tan(0.5 * th)
+        t1, t2 = q - t * d, q + t * bdir
+        corner = _arc(t2 + np.array([0.0, r_tip]), t1, t2)
+        # hulkilen: sentrum paa linjen parallelt med kanten, r_fil utenfor
+        n_out = np.array([-d[1], d[0]])
+        if n_out[0] * side < 0.0:
+            n_out = -n_out
+        # Hulkilen regnes mot kanobunnen loftet KEEL_FILLET_LIFT opp, saa den
+        # krysser den ekte kanobunnen med en liten vinkel (ca. 12-14 grader) i
+        # stedet for aa tangere den: et tydelig snitt gir en robust union.
+        lift = P.KEEL_FILLET_LIFT
+        xs = np.arange(max(q[0] - 3000.0, 300.0), min(q[0] + 3000.0, P.LOA - 100.0), 5.0)
+        cb = np.c_[xs, [C.bottom_z(float(x)) + lift for x in xs]]
+
+        def gap(s):
+            c = p + s * d + r_fil * n_out
+            dist = np.hypot(cb[:, 0] - c[0], cb[:, 1] - c[1])
+            i = int(np.argmin(dist))
+            below = c[1] < C.bottom_z(float(c[0])) + lift
+            return (dist[i] - r_fil) if below else -dist[i] - r_fil, cb[i], c
+        lo, hi = -3000.0, float(np.dot(q - p, d))         # hi: ved bunnen, langt fra kanobunnen
+        for _ in range(60):
+            m = 0.5 * (lo + hi)
+            if gap(m)[0] > 0.0:
+                hi = m
+            else:
+                lo = m
+        _, tb, c = gap(hi)
+        te = p + hi * d                                   # tangentpunktet paa kanten
+        fillet = _arc(c, tb, te)
+        line_pts = [tuple(te), tuple(t1)]
+        return [tuple(v) for v in fillet] + line_pts[1:] + corner[1:]
+
+    def edges(self, z):
+        """(forkant, bakkant) i hoyden z. Over hulkilenes ytterpunkter (inne
+        i skroget) staar de fast der."""
+        def at(chain):
+            if z >= chain[0, 1]:
+                return float(chain[0, 0])
+            if z <= chain[-1, 1]:
+                return float(chain[-1, 0])
+            return float(np.interp(-z, -chain[:, 1], chain[:, 0]))
+        return at(self.fwd), at(self.aft)
+
+
+def keel_outline():
+    """Kjolens omriss i senterplanet som (x, z)-liste fra kanobunnen foran,
+    ned forkanten, langs bunnen og opp bakkanten. Til kontroll og overlegg."""
+    k = _KeelProfile()
+    return [tuple(map(float, v)) for v in k.fwd] + [tuple(map(float, v)) for v in k.aft[::-1]]
+
+
 def keel() -> cq.Workplane:
-    """Finnekjol, loftet mellom rot og bunn. Stikker opp i skroget for union.
+    """Finnekjol, loftet gjennom vannrette snitt fra et stykke inne i skroget
+    ned til bunnen. Omrisset (for- og bakkant i hver hoyde) kommer fra
+    _KeelProfile, med hulkiler i profil mot curves.bottom_z.
 
-    Mot skroget utvides profilet (KEEL_FILLET), saa overgangen blir en
-    hulkil i stedet for en skarp kant. Kanobunnen ligger nesten vannrett
-    langs roten (innen ca. 7 mm), saa utvidelsen bygges inn i vannrette
-    snitt rundt overgangshoyden - ingen fillet i OCC.
+    Mot skroget utvides tverrsnittet i tillegg (KEEL_FILLET), saa overgangen
+    blir en hulkil ogsaa sett forfra. Bunnkanten fases 45 grader i tverrsnitt
+    (KEEL_BOT_CHAMFER): fasen er printbar uten stoette, og en flat stripe
+    staar igjen som kjolen staar paa ved print. Det store hjoernet mellom
+    forkant og bunn (KEEL_LE_TIP_R) heller mer enn 45 grader de nederste
+    ca. 170 mm og trenger stoette ved platen.
     """
-    root_z = C.bottom_z(0.5 * (P.KEEL_LE_ROOT + P.KEEL_TE_ROOT)) + 260.0
+    k = _KeelProfile()
+    xs = np.linspace(k.x_fwd, k.x_aft, 80)
+    z_cb = [C.bottom_z(float(x)) for x in xs]
+    z_top = max(z_cb) + P.KEEL_ROOT_UP
+    z_root = float(np.mean(z_cb))
+    cf = P.KEEL_BOT_CHAMFER
 
-    def section(z):
-        t = (z - root_z) / (P.KEEL_TIP_Z - root_z)
-        le = P.KEEL_LE_ROOT + (P.KEEL_LE_TIP - P.KEEL_LE_ROOT) * (t ** 0.85)
-        te = P.KEEL_TE_ROOT + (P.KEEL_TE_TIP - P.KEEL_TE_ROOT) * (t ** 1.30)
+    def thick(z):
+        t = min(max((z_root - z) / (z_root - k.zb), 0.0), 1.0)
         th = P.KEEL_ROOT_T + (P.KEEL_TIP_T - P.KEEL_ROOT_T) * t
-        return le, te - le, th
-
-    steps = 7
-    zs = [root_z + (P.KEEL_TIP_Z - root_z) * i / steps for i in range(steps + 1)]
-    r = P.KEEL_FILLET
-    if r <= 0.0:
-        wires = [_foil_wire(*_le_z(section(z), z)) for z in zs]
-        return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=False)])
+        e = z - k.zb
+        if e < cf:                                   # 45 graders fas paa bunnkanten
+            th -= 2.0 * (cf - e)
+        return th
 
     # overgangen: kanobunnens hoyde der kjolsiden moeter den, midlet langs roten
-    le, ch, th = section(zs[1])
+    le0, te0 = k.edges(z_root - 120.0)
+    th0 = thick(z_root - 120.0)
     z_j = []
-    for x in np.linspace(le + 0.1 * ch, le + 0.9 * ch, 9):
+    for x in np.linspace(le0 + 0.1 * (te0 - le0), le0 + 0.9 * (te0 - le0), 9):
         sec = np.asarray(C.section(float(x), 60), dtype=float)
-        z_j.append(float(np.interp(0.5 * th, sec[:, 0], sec[:, 1])))
+        z_j.append(float(np.interp(0.5 * th0, sec[:, 0], sec[:, 1])))
     zj = float(np.mean(z_j))
+    r = P.KEEL_FILLET
 
-    fil = [zj + f * r for f in (0.7, 0.35, 0.0, -0.2, -0.4, -0.6, -0.8, -1.0)]
-    wires = [_foil_wire(*_le_z(section(zs[0]), zs[0]))]
-    for z in fil:
-        le, ch, th = section(z)
-        wires.append(_offset_foil_wire(le, z, ch, th, _keel_fillet_offset(zj - z)))
-    wires += [_foil_wire(*_le_z(section(z), z)) for z in zs if z < zj - 1.6 * r]
-    return cq.Workplane("XY").newObject([_loft3(wires)])
+    # hoyder: ett snitt inne i skroget, saa jevnt hver KEEL_DZ fra toppen av
+    # hulkilen mot skroget ned til bunnen. Jevn avstand er viktig: loften
+    # svinger ut mellom tett og glissent plasserte snitt.
+    z1 = zj + 0.7 * r
+    n = max(int(math.ceil((z1 - k.zb) / P.KEEL_DZ)), 2)
+    zs = [z1 - (z1 - k.zb) * i / n for i in range(n + 1)]
+    if cf > 0.0:                                     # et snitt noyaktig der fasen slutter
+        zs = sorted([z for z in zs if abs(z - (k.zb + cf)) > 0.25 * P.KEEL_DZ] + [k.zb + cf], reverse=True)
 
-
-def _le_z(sec, z):
-    le, ch, th = sec
-    return le, z, ch, th
-
-
-def _loft3(wires) -> cq.Solid:
-    """Glatt loft med hoyst tredjegrads flate paa tvers av snittene (som
-    hull._loft3); standardloften svinger mellom tett og glissent plasserte snitt."""
-    from OCP.BRepOffsetAPI import BRepOffsetAPI_ThruSections
-
-    b = BRepOffsetAPI_ThruSections(True, False, 1e-6)
-    b.SetMaxDegree(3)
-    for w in wires:
-        b.AddWire(w.wrapped)
-    b.Build()
-    return cq.Solid(b.Shape())
+    # inne i skroget: snitt med samme avstand opp til z_top, der utvidelsen
+    # trappes ned til null (rent profil oeverst)
+    m = max(int(math.ceil((z_top - z1) / P.KEEL_DZ)), 1)
+    off1 = _keel_fillet_offset(zj - z1) if r > 0.0 else 0.0
+    wires = []
+    for i in range(m):
+        z = z_top - (z_top - z1) * i / m
+        le, te = k.edges(z)
+        wires.append(_offset_foil_wire(le, z, te - le, thick(z1), off1 * i / m))
+    for z in zs:
+        le, te = k.edges(z)
+        off = _keel_fillet_offset(zj - z) if r > 0.0 else 0.0
+        wires.append(_offset_foil_wire(le, z, te - le, thick(z), off))
+    # Rett (ruled) loft: snittene staar saa tett (KEEL_DZ) at kantene mellom
+    # dem ikke synes (buehoeyde under 0,01 mm i 1:30 i hulkilene), og den
+    # glatte loften svinger ut gjennom saa mange snitt.
+    return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=True)])
 
 
 def _pin_positions():

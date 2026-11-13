@@ -80,7 +80,9 @@ def winches() -> cq.Workplane:
     x = P.WINCH_X
     z = D.coaming_top_z(x)
     yi, yo = D.cockpit_half_width(x), D.coaming_half_width(x)
-    rb = min(0.5 * P.WINCH_BASE_D, 0.5 * (yo - yi) - 2.0)
+    # 8 mm fra karmens kanter: med 2 mm sto sokkelen nesten tangent mot
+    # karmens innervegg, og OCC laget en sprekk der (aapent nett, 13.11.2026)
+    rb = min(0.5 * P.WINCH_BASE_D, 0.5 * (yo - yi) - 8.0)
     rd = min(0.5 * P.WINCH_DRUM_D, rb - 8.0)
     for sign in (1, -1):
         y = sign * 0.5 * (yi + yo)

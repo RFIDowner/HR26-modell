@@ -215,6 +215,36 @@ def write_stl(wp: cq.Workplane, fn: str):
     shapes = [v for v in wp.vals() if isinstance(v, cq.Shape)]
     shape = shapes[0] if len(shapes) == 1 else cq.Compound.makeCompound(shapes)
     shape.exportStl(fn, STL_TOL, STL_ANG, False, False)
+    _drop_collapsed_triangles(fn)
+
+
+STL_WELD = 1e-5       # modell-mm: punkter naermere enn dette er samme punkt
+
+
+def _drop_collapsed_triangles(fn: str) -> int:
+    """Fjerner trekanter der to hjoerner er samme punkt (null areal).
+
+    OCC-trianguleringen lager av og til slike ved soemmer (f.eks. overkanten
+    av akterspeilet). De gjoer nettet ikke-manifold (kanten brukes tre-fire
+    ganger) uten aa ha noe volum. Punktene skrives sveiset (STL_WELD), saa
+    alle programmer ser de samme hjoernene. Returnerer antall fjernet."""
+    import numpy as np
+
+    with open(fn, "rb") as f:
+        head = f.read(84)
+        n = int.from_bytes(head[80:84], "little")
+        rec = np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])
+        a = np.frombuffer(f.read(n * 50), dtype=rec).copy()
+    q = np.round(a["v"].reshape(-1, 3).astype(np.float64) / STL_WELD).astype(np.int64)
+    _, inv = np.unique(q, axis=0, return_inverse=True)
+    t = inv.reshape(-1, 3)
+    keep = (t[:, 0] != t[:, 1]) & (t[:, 1] != t[:, 2]) & (t[:, 0] != t[:, 2])
+    a["v"] = (q * STL_WELD).reshape(-1, 3, 3).astype(np.float32)
+    a = a[keep]
+    with open(fn, "wb") as f:
+        f.write(head[:80] + int(len(a)).to_bytes(4, "little"))
+        f.write(a.tobytes())
+    return int((~keep).sum())
 
 
 def export(parts: dict, log=print, partial: bool = False):

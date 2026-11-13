@@ -60,15 +60,40 @@ HULL_WALL = 2.0 * SCALE    # skallveggtykkelse, uttrykt i fullskala-mm
 DECK_THICK = 2.0 * SCALE   # V10: heller tykt enn tynt (eieren), foer 1,5 og 1,6 mm
 
 # ---------------------------------------------------------------- kjøl
-KEEL_LE_ROOT = 3380.0   # forkant ved rot (fra baugen)
-KEEL_TE_ROOT = 5800.0   # bakkant ved rot
-KEEL_LE_TIP = 4894.0    # forkant ved bunn
-KEEL_TE_TIP = 5694.0    # bakkant ved bunn
-KEEL_TIP_Z = -DRAFT
-KEEL_ROOT_T = 320.0     # tykkelse ved rot
-KEEL_TIP_T = 175.0      # tykkelse ved bunn
+# V10: omrisset er maalt paa Enderleins tegning 448-5 (1:15). Den viser en
+# stor finne: rett forkant som heller 42 grader, nesten loddrett bakkant
+# (6 grader akterover nedover), flat bunn, et stort rundet hjoerne mellom
+# forkant og bunn og hulkiler opp i kanobunnen foran og bak. Brosjyrens
+# profil 1:50 og katalogen 1981 viser samme slags finne (brosjyren med
+# stoerre hjoerne og bakkanten ca. 50 mm lenger forut); bildene bekrefter
+# formen kvalitativt, men maaler den ikke. Kantene er rette linjer
+# (x = x0 + k * z); hjoerner og hulkiler rundes i appendages.keel(), og
+# hulkilene regnes mot curves.bottom_z, saa roten foelger kanobunnen.
+# Enderleins z er maalt fra hans DWL; datumforskjellen mot modellen
+# (0-45 mm) maa vaere den samme for kanobunnen og kjolen.
+KEEL_LE_LINE = ((3537.0, -700.0), (3992.0, -1200.0))   # to punkter paa forkanten (x, z)
+KEEL_TE_LINE = ((5658.0, -800.0), (5714.0, -1300.0))   # to punkter paa bakkanten (x, z)
+KEEL_TIP_Z = -DRAFT          # flat bunn; Enderlein -1 326 under sin DWL, utvidet til oppgitt dypgang
+KEEL_LE_TIP_R = 580.0        # hjoernet forkant/bunn i profil (Enderlein: sirkel r 575-585)
+KEEL_TE_TIP_R = 35.0         # hjoernet bakkant/bunn
+KEEL_LE_FILLET_R = 340.0     # hulkil i profil fra forkanten opp i kanobunnen
+KEEL_TE_FILLET_R = 260.0     # hulkil fra bakkanten akterover i kanobunnen
+KEEL_ROOT_T = 240.0          # stoerste tykkelse ved roten (IMG_9388: 220-265 mm etter kamera; eieren kan maale)
+KEEL_TIP_T = 240.0           # stoerste tykkelse ved bunnen (nesten parallelle sider)
+KEEL_BOT_CHAMFER = 45.0      # 45 graders fas paa bunnkanten i tverrsnitt (1,5 mm i 1:30, printbar);
+                             # flat stripe KEEL_TIP_T - 2 x dette igjen mot platen
+KEEL_FILLET_LIFT = 10.0      # hulkilene i profil regnes mot kanobunnen + dette, saa de krysser
+                             # skroget med 12-14 grader i stedet for aa tangere det (robust union)
+KEEL_ROOT_UP = 150.0         # hvor langt kjolen stikker opp i skroget over kanobunnen (for union)
+KEEL_DZ = 25.0               # avstand mellom de vannrette snittene i loften
 KEEL_FILLET = 90.0      # avrunding mot skroget: hoyden paa utvidelsen nederst ved roten
                         # (kjolen blir 0,75 x dette bredere paa hver side der den moeter skroget)
+# Bare til kanobunnens spline (curves._bottom_spline) og eldre skript: roten
+# slik den var foer V10. Endres de, flytter kanobunnen seg.
+KEEL_LE_ROOT = 3380.0
+KEEL_TE_ROOT = 5800.0
+KEEL_LE_TIP = 4430.0    # omtrent der den flate bunnen begynner; IKKE brukt av modellen
+KEEL_TE_TIP = 5725.0    # bakkantlinjen ved bunnen; IKKE brukt av modellen (foelger ikke KEEL_*_LINE)
 
 # Kanobunnen paa senterlinjen der profiltegningen ikke viser den: bak kjolen,
 # og akter der propellen og roret dekker den (det sporede omrisset der er

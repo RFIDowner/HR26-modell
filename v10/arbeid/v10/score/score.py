@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.0 (2026-11-10)"
+VERSION = "1.1 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -157,13 +157,14 @@ STERN_OUTLINE = [
     (7840.0, 773.0), (7860.0, 730.0), (7880.0, 650.0), (7891.0, 605.0),
 ]
 # data/deck_halfbreadth.csv (raw trace of the 1:50 deck plan)
+# (13.11.2026: x 2616-3019 re-traced from the brochure raster; the old trace had a 16-21 mm dip there)
 DECK_HB = [
     (0.0, 84.9), (100.6, 154.8), (201.3, 189.4), (301.9, 234.5), (402.5, 272.7), (503.2, 309.7),
     (603.8, 346.1), (704.4, 382.3), (805.1, 417.7), (905.7, 453.3), (1006.3, 488.3), (1107.0, 523.2),
     (1207.6, 557.6), (1308.2, 592.0), (1408.9, 625.9), (1509.5, 659.9), (1610.1, 693.5), (1710.8, 726.8),
     (1811.4, 759.9), (1912.0, 792.2), (2012.7, 823.9), (2113.3, 855.3), (2213.9, 885.8), (2314.6, 915.7),
-    (2415.2, 945.1), (2515.8, 970.2), (2616.5, 980.1), (2717.1, 1007.2), (2817.7, 1033.1), (2918.4, 1058.2),
-    (3019.0, 1085.7), (3119.6, 1126.8), (3220.3, 1148.7), (3320.9, 1169.5), (3421.5, 1188.8), (3522.2, 1207.3),
+    (2415.2, 945.1), (2515.8, 970.2), (2616.5, 1001.3), (2717.1, 1028.1), (2817.7, 1053.1), (2918.4, 1078.9),
+    (3019.0, 1102.1), (3119.6, 1126.8), (3220.3, 1148.7), (3320.9, 1169.5), (3421.5, 1188.8), (3522.2, 1207.3),
     (3622.8, 1223.9), (3723.4, 1239.6), (3824.1, 1255.1), (3924.7, 1269.7), (4025.3, 1283.0), (4125.9, 1296.1),
     (4226.6, 1308.2), (4327.2, 1318.3), (4427.8, 1327.2), (4528.5, 1334.7), (4629.1, 1340.6), (4729.7, 1344.8),
     (4830.4, 1347.7), (4931.0, 1348.7), (5031.6, 1348.2), (5132.3, 1345.5), (5232.9, 1340.6), (5333.5, 1333.8),
@@ -800,6 +801,16 @@ def deck_edge_at(sec, x, side=1):
     return out
 
 
+def plan_silhouette_at(sec, x, side=1):
+    """Outermost |y| of the section between the strake + 60 and the sheer +
+    150: what the deck plan (seen from above) shows as the outline.  (1.1)"""
+    y0, z0, y1, z1 = _seg_yz(sec, side)
+    zs, zk = float(sheer_meas(x)), float(strake_meas(x))
+    P = np.r_[np.c_[y0, z0], np.c_[y1, z1]]
+    m = (P[:, 0] > 0.0) & (P[:, 1] > zk + 60.0) & (P[:, 1] < zs + 150.0)
+    return float(P[m, 0].max()) if m.sum() >= 3 else np.nan
+
+
 def strake_at(sec, x, zc, side=1):
     """Strake bump on the side envelope y(z): centre (half-max), height, proud."""
     y0, z0, y1, z1 = _seg_yz(sec, side)
@@ -864,7 +875,8 @@ def station_sweep(slx, xs, fn=None):
             sec["n"] = fn[sec["f"]]
         d_s = deck_edge_at(sec, x, 1)
         d_p = deck_edge_at(sec, x, -1)
-        rows.append(dict(x=float(x), zlow=zlow, ymax=float(np.abs(pts[:, 1]).max()), stb=d_s, port=d_p, sec=sec))
+        rows.append(dict(x=float(x), zlow=zlow, ymax=float(np.abs(pts[:, 1]).max()), stb=d_s, port=d_p, sec=sec,
+                         sil=dict(stb=plan_silhouette_at(sec, x, 1), port=plan_silhouette_at(sec, x, -1))))
     return rows
 
 
@@ -875,16 +887,17 @@ def assemble_deck_line(rows):
     xs = np.array([r["x"] for r in rows if r is not None and r["stb"] is not None])
     out = {}
     for side in ("stb", "port"):
-        X, YC, ZC, DY, DZ = [], [], [], [], []
+        X, YC, ZC, DY, DZ, YS = [], [], [], [], [], []
         for r in rows:
             if r is None or r[side] is None:
                 continue
             yc, zc, yv, zv, ok = r[side]
             X.append(r["x"]); YC.append(yc); ZC.append(zc)
+            YS.append(r.get("sil", {}).get(side, np.nan))
             good = ok and not (WIN_X[0] - 60 < r["x"] < WIN_X[1] + 60)
             DY.append(yv - yc if good else np.nan)
             DZ.append(zv - zc if good else np.nan)
-        X, YC, ZC, DY, DZ = map(np.array, (X, YC, ZC, DY, DZ))
+        X, YC, ZC, DY, DZ, YS = map(np.array, (X, YC, ZC, DY, DZ, YS))
         nfit = int(np.isfinite(DY).sum())
         dx = np.median(np.diff(X)) if len(X) > 1 else 10.0
         if nfit >= 5:
@@ -893,7 +906,8 @@ def assemble_deck_line(rows):
         else:
             DYs = np.zeros_like(YC)
             DZs = np.zeros_like(ZC)
-        out[side] = dict(x=X, yc=YC, zc=ZC, y=YC + DYs, z=ZC + DZs, dy=DYs, dz=DZs, n_fit=nfit)
+        out[side] = dict(x=X, yc=YC, zc=ZC, y=YC + DYs, z=ZC + DZs, dy=DYs, dz=DZs, n_fit=nfit,
+                         ysil=fill_nan(YS) if np.isfinite(YS).any() else YC + DYs)
     return out
 
 
@@ -1549,26 +1563,37 @@ def analyze(path, args):
     zthr = lambda x: strake_meas(x) + 80.0
     tt = transom_top(sly, np.arange(0.0, 700.0, 10.0) + 0.37, zthr)
     m_side = st["x"] <= 7850.0
-    qx = np.r_[st["x"][m_side], tt[::-1, 0] if len(tt) else []]
-    qy = np.r_[st["y"][m_side], tt[::-1, 1] if len(tt) else []]
-    # order the transom part from the corner to the centreline
-    if len(tt):
-        cut = tt[:, 1] < st["y"][m_side][-1]
-        tpart = tt[cut][np.argsort(-tt[cut][:, 1])]
-        qx = np.r_[st["x"][m_side], tpart[:, 0]]
-        qy = np.r_[st["y"][m_side], tpart[:, 1]]
+
+    def _outline_err(sy):
+        qx = np.r_[st["x"][m_side], tt[::-1, 0] if len(tt) else []]
+        qy = np.r_[sy[m_side], tt[::-1, 1] if len(tt) else []]
+        # order the transom part from the corner to the centreline
+        if len(tt):
+            cut = tt[:, 1] < sy[m_side][-1]
+            tpart = tt[cut][np.argsort(-tt[cut][:, 1])]
+            qx = np.r_[st["x"][m_side], tpart[:, 0]]
+            qy = np.r_[sy[m_side], tpart[:, 1]]
+        d1, _, _ = poly_dist(_DHB[mx, 0], _DHB[mx, 1], qx, qy)
+        s1 = np.sign(np.interp(_DHB[mx, 0], st["x"], sy) - _DHB[mx, 1])
+        d2, _, _ = poly_dist(_SO[:, 0], _SO[:, 1], qx, qy)
+        # sign for the stern points: inside the model outline = negative
+        inside = _SO[:, 1] < np.interp(_SO[:, 0], qx[:int(m_side.sum())], qy[:int(m_side.sum())])
+        s2 = np.where(inside, 1.0, -1.0)
+        return d1 * s1, d2 * s2
+
     lines = {}
     mx = (_DHB[:, 0] >= 60.0) & (_DHB[:, 0] < 7300.0)
-    d1, _, _ = poly_dist(_DHB[mx, 0], _DHB[mx, 1], qx, qy)
-    s1 = np.sign(np.interp(_DHB[mx, 0], st["x"], st["y"]) - _DHB[mx, 1])
-    d2, _, _ = poly_dist(_SO[:, 0], _SO[:, 1], qx, qy)
-    # sign for the stern points: inside the model outline = negative
-    inside = _SO[:, 1] < np.interp(_SO[:, 0], qx[:len(st["x"][m_side])], qy[:len(st["x"][m_side])])
-    s2 = np.where(inside, 1.0, -1.0)
-    e_all = np.r_[d1 * s1, d2 * s2]
+    # 1.1: the plan drawing shows the silhouette seen from above (outermost
+    # point of the deck-edge rounding), not the virtual side/deck corner,
+    # which lies 4-11 mm outside it on a rounded edge.  The virtual-corner
+    # figure is kept for comparison with 1.0 results.
+    e1, e2 = _outline_err(st["ysil"])
+    v1, v2 = _outline_err(st["y"])
+    e_all = np.r_[e1, e2]
     x_all = np.r_[_DHB[mx, 0], _SO[:, 0]]
-    lines["deck_outline"] = dict(**err_stats(e_all, x_all), trace_x_lt_7300=err_stats(d1 * s1, _DHB[mx, 0]),
-                                 stern_outline=err_stats(d2 * s2, _SO[:, 0]),
+    lines["deck_outline"] = dict(**err_stats(e_all, x_all), trace_x_lt_7300=err_stats(e1, _DHB[mx, 0]),
+                                 virtual_corner_1_0=err_stats(np.r_[v1, v2], x_all),
+                                 stern_outline=err_stats(e2, _SO[:, 0]),
                                  virtual_corner_fits=int(st["n_fit"]),
                                  port_minus_stb_max=r1(float(np.max(np.abs(np.interp(st["x"], D["port"]["x"], D["port"]["y"]) - st["y"]))), 2),
                                  sign="+ = model outside the drawing")
