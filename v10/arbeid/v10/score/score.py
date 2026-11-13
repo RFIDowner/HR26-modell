@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.3 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face
+VERSION = "1.4 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -1203,6 +1203,11 @@ def hull_skin_mask(cen, fn, ext):
     # liten radius (ca. 3 mm i 1:30), som kjolroten over; tessellert med 0,15 rad gir
     # den knekker paa 5-9 grader uten at flaten er ujevn. Holdes utenfor som kjolroten.
     m &= ~((np.abs(y) < 350.0) & (z < 0.0) & (x > 5900.0))
+    # 1.4 (13.11 kveld): innredningen sees gjennom de aapne vinduene i
+    # skrogsiden og ble talt som skrogflate (179 av 413 knekker over 10 grader
+    # i s7). Flater over DWL mer enn 400 mm innenfor dekkets halvbredde er ikke
+    # skrogsiden.
+    m &= ~((z > 0.0) & (np.abs(y) < np.array([hb_meas(v) for v in x]) - 400.0))
     m &= ~((z > zk - 107.5) & (z < zk + 77.5))
     m &= ~((x > WIN_X[0] - 50) & (x < WIN_X[1] + 50) & (z > zk + 40.0))
     m &= (fn[:, 1] * np.sign(y) > 0.05) | (fn[:, 2] < -0.5)

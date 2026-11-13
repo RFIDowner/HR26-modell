@@ -58,24 +58,30 @@ SECTION_FLARE = [            # utfall ved dekkskanten, grader fra loddrett
 # glatte kurver (v10/verktoy/foto/py/opt_hjorne.py glatt=10 uten95 n80max=5.0):
 # hjoernet rms 10/9 mm, IMG_9391 12/14 px, kanobunn 2,40 m3 (foer 2,49). Slaget ved
 # t 0,80 er holdt mykt (n <= 5), ellers blir slaget midt akter kantete.
+# V10 trinn 5 (13.11 kveld): forkroppen (t < 0,75, doedtreet foran x 6 800) er
+# tilpasset IMG_9395 (nedenfra), IMG_9387 og IMG_9374 (fra siden) med glatte vannlinjer
+# (v10/verktoy/foto/py/opt_forkropp.py glatt=1 foto=9395,9387,9374). Doedtreet
+# starter ved kjolens forkant (foer 0,5 m foran: klumpen paa magen), slaget er
+# rundere (n ca. 3 midtskips mot 6) og baugen over vann er slankere.
+# IMG_9388-kameraet (f 2 068 px mot ca. 1 500) er tatt ut: det blaaste opp
+# forkroppen.
 SECTION_N = [                # superellipsens eksponent: 2 = ellipse,
-    (0.00, 2.4), (0.15, 3.1), (0.30, 3.4),       # hoyere = fastere slag
-    (0.45, 6.0), (0.80, 5.0), (0.90, 6.7), (0.95, 7.4), (1.00, 8.0),
+    (0.00, 1.6), (0.15, 2.4), (0.30, 4.6),       # hoyere = fastere slag
+    (0.45, 3.0), (0.60, 2.6), (0.80, 5.0), (0.90, 6.7), (0.95, 7.4), (1.00, 8.0),
 ]
 SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
-    (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # nesten flat foran kjolen,
-    (0.30, 0.0), (0.45, 4.9), (0.60, 21.5),       # V midtskips og akter
-    (0.75, 22.8), (0.90, 19.1), (0.95, 23.9), (1.00, 28.8),
+    (0.00, 45.0), (0.127, 24.2), (0.20, 1.5), (0.30, 5.1), (0.45, 0.1),
+    (0.60, 13.1), (0.75, 22.8), (0.90, 19.1), (0.95, 23.9), (1.00, 28.8),
 ]
 # Doedtre (vinglass-spant): spantets konvekse kanobunn bygges paa et kjolpunkt
 # DEADWOOD_H over senterlinjen, og bunnen trekkes ned til senterlinjen med
 # (1 - (y/DEADWOOD_W)^2)^2: en hul overgang. Gir hjertets spiss akterfra.
 DEADWOOD_H = [               # (x fra baugen, hoeyde over senterlinjen), mm
-    (2900.0, 0.0), (3600.0, 57.2), (5900.0, 57.2), (6800.0, 98.1),
-    (7400.0, 237.8), (7800.0, 328.9), (8000.0, 328.9),
+    (3486.4, 0.0), (3986.4, 48.6), (5900.0, 48.6),
+    (6800.0, 98.1), (7400.0, 237.8), (7800.0, 328.9), (8000.0, 328.9),
 ]
-DEADWOOD_W = [(5900.0, 163.2), (6800.0, 153.8), (7400.0, 104.8),   # halvbredden der overgangen
-              (7800.0, 74.0)]                                      # er ferdig (x, mm)
+DEADWOOD_W = [(5900.0, 300.0), (6800.0, 153.8),   # halvbredden der overgangen
+              (7400.0, 104.8), (7800.0, 74.0)]                                      # er ferdig (x, mm)
 DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
                              # (0,83 mm i 1:30; OCC-fillet feiler her)
 STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)
@@ -113,7 +119,9 @@ KEEL_TE_LINE = ((5658.0, -800.0), (5714.0, -1300.0))   # to punkter paa bakkante
 KEEL_TIP_Z = -DRAFT          # flat bunn; Enderlein -1 326 under sin DWL, utvidet til oppgitt dypgang
 KEEL_LE_TIP_R = 580.0        # hjoernet forkant/bunn i profil (Enderlein: sirkel r 575-585)
 KEEL_TE_TIP_R = 35.0         # hjoernet bakkant/bunn
-KEEL_LE_FILLET_R = 340.0     # hulkil i profil fra forkanten opp i kanobunnen
+KEEL_LE_FILLET_R = 1000.0    # hulkil i profil fra forkanten opp i kanobunnen. V10 trinn 5: 1000
+                             # (foer 340): IMG_9387 viser en stor, jevn hulkil, 100-190 mm
+                             # lenger forut ved z -520 til -470 (R 1000 gir 53-90)
 KEEL_TE_FILLET_R = 260.0     # hulkil fra bakkanten akterover i kanobunnen
 KEEL_ROOT_T = 240.0          # stoerste tykkelse ved roten (IMG_9388: 220-265 mm etter kamera; eieren kan maale)
 KEEL_TIP_T = 240.0           # stoerste tykkelse ved bunnen (nesten parallelle sider)
@@ -151,6 +159,16 @@ CANOE_BOTTOM_HIDDEN = [
     (6000.0, -446.8), (6250.0, -445.2), (6500.0, -439.7), (6750.0, -437.4),
     (7000.0, -433.1), (7250.0, -424.4), (7500.0, -415.5), (7650.0, -410.7),
     (7800.0, -409.6), (7950.0, -408.5),
+]
+# V10 trinn 5 (13.11 kveld): glatt rettelse av senterlinjen (mm, + = opp) fra
+# bildene, som gaar foran tegningene. IMG_9387 (fra siden) og IMG_9395
+# (nedenfra) er enige: forfoten staar ca. 20 mm for langt forut ved z +120 til
+# -30, og bunnen fra x 1,4 m ligger 20-45 mm for hoeyt (IMG_9374: 33-46 mm fra 1,6 til 2,8 m).
+# Bildets bunnlinje faller jevnt fra forfoten til kjolen (curves.bottom_z).
+BOTTOM_PHOTO_DZ = [          # IMG_9374 og IMG_9387 (rettet for hull i sporet) er enige
+    (830.0, 0.0), (950.0, 12.0), (1080.0, 12.0), (1200.0, 0.0), (1400.0, -19.0),
+    (1600.0, -33.0), (1800.0, -40.0), (2000.0, -43.0), (2400.0, -44.0), (2800.0, -39.0),
+    (3100.0, -35.0), (3500.0, -22.0), (4100.0, 0.0),
 ]
 
 # ------------------------------------------------------------ hekk/akterspeil

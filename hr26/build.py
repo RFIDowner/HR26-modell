@@ -16,6 +16,7 @@ import os
 import time
 
 import cadquery as cq
+import numpy as np
 
 from . import appendages as A
 from . import cabin as CB
@@ -96,6 +97,40 @@ def robust_union(base, part, what: str):
     raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
 
 
+def union_strake(w, log=print):
+    """Fenderlisten bit for bit (hull.rubbing_strake_pieces), med kontroll.
+
+    V10 trinn 5: union av hele listen som ett loft ga tilfeldig feil resultat
+    (listen falt bort, men volumet oekte litt, saa robust_union godtok det).
+    Hver bit maa nu oeke volumet med 0,6-2,5 x arealet utenfor skrogsiden
+    ganger bitens lengde. Feiler en bit, proeves smaa forskyvninger og saa to
+    halve biter; feiler ogsaa de, stopper byggingen."""
+    area = H.strake_area_out()
+    pieces = H.rubbing_strake_pieces()
+    for wires, x0, x1 in pieces:
+        w = _union_strake_piece(w, wires, area, f"fenderlist x {x0:.0f}-{x1:.0f}")
+    log(f"    fenderlist: {len(pieces)} biter")
+    return w
+
+
+def _union_strake_piece(w, wires, area, what, depth=0):
+    cs = np.array([[c.x, c.y, c.z] for c in (wi.Center() for wi in wires)])
+    length = float(np.linalg.norm(np.diff(cs, axis=0), axis=1).sum())
+    exp = area * length
+    piece = cq.Workplane("XY").newObject([H._loft3(wires)])
+    before, n0 = w.val().Volume(), _n_solids(w)
+    for dx in NUDGES:
+        cand = w.union(piece.translate((dx, 0.0, 0.0)) if dx else piece)
+        inc = cand.val().Volume() - before
+        if _n_solids(cand) <= n0 and 0.6 * exp < inc < 2.5 * exp:
+            return cand
+    if len(wires) > 3 and depth < 3:
+        mid = len(wires) // 2
+        w = _union_strake_piece(w, wires[:mid + 1], area, what + " a", depth + 1)
+        return _union_strake_piece(w, wires[mid:], area, what + " b", depth + 1)
+    raise RuntimeError(f"union av '{what}' ga feil volum - listen ville falt bort")
+
+
 def robust_cut(base, cutter, what: str, strict: bool = False):
     """Kutt som nekter aa feile i stillhet. OCC kan gi et tomt resultat
     (0 solider) eller et ugyldig volum uten feilmelding; da stopper vi.
@@ -141,7 +176,7 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         # foer fenderlisten: etterpaa gir unionen et korrupt volum
         w = robust_union(w, name, "navn paa akterspeilet")
         step("navn", w)
-    w = robust_union(w, H.rubbing_strake(), "fenderlist")
+    w = union_strake(w, log)
     step("fenderlist", w)
     w = H.round_transom_top(w)
     step("akterspeilets overkant", w)

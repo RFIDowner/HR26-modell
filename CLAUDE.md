@@ -88,6 +88,16 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   vannet i IMG_9370 innen ±2 cm; stripen er bare maling, men er brukt som
   høydemål akter (±4 cm). Les «Status – 13. november 2026, trinn 4» i
   `V10.md`.
+* **13.11.2026 (kveld): trinn 5, forkroppen.** Eieren: «ser ut som en
+  hvithai med en klump på magen». Fire målere løste kamera for IMG_9395,
+  9387, 9374 og 9389. Funnene: flat bunn med en finne (dødtreet) foran
+  kjølen, 30–45 mm for høy kjøllinje fra 1,4 til 2,9 m, og en for fyldig baug.
+  Rettet med `BOTTOM_PHOTO_DZ`, dødtreet fra kjølens forkant, en stor hulkil
+  (`KEEL_LE_FILLET_R` 1000) og spant tilpasset bildene (`opt_forkropp.py`).
+  IMG_9388-kameraet er ikke til å stole på (f 2068). Fenderlisten bygges i
+  kontrollerte biter (`build.union_strake`), fordi den ellers kan falle bort
+  i stillhet. Poengkortet `s7_forkropp` (`score.py` 1.4) består alle krav.
+  Les «Status – 13. november 2026, trinn 5» i `V10.md`.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på

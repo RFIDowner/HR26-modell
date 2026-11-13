@@ -80,7 +80,30 @@ def hull_mesh(n_st=240, nsec=60):
 
 
 def row_extents(cam, V, F, rows, axis="row", zmin=150.0):
-    """Exact min/max of the projected mesh per image row (or column)."""
+    """Exact min/max of the projected mesh per image row (or column).
+
+    13.11.2026 kveld: rows maa vaere jevnt fordelt (r0 og dr leses fra foerste
+    og siste). Har de hull, regnes det paa et jevnt rutenett og leses av
+    (maaleagenten for IMG_9374 fant at e9387/e9395 ellers ble skjeve)."""
+    rows = np.asarray(rows, float)
+    if len(rows) > 2:
+        d = np.diff(rows)
+        if np.ptp(d) > 1e-6 * max(1.0, float(np.abs(d).max())):
+            nz = np.abs(d[np.abs(d) > 1e-9])
+            step = max(0.5, float(nz.min())) if len(nz) else 1.0
+            a, b = float(np.floor(rows.min())), float(np.ceil(rows.max()))
+            grid = np.arange(a, b + 0.5 * step, step)
+            lo_g, hi_g = row_extents(cam, V, F, grid, axis, zmin)
+            def itp(y, fill):
+                ok = np.isfinite(y)
+                if ok.sum() < 2:
+                    return np.full(len(rows), fill)
+                out = np.interp(rows, grid[ok], y[ok], left=np.nan, right=np.nan)
+                # rader der rutenettet ikke traff nettet, beholdes som ikke-treff
+                k = np.clip(np.round((rows - a) / step).astype(int), 0, len(grid) - 1)
+                out = np.where(np.isfinite(y[k]) | np.isfinite(out), out, np.nan)
+                return np.where(np.isfinite(out), out, fill)
+            return itp(lo_g, np.inf), itp(hi_g, -np.inf)
     u, v, z = cam.project(V)
     if axis == "col":
         u, v = v, u

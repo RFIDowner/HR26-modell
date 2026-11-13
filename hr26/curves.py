@@ -291,7 +291,10 @@ def bottom_z(x: float) -> float:
 
     Foran vannlinjens forkant er det forstevnen, opp til stevnhodet i
     dekkshoyde. Ett stykke fra stevnhodet til hekken, uten sprang i forfoten.
+    V10 trinn 5: pluss en glatt rettelse fra bildene (P.BOTTOM_PHOTO_DZ).
     """
+    if _BOTTOM_DZ is not None and _DZ_X0 < x < _DZ_X1:
+        return _BOTTOM(x) + _BOTTOM_DZ(x)
     return _BOTTOM(x)
 
 
@@ -356,6 +359,11 @@ def _pchip(pairs):
     return f
 
 
+# V10 trinn 5 (13.11 kveld): rettelse av senterlinjen fra IMG_9387 og IMG_9395
+# (forfoten litt akterover, bunnen fra x 1,5 m jevnt dypere ned mot kjolen).
+_DZ_TAB = getattr(P, "BOTTOM_PHOTO_DZ", None)
+_BOTTOM_DZ = _pchip(_DZ_TAB) if _DZ_TAB else None
+_DZ_X0, _DZ_X1 = (float(_DZ_TAB[0][0]), float(_DZ_TAB[-1][0])) if _DZ_TAB else (0.0, 0.0)
 _FLARE = _pchip(P.SECTION_FLARE)
 _NEXP = _pchip(P.SECTION_N)
 _DEADRISE = _pchip(P.SECTION_DEADRISE)

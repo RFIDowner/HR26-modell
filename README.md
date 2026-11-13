@@ -150,6 +150,11 @@ markerte det på IMG_9391 og et uavhengig kantsøk bekreftet: ca. 1,1 m bredt
 nå ca. 2,4 m³ under vannlinjen. Modellens vannlinje stemmer med vannflaten der
 båten flyter (IMG_9370), innen ±2 cm.
 
+Forkroppen under vann er målt i bildene fra siden og nedenfra (IMG_9374, 9387
+og 9395). Bunnlinjen faller jevnt fra forfoten ned i kjølen, 20–45 mm dypere
+enn tegningens spor fra 1,4 til 3 m bak baugen (`BOTTOM_PHOTO_DZ`), med en stor
+hulkil ved kjølens forkant. Det er ingen finne foran kjølen.
+
 ---
 
 ## Kjør

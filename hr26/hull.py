@@ -222,10 +222,14 @@ def _strake_path(step: float = 20.0):
     tr = np.array([[C.transom_x(z, y), y, z] for y, z in zip(ys, zt)])
     stern = np.vstack([np.c_[arc, np.full(len(arc), zs)], tr])
 
-    # overgang: kutt siden og buen 50 mm fra knekken, bind sammen med Hermite
+    # overgang: kutt siden og buen STRAKE_CORNER_BLEND fra knekken, bind sammen
+    # med Hermite. V10 trinn 5: 50 mm ga en sving med mindre radius enn listens
+    # begravde bakside rundt det skarpe akterspeilhjoernet, og union med
+    # skroget feilet tilfeldig (listen falt bort uten feilmelding).
+    bl = float(getattr(P, "STRAKE_CORNER_BLEND", 50.0))
     s_st = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(stern, axis=0), axis=1))]
-    j = int(np.searchsorted(s_st, min(50.0, 0.5 * s_st[-1])))
-    i = int(np.searchsorted(side[:, 0], ex - 50.0))
+    j = int(np.searchsorted(s_st, min(bl, 0.5 * s_st[-1])))
+    i = int(np.searchsorted(side[:, 0], ex - bl))
     i = max(i, 2)
     t0 = side[i - 1] - side[i - 2]
     t1 = stern[j + 1] - stern[j]
@@ -281,7 +285,40 @@ def _frames(pts, nrm):
 
 
 def rubbing_strake(n_stations: int = 48) -> cq.Workplane:
-    """Fenderlist: en slank, avrundet list langs skrogsiden og rundt hekken.
+    """Hele listen som ett loft (se _strake_wires). Brukes til kontroll og
+    eldre skript; byggingen bruker rubbing_strake_pieces."""
+    return cq.Workplane("XY").newObject([_loft3(_strake_wires())])
+
+
+def rubbing_strake_pieces(per_piece: int = 12) -> list:
+    """Listen som korte loft (per_piece tverrsnitt, ca. 1,1 m) som overlapper
+    med ett tverrsnitt. V10 trinn 5: union av hele listen (ett 17 m langt
+    loft) med skroget ga tilfeldig feil resultat - listen falt bort uten
+    feilmelding. Korte biter gir korte skjaeringskurver, og hver bit kan
+    kontrolleres og proeves paa nytt for seg (build.union_strake).
+    Returnerer [(wires, x_fra, x_til), ...]."""
+    wires = _strake_wires()
+    xs = _STRAKE_X
+    out = []
+    for a in range(0, len(wires) - 1, per_piece - 1):
+        b = min(a + per_piece, len(wires))
+        out.append((wires[a:b], float(xs[a]), float(xs[b - 1])))
+    return out
+
+
+def strake_area_out() -> float:
+    """Arealet av listens tverrsnitt utenfor skrogsiden (n > 0), mm2."""
+    pr = np.array(_strake_profile())
+    v = pr[pr[:, 0] >= 0.0]
+    return 0.5 * abs(float(np.dot(v[:, 0], np.roll(v[:, 1], 1)) - np.dot(v[:, 1], np.roll(v[:, 0], 1))))
+
+
+_STRAKE_X: list = []
+
+
+def _strake_wires():
+    """Tverrsnittene (wires) for fenderlisten: en slank, avrundet list langs
+    skrogsiden og rundt hekken.
 
     Glatt loft (ikke ruled) gjennom like tverrsnitt (_strake_profile) med
     STRAKE_STEP mellomrom, staaende vinkelrett paa listens senterlinje og
@@ -310,6 +347,12 @@ def rubbing_strake(n_stations: int = 48) -> cq.Workplane:
     t, nv, uv = _frames(allp, alln)
 
     prof = _strake_profile()
+    # V10 trinn 5: den periodiske splinens soem ligger i foerste punkt. Den
+    # var (0, u_bot), altsaa akkurat paa skrogsiden, og union med skroget
+    # feilet tilfeldig (listen falt bort uten feilmelding). Start i midten av
+    # den begravde baksiden (-STRAKE_BURY, 0), der soemmen aldri moeter skroget.
+    k0 = min(range(len(prof)), key=lambda i: abs(prof[i][0] + P.STRAKE_BURY) + abs(prof[i][1]))
+    prof = prof[k0:] + prof[:k0]
     m = len(prof)
     par = list(np.linspace(0.0, 1.0, m + 1))
     wires = []
@@ -317,7 +360,8 @@ def rubbing_strake(n_stations: int = 48) -> cq.Workplane:
         c = c - d * nn
         v = [cq.Vector(*(c + pn * nn + pu * uu)) for pn, pu in prof]
         wires.append(cq.Wire.assembleEdges([cq.Edge.makeSpline(v, periodic=True, parameters=par)]))
-    return cq.Workplane("XY").newObject([_loft3(wires)])
+    _STRAKE_X[:] = [float(c[0]) for c in allp]
+    return wires
 
 
 def _loft3(wires) -> cq.Solid:
@@ -348,7 +392,7 @@ _CUT_FAR_X = 8400.0           # kuttet gaar saa langt akter
 _CUT_FAR_Y = 1400.0           # og saa langt ut til sidene
 _CUT_LEVELS = (-550.0, 1150.0, 50.0)   # vannrette snitt: fra, til, steg (under bunnen
                                         # og over dekket i hekken; V10 trinn 3: fra -450, doedtreets fot er -410)
-_CUT_PARK_Y = 700.0           # der det ikke rundes, tangerer buen akterspeilet her (utenfor skroget;
+_CUT_PARK_Y = float(getattr(P, "TRANSOM_CUT_PARK_Y", 700.0))   # der det ikke rundes, tangerer buen akterspeilet her (utenfor skroget;
                               # V10 trinn 3: 700, hjoernet ligger 600 ut ved DWL, foer 450)
 _CUT_RUN = 80.0               # forkanten fortsetter saa langt rett ut forbi buen
 
