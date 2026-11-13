@@ -98,6 +98,15 @@ vinduet står full veggtykkelse igjen (`hull_windows` gir uthulingen et
 `keep`-volum). Tidligere versjoner hadde vinduet i en ruffside 450 mm inne på
 dekket; det var feil.
 
+**Merk om kanten (V10 trinn 8, 14.11.2026):** bildene av båten viser at
+dekkskanten ligger 36–44 mm høyere over vinduet enn brosjyreprofilen ble lest
+til (`DECK_EDGE_Z`). Vinduet står der det sto: fra 3 580 til 5 150 mm, med
+underkanten 50 mm over listens senter og overkanten 86 mm (forut) og 70 mm
+(akter) under dekkskanten. Aktenfor vinduet slutter skrogsiden i en knekk som
+faller fra dekkskanten til ca. 135 mm over listen (`KNUCKLE_Z`), og over den
+ligger en skrå skulder (40°, `hull.shoulder_cutter`) opp til sidedekket og
+karmen. Linjene lagt over to av bildene ligger i `v10/rapporter/13nov_kant/`.
+
 **Merk om fenderlisten:** listen er en list utenpå skrogsiden, 95 mm høy og
 55 mm utstikkende (`STRAKE_*`), bygget som en loft langs den målte senter-
 linjen (`strake_z_mm` i `data/hull_stations.csv`). Den ligger *under*
@@ -123,9 +132,12 @@ akterspeil 1 331 mm bredt med skarpe hjørner.
 **Merk om cockpitbrønnen:** brønnen følger dekkskanten 290 mm innenfor langs
 sidene (`COCKPIT_INSET`) og hekkens runding akterover etter den målte tabellen
 `COCKPIT_AFT`, fram til en nesten rett bakkant ved 7 735 mm — som i
-dekksplanen, der brønnen følger hekkens kurve hele veien rundt. Karmen
-(`COAMING_TOP_Z`) faller fra 1 190 mm over vannlinjen ved forkanten til den
-går i ett med dekket ved 6 800–6 900. Overlegget under viser modellens
+dekksplanen, der brønnen følger hekkens kurve hele veien rundt. Karmtoppen
+(`COAMING_TOP_Z`) faller fra 1 190 mm over vannlinjen ved forkanten til
+1 084 mm helt akter. Fra et trinn opp fra sidedekket ved 6 040 mm
+(`AFTDECK_X0`) går den ut til skulderen og videre som akterdekk, og den
+skråner ned mot akterspeilet (V10 trinn 8; før gikk karmen i ett med dekket
+ved 6 800–6 900). Overlegget under er fra før V10 og viser modellens
 dekksutlinje (rødt) og brønnen (blått, snitt 850 mm over vannlinjen) på
 dekksplanen 1:50.
 
@@ -248,16 +260,16 @@ av fyllet (se under). Én rull på 1 kg holder med god margin.
 
 **Prøvebiter først (V10).** `export/test/` har tre små biter skåret ut av de
 ferdige delene (lag dem på nytt med `python tools/proevebiter.py`):
-`test-vindusbro.stl` (66 × 14 × 16 mm, stående med brim) viser om
+`test-vindusbro.stl` (62 × 15 × 15 mm, stående med brim) viser om
 sidedekket klarer broen over det åpne vinduet, og `test-lokk-skrog.stl` +
-`test-lokk-tak.stl` (23 × 60 × 6 mm) viser om taket glir ned over kanten. En
+`test-lokk-tak.stl` (23 × 60 × 5–6 mm) viser om taket glir ned over kanten. En
 times print før en på 16.
 
 **16 Ruff-tak** — taket på ruffen er et eget lokk (V10), med luker, ventil og
 sprayhood. Løftes det av, ser man ned i kahytten.
 * Ligger ferdig orientert på skjøteflaten, som er plan. **Ingen støtte.**
 * Infill 15 %. Lokket er massivt med et spor i undersiden som tres ned over
-  en 1,0 × 1,3 mm kant rundt åpningen i dekket, med 0,22–0,25 mm klaring.
+  en 1,0 × 1,1 mm kant rundt åpningen i dekket, med 0,22–0,25 mm klaring.
   Går det tregt, puss kanten lett. Lokket skal ikke limes.
 
 **02 Ror** — printes liggende, 3 mm tykt. Støtte av. Forkanten følger
@@ -507,20 +519,24 @@ Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
 ## Videre arbeid
 
 * Cockpiten har seter, fotbrønn og brodekk (V10 trinn 7), men ingen luker i
-  setene. Cockpitkarmen og dekkskanten ved vinduet («kanten») er neste trinn.
+  setene. Dekkskanten ved vinduet, knekken, skulderen, karmen og akterdekket
+  («kanten») er lagt inn i V10 trinn 8. Knekken og skulderens overkant er
+  skarpe kanter; på båten er de runde.
 * Roret er bare bladet under vannlinjen. På originalen går rorhodet opp til
   dekkshøyde, med rorkulten inn over akterdekket.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
-* Rundt akterdekket har tegningen en lav kant — karmen fortsetter rundt
-  hekken, men under 50 mm høy etter profilen (under 2 mm i 1:30), med
-  pushpiten oppå. Den er utelatt; karmen slutter der den går i ett med dekket
-  (6 900 mm), og akterdekket ligger i dekkshøyde.
+* Rundt akterdekket fortsetter karmtoppen som en bred flate med skrå skulder
+  ned til knekken (V10 trinn 8, etter bildene). På båten går knekken videre
+  rundt hjørnet og tvers over akterspeilet; i modellen går den over i
+  dekkskanten ved 7 780 mm.
+* Bildene øverst i denne fila og overleggene på tegningene er fra før V10.
 * Formen under vann akter følger bildene (V10, 13.11). Et mål med
   målebånd ved båten kan bekrefte den; se `V10.md`.
-* Alle deler er lukkede nett; eksporten fjerner trekanter med null areal.
+* Alle deler er lukkede nett; eksporten fjerner trekanter med null areal og
+  tetter hull på én trekant.
   Kjør `python tools/meshcheck.py export/stl/*.stl` for å se status.
 
 ### Plass til større målestokk

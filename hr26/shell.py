@@ -118,12 +118,21 @@ def hollow(solid: cq.Workplane, log=None, keep=(), **kw) -> cq.Workplane:
     aapnet seg rett inn i det hule skroget. De trekkes fra hvert kammer
     foer kammeret trekkes fra modellen.
     """
+    def empty(wp):
+        return not any(isinstance(v, cq.Shape) and v.Solids() for v in wp.vals())
+
     bays = compartments(**kw)
     for i, c in enumerate(bays, start=1):
         for k in keep:
             c = c.cut(k)
-        # et kammer helt innenfor et keep-volum (kahytten) blir tomt
-        if not any(isinstance(v, cq.Shape) and v.Solids() for v in c.vals()):
+            # Et kammer helt innenfor et keep-volum (kahytten) blir tomt. Da
+            # maa loekka stoppe: et nytt kutt paa en tom Workplane henter fram
+            # det uklipte kammeret igjen (findSolid leter i forgjengerne), og
+            # hele kahyttomraadet ble hulet ut da et keep-volum ble lagt til
+            # etter kahyttens (V10 trinn 8).
+            if empty(c):
+                break
+        if empty(c):
             continue
         solid = solid.cut(c)
         if log:

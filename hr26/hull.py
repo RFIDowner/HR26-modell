@@ -583,6 +583,65 @@ def _rounded_cutter() -> cq.Workplane:
     return cq.Workplane("XY").newObject([solid])
 
 
+# ------------------------------------------------- knekken og skulderen
+# V10 trinn 8 («kanten»): aktenfor vinduet slutter skrogsiden i en knekklinje
+# (C.knuckle_z) som faller fra dekkskanten mot hekken, og over den ligger en
+# skraa skulder opp til sidedekket og karmen. Skroget loftes som foer, og
+# hjoernet over knekken skjaeres bort: i hvert spant alt over en linje gjennom
+# knekken med helning KNUCKLE_ANGLE, ut til der linjen er 20 mm over dekket
+# (aktenfor trinnet: over karmtoppen og akterdekket).
+# Foran vinduets akterende ligger linjen i luften over dekkskanten, saa kuttet
+# vokser jevnt fram av den avrundede kanten. Rett (ruled) loft, som for
+# akterspeilets overkant: glatte lofter som kutt har feilet foer.
+_SHOULDER_TOP = 1500.0
+
+
+def _shoulder_poly(x: float, shift: float = 0.0, top_at=None):
+    """Kuttets tverrsnitt paa styrbord side: [(y, z)] mot klokka. `shift`
+    flytter den skraa linjen saa mange mm inn i godset (for uthulingen).
+    `top_at(x)` er flaten skulderen gaar opp til (dekkskanten hvis ikke gitt)."""
+    th = math.radians(P.KNUCKLE_ANGLE)
+    t = math.tan(th)
+    xs = min(x, P.LOA - 10.0)                      # aktenfor skroget: samme snitt
+    zs = C.sheer_z(xs)
+    zk = C.knuckle_z(xs)
+    yk = _side_y(xs, min(zk, zs - 1.0))
+    zt = max(zs, top_at(xs)) if top_at else zs
+    zl = zk - shift / math.cos(th)                 # linjens hoyde ved yk
+    w_in = max(zt - zl + 20.0, 10.0) / t           # inn til 20 mm over toppflaten
+    y_in, y_out = yk - w_in, yk + 200.0
+    return [(y_out, zl - 200.0 * t), (y_out, _SHOULDER_TOP), (y_in, _SHOULDER_TOP), (y_in, zl + w_in * t)]
+
+
+def shoulder_cutter(shift: float = 0.0, x0: float = 5000.0, x1: float | None = None,
+                    step: float = 50.0, top_at=None) -> cq.Workplane:
+    """Det som skjaeres bort over knekken, begge sider. Med shift = skall-
+    veggen er det volumet uthulingen maa la staa (shell.hollow, keep), saa
+    veggen under skulderen blir like tykk som ellers. Der toppflaten har et
+    trinn (AFTDECK_X0) faar kuttet et snitt paa hver side av det."""
+    x1 = P.LOA + 60.0 if x1 is None else x1
+    xs = {float(x) for x in np.arange(x0, x1 + 0.5 * step, step)}
+    xa = getattr(P, "AFTDECK_X0", None)
+    if top_at is not None and xa is not None and x0 < xa < x1:
+        xs = {x for x in xs if abs(x - xa) > 2.0} | {xa - 1.0, xa + 1.0}
+    xs = sorted(xs)
+    out = None
+    for sign in (1.0, -1.0):
+        wires = []
+        for x in xs:
+            pts = _shoulder_poly(x, shift, top_at)
+            if sign < 0:
+                pts = pts[::-1]
+            wires.append(cq.Wire.makePolygon(
+                [cq.Vector(x, sign * y, z) for y, z in pts], close=True))
+        solid = cq.Solid.makeLoft(wires, ruled=True)
+        if not solid.isValid():
+            raise RuntimeError("ugyldig kutt for skulderen over knekken")
+        wp = cq.Workplane("XY").newObject([solid])
+        out = wp if out is None else out.union(wp)
+    return out
+
+
 # ---------------------------------------------- akterspeilets overkant
 # OCC-fillet feiler ogsaa paa kanten mellom akterspeilet og dekket, saa den
 # rundes med et eget kutt: i hvert loddrette snitt (y fast) en sirkelbue som

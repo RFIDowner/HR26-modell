@@ -23,7 +23,7 @@ def _pin_hole(x: float, y: float, dia: float, depth: float = HOLE_DEPTH):
         cq.Workplane("XY")
         .workplane(offset=z - depth)
         .circle(0.5 * dia)
-        .extrude(depth + 40.0)
+        .extrude(depth + 160.0)      # opp gjennom skulderen og akterdekket (V10 trinn 8), foer + 40
         .translate((x, y, 0.0))
     )
 
@@ -125,7 +125,7 @@ def _cleat(x: float, y: float) -> cq.Workplane:
     gjennom profilen skalert ned mot sidene, saa alle kanter blir runde uten
     fillet (fillet paa de korte kantene ga hull i STL-en)."""
     L, W, H = P.CLEAT_L, P.CLEAT_W, P.CLEAT_H
-    z = min(D.deck_z(x, y - 0.5 * W), D.deck_z(x, y + 0.5 * W))
+    z = min(D.top_z(x, y - 0.5 * W), D.top_z(x, y + 0.5 * W))
     a = 0.5 * L
     half = [(0.0, -25.0), (0.18 * L, -25.0), (0.22 * L, -10.0), (0.22 * L, 0.13 * H),
             (0.29 * L, 0.3 * H), (0.39 * L, 0.45 * H), (0.48 * L, 0.6 * H), (a, 0.77 * H),
@@ -151,7 +151,8 @@ def cleats() -> cq.Workplane:
     for x in P.CLEAT_X:
         hb = C.deck_half_breadth(x)
         for sign in (1, -1):
-            c = _cleat(x, sign * (hb - P.CLEAT_INSET))
+            inset = P.CLEAT_INSET_AFT if x >= getattr(P, "AFTDECK_X0", 1e9) else P.CLEAT_INSET
+            c = _cleat(x, sign * (hb - inset))
             out = c if out is None else out.union(c)
     return out
 

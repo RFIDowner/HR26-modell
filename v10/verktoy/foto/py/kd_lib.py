@@ -68,14 +68,20 @@ def coach_top3(x0=2700.0, x1=None, n=120, side=-1):
     return np.array(out)
 
 
-def coaming_top3(x0=5700.0, x1=6850.0, n=80, side=-1):
-    a = np.array(P.COAMING_TOP_Z)
-    fit = np.polyfit(a[:, 0] - a[:, 0].mean(), a[:, 1], 2)
+def coaming_top3(x0=5700.0, x1=7850.0, n=110, side=-1):
+    """Karmtoppen og akterdekket (V10 trinn 8): forut karmens ytterkant, fra
+    AFTDECK_X0 skulderens overkant (der den skraa flaten moeter toppen)."""
+    top = C._pchip(P.COAMING_TOP_Z)
+    t = math.tan(math.radians(P.KNUCKLE_ANGLE))
     xs = np.linspace(x0, x1, n)
     out = []
     for x in xs:
-        w = max(260.0, min(P.COAMING_HALF_W, C.deck_half_breadth(x) - 200.0))
-        out.append((x, side * w, float(np.polyval(fit, x - a[:, 0].mean()))))
+        hb = C.deck_half_breadth(x)
+        if x >= P.AFTDECK_X0:
+            w = hb - max(top(x) - C.knuckle_z(x), 0.0) / t
+        else:
+            w = max(260.0, min(P.COAMING_HALF_W, hb - 200.0))
+        out.append((x, side * w, top(x)))
     return np.array(out)
 
 
@@ -85,7 +91,11 @@ def window3(side=-1, n=40):
     rf, ra = P.WIN_RAKE
     xs = np.linspace(P.WIN_X0, P.WIN_X1, n)
     lo = [(x, C.strake_z(x) + P.WIN_ABOVE_STRAKE) for x in xs]
-    hi = [(x, C.sheer_z(x) - P.WIN_BELOW_DECK) for x in np.linspace(P.WIN_X0 + rf, P.WIN_X1 - ra, n)]
+    wa = P.WIN_BELOW_DECK
+    wf = getattr(P, "WIN_BELOW_DECK_FWD", wa)
+    xa, xb = P.WIN_X0 + rf, P.WIN_X1 - ra
+    za, zb = C.sheer_z(xa) - wf, C.sheer_z(xb) - wa
+    hi = [(x, za + (zb - za) * (x - xa) / (xb - xa)) for x in np.linspace(xa, xb, n)]
     pts = lo + hi[::-1] + lo[:1]
     out = []
     for x, z in pts:

@@ -234,7 +234,9 @@ LID_WALL = 2.0 * SCALE       # minste godstykkelse utenfor og over sporet
 LID_CLEAR = 0.25 * SCALE     # klaring paa hver side av kanten i sporet (FDM)
 LID_CLEAR_TOP = 0.3 * SCALE  # klaring over kanten i sporet
 LIP_W = 1.0 * SCALE          # kantens tykkelse
-LIP_H = 1.3 * SCALE          # kantens hoyde over skjoeten (lav front: se cabin._groove_inset)
+LIP_H = 1.1 * SCALE          # kantens hoyde over skjoeten (lav front: se cabin._groove_inset).
+                             # V10 trinn 8: 1,1 (foer 1,3); dekket er loeftet 40 mm, saa lokkets lave
+                             # front fikk bare 54 mm gods over sporet med 1,3
 LIP_X1 = 5400.0              # kanten og sporet slutter her; akterkanten er aapen (nedgangen)
 
 # ------------------------------------------------------------ innredning
@@ -289,18 +291,49 @@ INT_POST_SOCKET = True       # hull i mastestoetten for mastefoten (masten gaar 
 # list utenpaa (STRAKE_*). (x fra baugen, z over DWL.) Aktenfor 6400 ligger
 # cockpitkarmen over linjen; aktenfor 7000 er den oevre linjen rorkulten.
 DECK_EDGE_Z = [
-    (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1200.0), (2500.0, 1175.0),
-    (3000.0, 1150.0), (3750.0, 1122.0), (4200.0, 1115.0), (4500.0, 1105.0),
-    (5000.0, 1095.0), (5500.0, 1085.0), (6000.0, 1080.0), (6500.0, 1075.0),
+    (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1198.0), (2500.0, 1184.0),
+    (3000.0, 1187.0), (3750.0, 1169.0), (4200.0, 1151.0), (4500.0, 1138.0),
+    (5000.0, 1119.0), (5500.0, 1114.0), (6000.0, 1088.0), (6500.0, 1075.0),
     (7000.0, 1056.0), (7200.0, 1040.0), (7400.0, 1020.0), (7600.0, 992.0),
     (7800.0, 962.0), (7950.0, 940.0),
 ]
+# V10 trinn 8 «kanten» (natt til 14.11): dekkskanten fra 2 500 til 5 900 er
+# loeftet etter «nye (4)» (kamera pin_Nc_f850, rettet stripe kd_rect) og
+# IMG_9374, som viser samme linje: toppen av skrogsiden ligger 36-44 mm over
+# brosjyresporet ved 3 000-4 200 og 20-30 mm over ved 4 600-5 800 (ca. 310 mm
+# over listens senter ved vinduet, foer 270). Brosjyresporets «hakk»
+# (1 200 -> 1 150 fra 2 000 til 3 000) finnes ikke paa baaten: linjen faller
+# til ca. 1 180 ved 2 400-2 600 (som foer) og ligger saa nesten flatt til 3 200.
+# Foer: 2000 1200, 2500 1175, 3000 1150, 3750 1122, 4200 1115, 4500 1105,
+# 5000 1095, 5500 1085, 6000 1080.
 # Springet er en utjevnende spline gjennom DECK_EDGE_Z (curves.sheer_z):
 # straffen paa krumningen. 4e7 gir maks 5 mm avvik fra punktene og fjerner
 # S-bukten tabellen har mellom 3 000 og 4 500 (2 vendepunkter i stedet for 5).
 SHEER_SMOOTHING = 4.0e7
 DECK_CAMBER = 30.0           # bue paa dekket, senter over kant (fordekkets
                              # silhuett ligger 15-25 mm over dekkskanten)
+
+# Knekken («kanten», V10 trinn 8): aktenfor vinduet slutter skrogsiden i en
+# knekklinje som forlater dekkskanten ved vinduets akterende og faller mot
+# hekken; over den ligger en skraa skulder opp til sidedekket og cockpitkarmen
+# (tanklokket sitter paa den). Maalt som den lyse ryggen i «nye (4)» (rettet
+# stripe, +-8 mm) og bekreftet av IMG_9374 (innen 10 mm ved 5 100-5 700).
+# (x, z over DWL.) Foran 5 080 ligger linjen over dekkskanten (ingen kutt). Paa
+# baaten gaar knekken videre rundt hjoernet og tvers over akterspeilet (kant.jpeg),
+# i hoeyde med modellens dekkskant der. I modellen gaar den derfor jevnt over i
+# dekkskanten mellom KNUCKLE_FADE-grensene og ligger KNUCKLE_LIFT over den
+# videre akterover: skrogets hjoerne og akterspeilets avrundede overkant staar
+# uroert (smaa kutt der ga ikke-manifold STL), og skulderen paa akterdekket
+# begynner ved dekkskanten.
+KNUCKLE_Z = [
+    (4900.0, 1150.0), (5080.0, 1118.0), (5300.0, 1080.0), (5500.0, 1055.0),
+    (5700.0, 1032.0), (5900.0, 1010.0), (6100.0, 990.0), (6300.0, 970.0),
+    (6500.0, 960.0), (6700.0, 952.0), (7100.0, 942.0), (7400.0, 937.0),
+    (7600.0, 944.0),
+]
+KNUCKLE_FADE = (7600.0, 7780.0)
+KNUCKLE_LIFT = 3.0
+KNUCKLE_ANGLE = 40.0         # skulderens helning fra vannrett (nye (2), kant2: bred, slak flate)
 
 # ------------------------------------------------------------ ruff/dekk
 # Hoyder og lengder er maalt ut av profiltegningen 1:50, bredder av
@@ -359,7 +392,10 @@ WIN_RAKE = (70.0, 95.0)      # skraa ender: overkanten staar saa mye lenger inn
                              # (forut, akter) enn underkanten
 WIN_ABOVE_STRAKE = 50.0      # underkant over listens senter (2 mm klaring; trinn 6: i nye (4)
                              # staar rammen rett paa listen, foer 70 = 22 mm klaring)
-WIN_BELOW_DECK = 30.0        # overkant under dekkskanten (1 mm leppe i 1:30)
+WIN_BELOW_DECK = 70.0        # overkant under dekkskanten, akter. V10 trinn 8: dekkskanten er loeftet
+                             # ca. 40 og vinduet staar der det sto (foer 30 under den gamle kanten)
+WIN_BELOW_DECK_FWD = 86.0    # ... og forut: i «nye (4)» (rettet stripe) ligger rammens overkant ca.
+                             # 1 083 ved 3 700 og 1 058 ved 4 900, saa vinduet er lavere forut enn akter
 WIN_DEPTH = 15.0             # forsenkning (rammen), 0,5 mm i 1:30
 WIN_RAD = 55.0
 WIN_FRAME = 1.0 * SCALE      # med kahytt: glasset er en aapning saa mye innenfor
@@ -371,7 +407,8 @@ WIN_TIE_W = 1.0 * SCALE
 # cockpit: bronnen er dekkshalvbredden minus COCKPIT_INSET langs sidene, og
 # foelger hekkens runding akterover (COCKPIT_AFT, maalt i dekksplanen) fram
 # til en nesten rett bakkant paa 7 735. Karmen ligger langs bronnen fra
-# COCKPIT_X0 og gaar i ett med dekket ved 6 800; toppen er maalt i profilen.
+# COCKPIT_X0; fra trinnet AFTDECK_X0 gaar karmtoppen ut til skulderen og helt
+# akter som akterdekk (V10 trinn 8, se COAMING_TOP_Z under).
 COCKPIT_X0 = 5660.0
 COCKPIT_HALF_W = 850.0       # bronnen, oevre grense
 COCKPIT_INSET = 290.0        # bronnens side innenfor dekkskanten
@@ -400,14 +437,27 @@ COMPANION_SILL_Z = 920.0     # nedgangen aapen ned til en teakterskel 40 over br
                              # foer dekk + 60
 COCKPIT_RAD = 140.0          # hjorneradius forut, i plan
 COAMING_HALF_W = 980.0       # karmens ytterkant
-COAMING_X1 = 6900.0          # karmen slutter her (den er nede i dekket fra 6 800)
-COAMING_DOWN_X = 6750.0      # herfra glir karmtoppen jevnt ned i dekket (til COAMING_X1)
 COAMING_MIN_H = 40.0         # karmen staar minst saa mye over dekket ved ytterkanten
-# karmtoppen er en glatt kurve gjennom tabellen (innen 5 mm av punktene)
-COAMING_TOP_Z = [            # karmens overkant (x, z over DWL), fra profilen
-    (5680.0, 1190.0), (5800.0, 1180.0), (6000.0, 1148.0), (6200.0, 1118.0),
-    (6400.0, 1101.0), (6600.0, 1078.0), (6800.0, 1064.0),
+# Karmtoppen og akterdekket (V10 trinn 8): karmens overkant fortsetter som en
+# bred flate helt akter (nye (2)); den skraa skulderen gaar fra knekken opp til
+# den. Maalt som oevre silhuett i «nye (4)» (6 100-7 200, lagt tilbake til
+# skulderens overkant) og «nye (6)» (7 100-7 800), som er enige innen 10 mm:
+# 33-59 mm over den gamle tabellen ved 6 200-6 800, og karmen gaar ikke ned i
+# dekket ved 6 800 slik brosjyreprofilen ble lest (den oevre linjen aktenfor
+# 7 000 er akterdekket, ikke rorkulten). Foer: 5800 1180, 6000 1148, 6200 1118,
+# 6400 1101, 6600 1078, 6800 1064, slutt 6 900.
+COAMING_TOP_Z = [            # karmens og akterdekkets overflate (x, z over DWL)
+    (5680.0, 1190.0), (5800.0, 1176.0), (5900.0, 1165.0), (6000.0, 1158.0),
+    (6300.0, 1146.0), (6700.0, 1128.0), (7100.0, 1111.0), (7400.0, 1096.0),
+    (7700.0, 1086.0), (7950.0, 1084.0),
 ]
+AFTDECK_X0 = 6040.0          # trinnet opp fra sidedekket: herfra gaar karmtoppen helt ut til
+                             # skulderen (nye (4): silhuetten hopper 40-60 mm mellom 5 900 og 6 100)
+AFTDECK_EDGE = 8.0           # akterdekkets ytterkant staar saa langt innenfor dekkskanten (skulderen
+                             # skjaerer den bort der knekken ligger under dekkskanten)
+AFTDECK_SINK = 15.0          # karm og akterdekk gaar saa langt ned i dekket ved dekkskantens hoyde
+AFTDECK_SLOPE_FWD = 30.0     # skraaningen ned mot akterspeilet begynner saa langt foran overkanten
+CLEAT_INSET_AFT = 250.0      # klampene paa akterdekket: paa den flate toppen innenfor skulderen
 COAMING_FWD = 80.0           # karmen begynner saa langt foran bronnen (under sprayhooden)
 COAMING_RAD = 200.0          # karmens hjorneradius forut, i plan
 COAMING_EDGE_R = 25.0        # avrunding av karmens overkant, begge sider (0,8 mm i 1:30)

@@ -1,0 +1,27 @@
+HR 26 i 1:30  (LOA 265.0 mm)
+  skrog loftet               0s
+  kjol                       1s
+    fenderlist: 16 biter
+  fenderlist                11s
+  akterspeilets overkant    12s
+  krage, kant og karm       34s
+  knekk og skulder          38s
+  dekksbeslag               40s
+  cockpit, nedgang, vinduer    44s
+  hull for rigg og rekke    45s
+  aapning i dekket          52s
+  uthult                    61s
+    kahytt: rom under taket, vinduer, doerer
+    kahytt: innredning trukket fra
+    kahytt: kappet ved skrogets innside
+  kahytt                    72s
+  aapne vinduer             76s
+  plastforbruk (skall og innredning): 336 cm3
+Bygget paa 114s. Eksporterer:
+  skrog             205.6 x  205.4 x   89.3 mm  rot   45 gr  OK   21.4 MB
+  ruff-tak          125.1 x   74.7 x   19.7 mm  rot    0 gr  OK    2.7 MB
+  stativ-vugge1      80.2 x   95.6 x    6.0 mm  rot    0 gr  OK    0.1 MB
+  stativ-vugge2      78.0 x  106.8 x    6.0 mm  rot    0 gr  OK    0.1 MB
+Mast: 354 mm synlig, ovalt 4.0 x 3.0 mm (hull 4.5 x 3.5 mm). To varianter: med 11 mm sokkel (trenger storre plate) og uten sokkel (passer A1 diagonalt).
+Ferdig paa 198s
+memcap: topp 2.37 GB av 5.0 GB, rc=0

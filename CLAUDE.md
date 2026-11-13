@@ -138,6 +138,20 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   tanklokket. I tillegg cockpitkarmens høyde, steget og avrundingene. Les
   «Status – 13. november 2026 kl. 19» i `V10.md`. Bildet IMG_9304 heter nå
   `kant2.jpg`. `kant.jpeg` (barnet) og `kant3.jpeg` holdes utenfor git.
+* **14.11.2026 (natt): trinn 8 «kanten» ferdig og pushet.** Målt i «nye 4»,
+  IMG_9374 og «nye 6»: dekkskanten er hevet 36–44 mm over vinduet
+  (`DECK_EDGE_Z`), skrogsiden slutter i en knekk aktenfor vinduet med en 40°
+  skulder over (`KNUCKLE_Z`, `hull.shoulder_cutter`), og karmtoppen går som
+  akterdekk helt akter med et trinn opp fra sidedekket ved 6 040
+  (`COAMING_TOP_Z`, `AFTDECK_X0`). Vinduet er litt lavere forut, og kanten
+  under lokket er 1,1 mm (`LIP_H`). Poengkortet `s9_kant` (`score.py` 1.5)
+  består alle krav. Rettet underveis: `shell.hollow` hulet ut kahytten når et
+  «behold»-volum lå etter kahyttens, og eksporten tetter nå hull på én
+  trekant. Usikkert: skulderens vinkel, trinnets plass (±100 mm) og om den
+  mørke linjen langs dekkskanten er en fotlist. Ikke gjort: avrunding av
+  knekken, knekken rundt akterspeilet og nye README-bilder. Eieren kan måle
+  den skrå flaten ved vinsjen (modellen ca. 275 mm langs flaten). Les
+  «Status – 14. november 2026» i `V10.md`.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
@@ -181,6 +195,14 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   15,5 GB automatisk) og sier at flere agenter går. Nå gjelder høyst fire
   agenter samtidig. Python-jobber kjøres med `--gb 3`, CadQuery med
   `--gb 5 --lock` (fortsatt bare én CAD-jobb om gangen).
+* **Når eieren spiller (13.11.2026 kl. 23: «ikke kjør så store prosesser for
+  jeg har en game med CSGO»):** så lenge `cs2.exe` kjører (ca. 3,3 GB, og
+  bare ca. 3,5 GB ledig), kjøres ikke skrogbygget (topp 2,6 GB, 135 s) eller
+  poengkortet (1,4 GB). Lette jobber går fint: måleskriptene for bildene
+  (0,2–0,4 GB) og én liten CadQuery-del med `--gb 2 --lock` (0,6–1,2 GB).
+  Legg det tunge bygget i kø med et bakgrunnsskript som venter til `cs2.exe`
+  er avsluttet (`tasklist //FI "IMAGENAME eq cs2.exe"`), og som så bygger og
+  kjører poengkortet.
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
 * Skroget alene bygger på ca. 150 s. `python -m hr26.build` sletter alle
   STL-er i `export/stl` før eksport. Med `--only skrog,stativ-vugge1,...`

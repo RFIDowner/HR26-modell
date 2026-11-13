@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.4 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin
+VERSION = "1.5 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin; 1.5: DECK_EDGE_Z lifted x 2000-6000 from the photos, KNUCKLE_Z (hull side ends in a knuckle aft of the window) is the reference there
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -142,15 +142,32 @@ DECK_HOLE_D = 36.0              # STANCHION_D + CLEAR
 DECK_HOLE_DEPTH = 210.0
 RUDDER_PIN_Z = (-90.0, -200.0)
 RUDDER_PIN_HOLE_D = 42.0
-WIN_X = (3670.0, 5350.0)   # 1.1: the V10 windows (open, 448-5 and the sail plan); 1.0 had 3700-4900
+WIN_X = (3580.0, 5350.0)   # 1.5: forward end 3580 (the window moved in step 6); 1.1: the V10 windows (open, 448-5 and the sail plan); 1.0 had 3700-4900
 
+# 1.5 (13.11.2026, step 8 "kanten"): x 2000-6000 lifted after the photos "nye (4)"
+# and IMG_9374 (the owner's rule: photos beat the brochure trace).  Before:
+# 2000 1200, 2500 1175, 3000 1150, 3750 1122, 4200 1115, 4500 1105, 5000 1095,
+# 5500 1085, 6000 1080.
 DECK_EDGE_Z = [
-    (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1200.0), (2500.0, 1175.0),
-    (3000.0, 1150.0), (3750.0, 1122.0), (4200.0, 1115.0), (4500.0, 1105.0),
-    (5000.0, 1095.0), (5500.0, 1085.0), (6000.0, 1080.0), (6500.0, 1075.0),
+    (0.0, 1204.0), (1000.0, 1204.0), (2000.0, 1198.0), (2500.0, 1184.0),
+    (3000.0, 1187.0), (3750.0, 1169.0), (4200.0, 1151.0), (4500.0, 1138.0),
+    (5000.0, 1119.0), (5500.0, 1114.0), (6000.0, 1088.0), (6500.0, 1075.0),
     (7000.0, 1056.0), (7200.0, 1040.0), (7400.0, 1020.0), (7600.0, 992.0),
     (7800.0, 962.0), (7950.0, 940.0),
 ]
+# 1.5: aft of the window the hull side ends in a knuckle below the deck edge
+# (bright ridge in "nye (4)", confirmed by IMG_9374); a sloping shoulder joins
+# it to the side deck and the coaming.  Where this line lies below DECK_EDGE_Z
+# it is the top of the hull side: the support point / virtual corner that
+# deck_edge_at() finds, and the outline the deck plan shows.
+KNUCKLE_Z = [
+    (4900.0, 1150.0), (5080.0, 1118.0), (5300.0, 1080.0), (5500.0, 1055.0),
+    (5700.0, 1032.0), (5900.0, 1010.0), (6100.0, 990.0), (6300.0, 970.0),
+    (6500.0, 960.0), (6700.0, 952.0), (7100.0, 942.0), (7400.0, 937.0),
+    (7600.0, 944.0), (7700.0, 961.0), (7780.0, 971.0),
+]   # aft of 7600 it runs into the deck edge (7780) and there is no knuckle
+KNUCKLE_MIN_DROP = 30.0         # knuckle points are checked where it lies this far below the deck edge
+KNUCKLE_SHARP = 15.0            # from this drop on the knuckle is a sharp edge clear of the deck-edge rounding
 STERN_OUTLINE = [
     (7300.0, 995.0), (7400.0, 968.0), (7500.0, 944.0), (7600.0, 916.0),
     (7700.0, 890.0), (7750.0, 866.0), (7800.0, 835.0), (7820.0, 812.0),
@@ -247,6 +264,7 @@ UW_SEGMENTS = [("canoe_fwd", 1010, 3100), ("keel_le", 3110, 4800), ("keel_bottom
 _HS = np.array(HULL_STATIONS, float)
 _DHB = np.array(DECK_HB, float)
 _DEZ = np.array(DECK_EDGE_Z, float)
+_KNZ = np.array(KNUCKLE_Z, float)
 _SO = np.array(STERN_OUTLINE, float)
 _UW = np.array([[float(a) for a in t.split(":")] for t in UW_TABLE.split()], float)
 
@@ -261,6 +279,15 @@ def hb_meas(x):
 
 def sheer_meas(x):
     return np.interp(x, _DEZ[:, 0], _DEZ[:, 1])
+
+
+def knuckle_meas(x):
+    return np.interp(x, _KNZ[:, 0], _KNZ[:, 1], left=np.inf, right=np.inf)
+
+
+def edge_meas(x):
+    """Top of the hull side: the deck edge, or the knuckle where it is lower (1.5)."""
+    return np.minimum(sheer_meas(x), knuckle_meas(x))
 
 
 def strake_meas(x):
@@ -894,7 +921,7 @@ def assemble_deck_line(rows):
     xs = np.array([r["x"] for r in rows if r is not None and r["stb"] is not None])
     out = {}
     for side in ("stb", "port"):
-        X, YC, ZC, DY, DZ, YS = [], [], [], [], [], []
+        X, YC, ZC, DY, DZ, YS, SH = [], [], [], [], [], [], []
         for r in rows:
             if r is None or r[side] is None:
                 continue
@@ -902,9 +929,17 @@ def assemble_deck_line(rows):
             X.append(r["x"]); YC.append(yc); ZC.append(zc)
             YS.append(r.get("sil", {}).get(side, np.nan))
             good = ok and not (WIN_X[0] - 60 < r["x"] < WIN_X[1] + 60)
-            DY.append(yv - yc if good else np.nan)
-            DZ.append(zv - zc if good else np.nan)
+            # 1.5: at the knuckle the hull side ends in a sharp edge, so the
+            # support point is the corner itself: offset 0 there, set after the
+            # smoothing so it does not leak into the rounded deck edge forward
+            # (offset about +14 mm) or the other way.  (The side/deck line fit
+            # does not see the steep shoulder.)
+            sharp = float(sheer_meas(r["x"]) - knuckle_meas(r["x"])) >= KNUCKLE_SHARP
+            SH.append(sharp)
+            DY.append(yv - yc if good and not sharp else np.nan)
+            DZ.append(zv - zc if good and not sharp else np.nan)
         X, YC, ZC, DY, DZ, YS = map(np.array, (X, YC, ZC, DY, DZ, YS))
+        SH = np.array(SH, bool)
         nfit = int(np.isfinite(DY).sum())
         dx = np.median(np.diff(X)) if len(X) > 1 else 10.0
         if nfit >= 5:
@@ -913,6 +948,8 @@ def assemble_deck_line(rows):
         else:
             DYs = np.zeros_like(YC)
             DZs = np.zeros_like(ZC)
+        DYs[SH] = 0.0
+        DZs[SH] = 0.0
         out[side] = dict(x=X, yc=YC, zc=ZC, y=YC + DYs, z=ZC + DZs, dy=DYs, dz=DZs, n_fit=nfit,
                          ysil=fill_nan(YS) if np.isfinite(YS).any() else YC + DYs)
     return out
@@ -1197,7 +1234,7 @@ def hull_skin_mask(cen, fn, ext):
     m &= np.abs(y) > 25.0                                   # centreline seam / stem edge
     m &= ~((x < 750.0) & (np.abs(y) < 120.0) & (z > 600.0))  # anchor-roller block
     m &= (x > 150.0) & (x < transom_x(z, y) - 100.0)
-    m &= z < sheer_meas(x) - 60.0
+    m &= z < edge_meas(x) - 60.0          # 1.5: the shoulder above the knuckle is not hull skin
     m &= ~((np.abs(y) < 300.0) & (z < bottom_meas(x) + 120.0) & (x > 3300.0) & (x < 5950.0))
     # 1.2 (13.11 kveld): doedtreets hule overgang akter (DEADWOOD_H/W) er en bevisst
     # liten radius (ca. 3 mm i 1:30), som kjolroten over; tessellert med 0,15 rad gir
@@ -1306,6 +1343,8 @@ def ray_cast(V, F, O, Dd, L, h, chunk=3000, bounds=None):
         t = np.einsum("ij,ij->i", E2[ff], q) * inv
         good = ok & (u >= -1e-9) & (v >= -1e-9) & (u + v <= 1 + 1e-9) & (t > 1e-3) & (t <= L)
         rg, tg, fg = rr[good], t[good], ff[good]
+        if len(rg) == 0:          # 1.5: no ray of this chunk hits anything (solid deck above the cabin)
+            continue
         o = np.lexsort((tg, rg))
         rg, tg, fg = rg[o], tg[o], fg[o]
         first = np.r_[True, rg[1:] != rg[:-1]]
@@ -1619,12 +1658,18 @@ def analyze(path, args):
                                  port_minus_stb_max=r1(float(np.max(np.abs(np.interp(st["x"], D["port"]["x"], D["port"]["y"]) - st["y"]))), 2),
                                  sign="+ = model outside the drawing")
     # sheer at the table points
-    xz = np.clip(_DEZ[:, 0], 80.0, 7850.0)
-    keepz = _DEZ[:, 0] < 7900.0
-    ez = np.interp(xz, st["x"], st["z"]) - _DEZ[:, 1]
-    lines["sheer"] = dict(**err_stats(ez[keepz], _DEZ[keepz, 0]),
-                          points=[[r1(a, 0), r1(b, 1)] for a, b in zip(_DEZ[keepz, 0], ez[keepz])],
-                          sign="+ = model above the drawing", note="x=0 evaluated at x=80; x=7950 skipped (transom)")
+    # 1.5: DECK_EDGE_Z points where the hull side reaches the deck edge, and
+    # the KNUCKLE_Z points where the knuckle lies well below it
+    ref = [(x, z) for x, z in DECK_EDGE_Z if x < 7900.0 and knuckle_meas(x) >= z]
+    ref += [(x, z) for x, z in KNUCKLE_Z if sheer_meas(x) - z >= KNUCKLE_MIN_DROP]
+    ref = np.array(sorted(ref), float)
+    xz = np.clip(ref[:, 0], 80.0, 7850.0)
+    ez = np.interp(xz, st["x"], st["z"]) - ref[:, 1]
+    lines["sheer"] = dict(**err_stats(ez, ref[:, 0]),
+                          points=[[r1(a, 0), r1(b, 1)] for a, b in zip(ref[:, 0], ez)],
+                          sign="+ = model above the reference",
+                          note="x=0 evaluated at x=80; x=7950 skipped (transom); 1.5: KNUCKLE_Z points "
+                               "replace DECK_EDGE_Z where the hull side ends in the knuckle")
     # strake
     srows = []
     for xk, _, zk, _ in HULL_STATIONS:
@@ -1713,7 +1758,7 @@ def analyze(path, args):
             spot["nearest_hole"] = nm if dd < 120 else None
     log(f"  wall thickness  ({time.time() - t0:.1f}s)")
     ctx = dict(V=V, F=F, fn=fn, ext=ext, D=D, rows=rows, wtr=wtr, dtr=dtr, scv=scv, tpts=tpts,
-               uw=(xl[okl], zl[okl], uw_dev), lab=lab, sr=sr, ez=(_DEZ[keepz, 0], ez[keepz]),
+               uw=(xl[okl], zl[okl], uw_dev), lab=lab, sr=sr, ez=(ref[:, 0], ez),
                ed=(x_all, e_all), skin=skin, dih=dih)
     res["meta"]["analysis_s"] = r1(time.time() - t0, 1)
     return res, ctx
@@ -2152,7 +2197,7 @@ def plots_image(res, ctx, width=1600, height=760):
     xe, ee = ctx["ed"]
     a.plot(xe, ee, ".-", color="#1f77b4", ms=3, lw=0.8, label="deck outline (plan dist.)")
     m = (D["x"] > 60) & (D["x"] < 7850)
-    a.plot(D["x"][m], D["z"][m] - sheer_meas(D["x"][m]), "-", color="#ff7f0e", lw=0.8, label="sheer - DECK_EDGE_Z")
+    a.plot(D["x"][m], D["z"][m] - edge_meas(D["x"][m]), "-", color="#ff7f0e", lw=0.8, label="hull-side top - DECK_EDGE_Z / KNUCKLE_Z")
     xs, es = ctx["ez"]
     a.plot(xs, es, "o", color="#ff7f0e", ms=3)
     sr = ctx["sr"]

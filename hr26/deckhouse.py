@@ -20,6 +20,7 @@ import cadquery as cq
 import numpy as np
 
 from . import curves as C
+from . import hull as H
 from . import params as P
 from . import shell as S
 
@@ -91,27 +92,31 @@ def coach_half_width(x: float) -> float:
     return w
 
 
-_COAMING_XM = 0.5 * (P.COAMING_TOP_Z[0][0] + P.COAMING_TOP_Z[-1][0])
-_COAMING_FIT = np.polyfit([p[0] - _COAMING_XM for p in P.COAMING_TOP_Z],
-                          [p[1] for p in P.COAMING_TOP_Z], 2)
+_COAMING_TOP = C._pchip(P.COAMING_TOP_Z)
 
 
 def coaming_top_z(x: float) -> float:
-    """Cockpitkarmens overkant over DWL.
+    """Cockpitkarmens og akterdekkets overflate over DWL.
 
-    En glatt kurve (andregrads, innen 5 mm av punktene) gjennom den maalte
-    tabellen COAMING_TOP_Z, men aldri lavere enn COAMING_MIN_H over dekket
-    ved karmens ytterkant (dekksbuen loefter dekket innenfor dekkskanten) -
-    begge deler blandet uten knekk. Fra COAMING_DOWN_X glir karmen jevnt ned
-    i dekket fram til COAMING_X1; aktenfor det er "karmtoppen" dekkskanten.
+    Monoton kurve gjennom tabellen COAMING_TOP_Z (endeverdiene holdes utenfor
+    tabellen), men aldri lavere enn COAMING_MIN_H over dekket ved karmens
+    ytterkant - blandet uten knekk. Fra V10 trinn 8 gaar flaten helt akter;
+    den gled foer ned i dekket ved 6 900.
     """
-    if x >= P.COAMING_X1:
-        return C.sheer_z(x)
-    zt = float(np.polyval(_COAMING_FIT, x - _COAMING_XM))
-    floor = deck_z(x, coaming_half_width(x)) + P.COAMING_MIN_H
-    z = _smax(zt, floor, 20.0)
-    t = _smoothstep((x - P.COAMING_DOWN_X) / (P.COAMING_X1 - P.COAMING_DOWN_X))
-    return z * (1.0 - t) + C.sheer_z(x) * t
+    zt = _COAMING_TOP(x)
+    xc = min(x, P.LOA)
+    floor = deck_z(xc, coaming_half_width(xc)) + P.COAMING_MIN_H
+    return _smax(zt, floor, 20.0)
+
+
+def top_z(x: float, y: float) -> float:
+    """Flaten beslag staar paa: akterdekket fra AFTDECK_X0, ellers dekket."""
+    return coaming_top_z(x) if x >= P.AFTDECK_X0 else deck_z(x, y)
+
+
+def shoulder_top_z(x: float) -> float:
+    """Hoyden skulderen over knekken gaar opp til (hull.shoulder_cutter)."""
+    return coaming_top_z(x) if x >= P.AFTDECK_X0 else C.sheer_z(x)
 
 
 # --------------------------------------------------------------- hjelpere
@@ -416,8 +421,10 @@ def _window_box(grow: float) -> cq.Workplane:
     rf, ra = getattr(P, "WIN_RAKE", (0.0, 0.0))
     x0, x1 = P.WIN_X0 - grow, P.WIN_X1 + grow
     lo = lambda x: C.strake_z(x) + P.WIN_ABOVE_STRAKE - grow
-    hi = lambda x: C.sheer_z(x) - P.WIN_BELOW_DECK + grow
-    pts = [(x0, lo(x0)), (x1, lo(x1)), (x1 - ra, hi(x1 - ra)), (x0 + rf, hi(x0 + rf))]
+    wa = P.WIN_BELOW_DECK                                  # akter
+    wf = getattr(P, "WIN_BELOW_DECK_FWD", wa)              # forut
+    hi = lambda x, w: C.sheer_z(x) - w + grow
+    pts = [(x0, lo(x0)), (x1, lo(x1)), (x1 - ra, hi(x1 - ra, wa)), (x0 + rf, hi(x0 + rf, wf))]
     b = cq.Workplane("XZ").polyline(pts).close().extrude(3000.0, both=True)
     try:
         b = b.edges("|Y").fillet(P.WIN_RAD + grow)
@@ -636,22 +643,76 @@ def _coaming_slab(x_fwd: float, x_aft: float, z0: float, z1: float, n: int = 32)
     return wp.close().extrude(z1 - z0)
 
 
+def _aft_slope_cutter() -> cq.Workplane:
+    """Alt aktenfor og over en flate som stiger KNUCKLE_ANGLE forover fra
+    akterspeilets overkant (AFTDECK_SLOPE_FWD foran den): akterdekket skraaner
+    ned mot akterspeilet slik skulderen gjoer langs sidene (kant.jpeg). Samme
+    buede prisme som akterspeilkuttet, dreid forover."""
+    R = P.TRANSOM_CAMBER_R
+    z0 = C.sheer_z(P.LOA - 10.0)
+    xe = C.transom_x(z0, 0.0) - P.AFTDECK_SLOPE_FWD
+    ze = C.deck_z(min(xe, P.LOA - 2.0), 0.0)
+    half = 2400.0
+    sag = R - math.sqrt(R * R - half * half)
+    prism = (
+        cq.Workplane("XY").workplane(offset=-4000.0)
+        .moveTo(xe - sag, -half).threePointArc((xe, 0.0), (xe - sag, half))
+        .lineTo(xe + 3000.0, half).lineTo(xe + 3000.0, -half).close()
+        .extrude(8000.0)
+    )
+    return prism.rotate((xe, 0.0, ze), (xe, 1.0, ze), -(90.0 - P.KNUCKLE_ANGLE))
+
+
+def _aft_deck_prism(z0: float, z1: float) -> cq.Workplane:
+    """Akterdekkets omriss som loddrett prisme: fra trinnet (AFTDECK_X0) og
+    akterover, AFTDECK_EDGE innenfor dekkskanten."""
+    xe = P.LOA - 10.0
+    xs = [P.AFTDECK_X0] + [float(x) for x in np.arange(P.AFTDECK_X0 + 60.0, xe - 20.0, 60.0)] + [xe]
+    stb = [(x, C.deck_half_breadth(x) - P.AFTDECK_EDGE) for x in xs]
+    stb.append((P.LOA + 80.0, stb[-1][1]))
+    pts = stb + [(x, -y) for x, y in reversed(stb)]
+    return cq.Workplane("XY").workplane(offset=z0).polyline(pts).close().extrude(z1 - z0)
+
+
 def coaming_block() -> cq.Workplane:
-    """Cockpitkarm med fallende overkant, fra litt foran bronnen til den
-    gaar i ett med dekket (COAMING_X1). Bygges som et baand rundt bronnen
-    (karmen minus bronnen, COAMING_GAP videre), saa begge overkantene kan
-    rundes med fillet paa den frie delen. Unioneres foer bronnen skjaeres ut."""
+    """Cockpitkarmen og akterdekket i ett stykke (V10 trinn 8).
+
+    Forut et baand rundt bronnen (karmen minus bronnen, COAMING_GAP videre)
+    med sidedekket utenfor. Fra trinnet ved AFTDECK_X0 gaar karmtoppen ut til
+    dekkskanten og helt akter som akterdekk; den skraaner ned mot akter-
+    speilet (_aft_slope_cutter), og skulderen over knekken skjaeres etterpaa
+    (hull.shoulder_cutter i build.py). Undersiden ligger AFTDECK_SINK under
+    dekkskantens hoyde, altsaa inne i dekket overalt. Overkantene rundes med
+    fillet der det gaar. Unioneres foer bronnen skjaeres ut."""
     x0 = P.COCKPIT_X0 - P.COAMING_FWD
-    z0 = min(C.sheer_z(x) for x in (x0, P.COAMING_X1)) - 220.0
-    z1 = max(coaming_top_z(x) for x in (x0, P.COAMING_X1)) + 60.0
-    slab = _coaming_slab(x0, P.COAMING_X1, z0, z1)
-    top = _roof_body(x0 - 300.0, P.COAMING_X1 + 300.0, coaming_top_z, 1500.0, 2000.0,
-                     camber=0.0, steps=40)
+    xr = P.AFTDECK_X0 + 100.0                     # baandets akterkant, inne i akterdekket
+    x_all = [x0, xr, P.AFTDECK_X0, P.LOA - 10.0]
+    z0 = min(C.sheer_z(x) for x in x_all) - 220.0
+    z1 = max(coaming_top_z(x) for x in x_all) + 60.0
+    top = _roof_body(x0 - 300.0, P.LOA + 400.0, coaming_top_z, 1500.0, 2000.0,
+                     camber=0.0, steps=48)
     g = P.COAMING_GAP
     hole = _plan_prism_well(_cockpit_stb(g), P.COCKPIT_X0 - g, P.COCKPIT_RAD + g,
                             z0 - 50.0, z1 + 50.0)
-    ring = slab.intersect(top).cut(hole)
-    return _try_fillet(ring, ring.faces(">Z").edges(), P.COAMING_EDGE_R)
+    # Baandet rundes for seg (fillet paa hele stykket feiler), saa legges
+    # akterdekket til; de deler toppflaten der de overlapper.
+    ring = _coaming_slab(x0, xr, z0, z1).intersect(top).cut(hole)
+    n0 = len(ring.val().Faces())
+    ring = _try_fillet(ring, ring.faces(">Z").edges(), P.COAMING_EDGE_R)
+    if len(ring.val().Faces()) == n0:
+        print("  advarsel: karmens overkant ble ikke rundet (fillet feilet)")
+    plate = _aft_deck_prism(z0, z1).intersect(top).cut(hole)
+    block = ring.union(plate)
+    under = _roof_body(x0 - 300.0, P.LOA + 400.0,
+                       lambda x: C.sheer_z(min(x, P.LOA)) - P.AFTDECK_SINK,
+                       1600.0, 2000.0, camber=0.0, steps=48)
+    block = block.cut(under).cut(_aft_slope_cutter())
+    # under skraaningens fot ville platen stukket ut gjennom akterspeilet
+    block = block.cut(H._plain_cutter(-20.0))
+    sol = sorted(block.val().Solids(), key=lambda v: -v.Volume())
+    if not sol or sum(v.Volume() for v in sol[1:]) > 1e-4 * sol[0].Volume():
+        raise RuntimeError(f"karm og akterdekk ble {len(sol)} biter")
+    return cq.Workplane("XY").newObject([sol[0]])
 
 
 def cockpit_floor_z() -> float:

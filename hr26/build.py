@@ -137,6 +137,16 @@ def robust_cut(base, cutter, what: str, strict: bool = False):
     `strict` krever ogsaa et gyldig volum (brukes for kahytten)."""
     before = _n_solids(base)
     out = base.cut(cutter)
+    if strict and _n_solids(out) and not out.val().isValid():
+        # Som for unionene: en flate i kuttet som faller paa en soem i skroget
+        # kan gi et ugyldig volum. Smaa forskyvninger i x (under 0,03 mm i
+        # 1:30) proeves foer bygget stopper.
+        for dx in NUDGES[1:]:
+            cand = base.cut(cutter.translate((dx, 0.0, 0.0)))
+            if _n_solids(cand) and cand.val().isValid():
+                print(f"  kutt '{what}': gyldig med kuttet flyttet {dx:+.2f} mm i x")
+                out = cand
+                break
     n = _n_solids(out)
     if n == 0:
         raise RuntimeError(f"kutt '{what}' ga et tomt resultat")
@@ -200,6 +210,11 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         w = robust_union(w, D.coaming_block(), "cockpitkarm")
         w = robust_union(w, D.sprayhood(), "sprayhood")
         step("karm og sprayhood", w)
+    if getattr(P, "KNUCKLE_Z", None):
+        # etter karm og akterdekk (skulderen gaar opp til dem), foer beslagene
+        w = robust_cut(w, H.shoulder_cutter(top_at=D.shoulder_top_z),
+                       "skulderen over knekken", strict=True)
+        step("knekk og skulder", w)
     w = robust_union(w, F.additions(), "dekksbeslag")
     step("dekksbeslag", w)
 
@@ -228,12 +243,18 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         keep = [D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()]
         if P.CABIN:
             keep.append(I.keep_block())
+        if getattr(P, "KNUCKLE_Z", None):
+            # veggen under skulderen: samme tykkelse som skallet ellers
+            keep.append(H.shoulder_cutter(shift=P.HULL_WALL + P.VOID_MARGIN, x0=5600.0, x1=7600.0,
+                                          top_at=D.shoulder_top_z))
         w = S.hollow(w, keep=keep)
         step("uthult", w)
     if P.CABIN:
         # kahytten med innredning, aapningen i dekket og doerene; saa
         # vinduene som aapninger gjennom veggen (etter hulrommet, saa de
         # bare gaar gjennom veggen)
+        if os.environ.get("HR26_DUMP"):
+            w.val().exportBrep(os.environ["HR26_DUMP"])       # feilsoeking: skroget foer kahyttkuttet
         w = robust_cut(w, I.cabin_void(log=log, with_opening=False), "kahytt og innredning",
                        strict=True)
         step("kahytt", w)
@@ -310,6 +331,9 @@ def write_stl(wp: cq.Workplane, fn: str):
     shape = shapes[0] if len(shapes) == 1 else cq.Compound.makeCompound(shapes)
     shape.exportStl(fn, STL_TOL, STL_ANG, False, False)
     _drop_collapsed_triangles(fn)
+    n = _fill_triangle_holes(fn)
+    if n:
+        print(f"    {os.path.basename(fn)}: tettet {n} trekanthull i nettet")
 
 
 STL_WELD = 1e-4       # modell-mm (0,1 mikrometer): punkter naermere enn dette er samme punkt
@@ -340,6 +364,69 @@ def _drop_collapsed_triangles(fn: str) -> int:
         f.write(head[:80] + int(len(a)).to_bytes(4, "little"))
         f.write(a.tobytes())
     return int((~keep).sum())
+
+
+def _fill_triangle_holes(fn: str) -> int:
+    """Tetter hull i nettet som er noeyaktig en trekant store.
+
+    OCC-trianguleringen hopper av og til over en flis-flate (V10 trinn 8: en
+    0,5 mm bred og 89 mm hoy flate i fullskala ved spissen av aapningen i
+    dekket, x 2 731): volumet er gyldig og lukket, men STL-en mangler en
+    trekant og faar tre aapne kanter. Tre aapne kanter som danner en lukket
+    ring er et slikt hull, og den manglende trekanten legges inn med
+    omloepsretningen motsatt av naboene. Stoerre hull roeres ikke; de skal
+    synes i tools/meshcheck.py og poengkortet. Returnerer antall tettet."""
+    import numpy as np
+
+    with open(fn, "rb") as f:
+        head = f.read(84)
+        n = int.from_bytes(head[80:84], "little")
+        rec = np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])
+        a = np.frombuffer(f.read(n * 50), dtype=rec).copy()
+    v = a["v"].reshape(-1, 3)
+    q = np.round(v.astype(np.float64) / STL_WELD).astype(np.int64)
+    uq, first, inv = np.unique(q, axis=0, return_index=True, return_inverse=True)
+    t = inv.reshape(-1, 3)
+    d = np.r_[t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]]          # rettede kanter
+    und = np.sort(d, axis=1)
+    key = und[:, 0] * (len(uq) + 1) + und[:, 1]
+    _, kinv, cnt = np.unique(key, return_inverse=True, return_counts=True)
+    open_e = d[cnt[kinv] == 1]
+    if len(open_e) == 0 or len(open_e) > 300:
+        return 0
+    nxt = {}
+    for p0, p1 in open_e:
+        nxt.setdefault(int(p0), []).append(int(p1))
+    new = []
+    seen = set()
+    for p0, outs in nxt.items():
+        if p0 in seen or len(outs) != 1:
+            continue
+        p1 = outs[0]
+        o1 = nxt.get(p1, [])
+        if len(o1) != 1:
+            continue
+        p2 = o1[0]
+        o2 = nxt.get(p2, [])
+        if len(o2) != 1 or o2[0] != p0 or len({p0, p1, p2}) != 3:
+            continue
+        seen.update((p0, p1, p2))
+        new.append((p0, p2, p1))                                  # motsatt retning av naboene
+    if not new:
+        return 0
+    pts = v[first].astype(np.float64)
+    add = np.zeros(len(new), dtype=rec)
+    for i, (i0, i1, i2) in enumerate(new):
+        tri = pts[[i0, i1, i2]]
+        nrm = np.cross(tri[1] - tri[0], tri[2] - tri[0])
+        ln = float(np.linalg.norm(nrm))
+        add["n"][i] = nrm / ln if ln > 0 else (0.0, 0.0, 0.0)
+        add["v"][i] = tri.astype(np.float32)
+    a = np.concatenate([a, add])
+    with open(fn, "wb") as f:
+        f.write(head[:80] + int(len(a)).to_bytes(4, "little"))
+        f.write(a.tobytes())
+    return len(new)
 
 
 def export(parts: dict, log=print, partial: bool = False):

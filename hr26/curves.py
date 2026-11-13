@@ -251,6 +251,37 @@ def strake_z(x: float) -> float:
     return _STRAKE(x)
 
 
+_KNUCKLE = None
+
+
+def knuckle_z(x: float) -> float:
+    """Knekklinjens hoyde over DWL (P.KNUCKLE_Z, V10 trinn 8): der skrogsiden
+    slutter aktenfor vinduet og den skraa skulderen begynner. Ligger linjen over
+    dekkskanten (foran vinduets akterende og helt akter), er det ingen knekk.
+    Mellom KNUCKLE_FADE-grensene gaar den jevnt over i dekkskanten og ligger
+    KNUCKLE_LIFT over den videre akterover."""
+    global _KNUCKLE
+    if _KNUCKLE is None:
+        _KNUCKLE = _pchip(P.KNUCKLE_Z)
+    xa, xb = P.KNUCKLE_FADE
+    if x <= xa:
+        return _KNUCKLE(x)
+    if x >= xb:
+        return sheer_z(min(x, P.LOA)) + P.KNUCKLE_LIFT
+    u = (x - xa) / (xb - xa)
+    s = u * u * (3.0 - 2.0 * u)
+    d0 = sheer_z(xa) - _KNUCKLE(xa)
+    return sheer_z(x) - (d0 * (1.0 - s) - P.KNUCKLE_LIFT * s)
+
+
+def knuckle_drop(x: float) -> float:
+    """Hvor langt knekken ligger under dekkskanten (0 der det ikke er knekk)."""
+    tab = getattr(P, "KNUCKLE_Z", None)
+    if not tab or not tab[0][0] <= x <= P.KNUCKLE_FADE[1]:
+        return 0.0
+    return max(sheer_z(x) - knuckle_z(x), 0.0)
+
+
 # ------------------------------------------------- profil paa senterlinjen
 # Forstevnen over vann er en rett linje (P.STEM_LINE) mellom hoydene
 # P.STEM_LINE_Z; over den gaar splinen opp til stevnhodet (0, sheer_z(0)), og
@@ -403,10 +434,31 @@ _GEOM: dict = {}
 def _section_geom(x: float) -> dict:
     """Spantets geometri ved x, regnet en gang og husket: tett polylinje fra
     kjolen til den virtuelle dekkskanten, avrundingen mot dekket og dekks-
-    buen."""
+    buen.
+
+    Der skrogsiden slutter i knekken (knuckle_drop > 0, V10 trinn 8) er det
+    knekken dekksplanen viser som omriss, ikke den virtuelle dekkskanten over
+    den. Spantet gjoeres derfor saa mye bredere i dekkskanten at siden gaar
+    gjennom (deck_half_breadth, knuckle_z): 0-15 mm."""
     g = _GEOM.get(x)
     if g is not None:
         return g
+    extra = 0.0
+    drop = knuckle_drop(x)
+    if drop > 0.0:
+        g0 = _section_core(x, 0.0)
+        p = g0["pts"]
+        zz = np.maximum.accumulate(p[:, 1])
+        extra = max(g0["hb"] - float(np.interp(g0["zs"] - drop, zz, p[:, 0])), 0.0)
+    g = _section_core(x, extra)
+    if len(_GEOM) > 50000:
+        _GEOM.clear()
+    _GEOM[x] = g
+    return g
+
+
+def _section_core(x: float, extra: float) -> dict:
+    """Spantet ved x med dekkskanten `extra` mm utenfor den maalte halvbredden."""
     t = x / P.LOA
     k = _nose(x)
     # Senterlinjen (profilen) er zp. Akter bygges den konvekse kanobunnen paa
@@ -416,7 +468,7 @@ def _section_geom(x: float) -> dict:
     dwh = max(_DEADWOOD(x), 0.0)
     zb = zp + dwh
     zs = sheer_z(x)
-    hb = max(deck_half_breadth(x) * k, 1e-3)
+    hb = max(deck_half_breadth(x) * k, 1e-3) + extra
     cam = deck_camber(x) * k
     hgt = max(zs - zb, 1e-3)
     # helt forut er spantet lite og flatt: bunnreisning og utfall holdes
@@ -501,9 +553,6 @@ def _section_geom(x: float) -> dict:
     g = dict(x=x, pts=pts, s=s, K=np.array([0.0, zp]), D=D, T1=T1, t1=t1, P1=P1,
              T2=T2, t2=t2, w=w, R=R, L=L, hb=hb, bd=bd, zs=zs, zb=zb, cam=cam,
              phi=phi, beta=beta, n=n, rs=rs, a=a, c=c)
-    if len(_GEOM) > 50000:
-        _GEOM.clear()
-    _GEOM[x] = g
     return g
 
 
