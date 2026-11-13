@@ -14,8 +14,11 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   GitHub, i tillegg til Claude Codes lokale minne.
 * Om V10 (10.11.2026): «tiden er ikke problem, tokens er», og deretter «maks
   effort og ultra, ikke spar på noe, best mulig».
-* «Tegninger fra produsent trumfer alt» (12.11.2026). Rekkefølgen er
-  Enderleins tegning og brosjyren, så bildene av båten, så Bambu-modellen.
+* **Kilderegel (13.11.2026, erstatter «tegninger fra produsent trumfer alt»
+  fra 12.11):** Når bildene av den ekte båten og tegningene eller brosjyren er
+  uenige, gjelder bildene. Enderleins tegning og brosjyren brukes der bildene
+  ikke viser noe, og Bambu-modellen er stilmål. Tegningene stemmer stort sett
+  med båten; avvikene som er funnet, lå i modellen.
 * Brukeren liker linjene i Bambu-modellen, særlig dekkskanten, fenderlisten og
   akterspeilet. De er stilmålet der tegningene ikke sier noe, etter at bredden
   er rettet.
@@ -68,6 +71,11 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   sier at skroget er for fyldig, mens en vannlinje på 448-5 sier at det
   stemmer. Les «Status – 13. november 2026» i `V10.md` (spørsmålene til
   eieren og oppskriften for trinn 3).
+* **13.11.2026 (morgen): plan for kvelden vedtatt.** Den står i
+  `v10/PLAN_13nov_kveld.md`: rett stevn (ca. 49°), fenderlisten i bue over
+  akterspeilet og hjerteform under vann akter etter IMG_9391. Formen under
+  vann er avgjort: følg bildet. Kjølens tykkelse er lukket på 240 mm. Start med
+  trinn 0 i planen.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
