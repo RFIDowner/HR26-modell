@@ -114,6 +114,12 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     likt, glatte bunnreisningens dupp ved t 0,45, bygge, kjøre poengkortet og
     pushe hvis grønt. Vent på «kjør». Et bilde rett fra siden i
     vannlinjehøyde avgjør 1,5–2 cm-spørsmålet.
+  * Eieren mener også at kjølen stikker for dypt. Det er ikke vist:
+    dypgang 1 400 er oppgitt og stemmer med 448-5. Men stripen i bildene på
+    land kan tyde på ca. 10 cm. Avgjøres med målebånd fra fenderlistens
+    underkant ned til kjølbunnen midt på kjølen (modellen har 2 200 mm).
+    Roret er trolig 5 cm for dypt (−1 094 mot ca. −1 045) og tas med i
+    trinn 6.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
