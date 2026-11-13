@@ -98,6 +98,22 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   kontrollerte biter (`build.union_strake`), fordi den ellers kan falle bort
   i stillhet. Poengkortet `s7_forkropp` (`score.py` 1.4) består alle krav.
   Les «Status – 13. november 2026, trinn 5» i `V10.md`.
+* **13.11.2026: trinn 6 venter på eieren («lagre i minnet, jeg tar dette
+  senere»).** Eieren så skjermklipp A, B og C (`~/Pictures/Screenshots`):
+  forfoten ser ut som en «boble», og han tegnet en slankere linje (B). Min
+  vurdering, målt i alle fire bildene:
+  * Forfoten (x 0,9–1,5 m) er 1–3 cm for fyldig. Det er jeg enig i.
+  * Bunnen fra 1,5 til 3 m ble trolig senket for mye i trinn 5. IMG_9389
+    (eierens bilde A) og IMG_9395 sier 3–4 cm for dypt. IMG_9374 og 9387
+    sier riktig, men kameraene deres har unaturlige linseparametre.
+  * Eierens linje skjærer 5–8 cm, mer enn bildene støtter.
+  * C: jeg er uenig i å skjære siden inn foran kjølen. Bredden stemmer med
+    IMG_9395, og ved kjølroten mangler det heller materiale.
+  * Foreslått trinn 6: trekke forfoten inn 2–3 cm, heve bunnen ca.
+    1,5–2 cm ved x 1,5–3 m (`BOTTOM_PHOTO_DZ`) med IMG_9389 og 9395 vektet
+    likt, glatte bunnreisningens dupp ved t 0,45, bygge, kjøre poengkortet og
+    pushe hvis grønt. Vent på «kjør». Et bilde rett fra siden i
+    vannlinjehøyde avgjør 1,5–2 cm-spørsmålet.
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
