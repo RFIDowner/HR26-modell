@@ -114,7 +114,9 @@ mellom 3 578 og 6 996 mm har fått tillegg til bunnreisning, slag og utfall
 (`BELLY_*` i `params.py`), så vannlinjene er jevne uten midje. Buken er
 5–8 cm fyldigere under vann ved 4,7–5,0 m. Det største spantet og alt foran
 vinduet og aktenfor ca. 7 m er uendret. Halvbreddeplan og spantriss før og
-etter ligger i `v10/rapporter/14nov_mage/`.
+etter ligger i `v10/rapporter/14nov_mage/`. Før og etter som STL, med et
+snitt ved 4,85 m, lages med `v10/verktoy/foto/py/mage_stl_sammenlign.py`
+(filene havner i `export/visning/`).
 
 **Merk om fenderlisten:** listen er en list utenpå skrogsiden, 95 mm høy og
 55 mm utstikkende (`STRAKE_*`), bygget som en loft langs den målte senter-

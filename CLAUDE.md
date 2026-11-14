@@ -10,6 +10,14 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   og avslutter med valgt kurs og hva som trengs fra brukeren.
 * Under lange jobber skal det være lite underveisrapportering og mest mulig
   faktisk forbedring. Høyst ett bilde mellom hvert trinn.
+* Brukeren ser formendringer i en STL-fil, ikke i PNG-figurer (14.11.2026:
+  «jeg klarer ikke å se dette uten i en stl fil»). Når formen endres, lag
+  før og etter som STL i `export/visning/`, i samme ramme og med et snitt
+  der endringen er størst (se `v10/verktoy/foto/py/mage_stl_sammenlign.py`).
+* Brukeren vurderer fasongen med øyet, ved å se 3D-modellen rett på og se på
+  buen (14.11.2026). At «pølsa» vises på alle bildene, er for brukeren
+  «uomtvistelig» og kan ikke konkluderes bort med usikre kameraer. Si hva en
+  måling kan og ikke kan avgjøre, men ikke si at bildet «lyver».
 * Minner skal lagres slik at også Fable ser dem: her i `CLAUDE.md`, pushet til
   GitHub, i tillegg til Claude Codes lokale minne.
 * Om V10 (10.11.2026): «tiden er ikke problem, tokens er», og deretter «maks
@@ -219,8 +227,10 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   Kriteriet: ingen midje (ingen hul krumning i vannlinjer og diagonaler),
   glatt, IMG_9391 ikke verre, ingen halvbredde under DWL og intet spant
   større enn foran vinduet, og n ≤ 5 akter (det myke slaget fra trinn 4).
-  Buken er 5–8 cm fyldigere under vann ved 4,7–5,0 m, 2–5 cm i DWL, opptil
-  4 cm 10 cm over vannet og under 0,6 cm ved listen. Kanobunnen er 2,52 m³
+  Buken er 5–8 cm fyldigere under vann ved 4,7–5,0 m, 2–5 cm i DWL og opptil
+  4 cm 10 cm over vannet. 40–90 cm over vannet (3,7–6,1 m) er siden opptil
+  0,9 cm slankere, fordi dekkskanten står fast. Det ble funnet 14.11 om
+  dagen; nattrapporten sa «under 0,6 cm ved listen». Kanobunnen er 2,52 m³
   (før 2,44), største spant er uendret, og alt utenfor sonen er uendret
   (vugge 1 byte-lik). IMG_9391 ble litt bedre (rms 11,6 mot 12,1).
   * **«nye 1» er ikke til å stole på kvantitativt** for buken. Å lukke
@@ -229,14 +239,42 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     skjermbilde fra redigering i Bilder-appen, og de nedre radene bommer
     motsatt vei. Det er brukt bare som retning.
   * Vil brukeren ha mer «pølse», er neste knapp variant a
-    (`out/opt_mage2_a.json`: DWL-bredden holdes til ca. 5,6 m, +0,1 m³) eller å
-    løfte taket for største spant. Aktenfor ca. 5,5 m er spantene fortsatt
+    (`out/opt_mage2_a.json`: DWL-bredden holdes til ca. 5,6 m; kanobunnen
+    2,54 m³, bare 0,014 m³ mer enn f) eller å løfte taket for største spant.
+    Variant a er for lik f til å vises som eget alternativ. Aktenfor ca. 5,5 m er spantene fortsatt
     V-formet (17–22°); IMG_9391 bekrefter hjerteformen fra ca. 6,2 m.
   * Rettet: fenderlistens kontroll (`build._union_strake_piece`) brukte rask
     `Volume()` på hele skroget, som bommer med liter. Nå avgjør den presise.
   * `docs/foto/IMG_9395.jpg` heter nå `IMG_9395_mage.jpg` (brukerens navn),
     og verktøyene er rettet. Brukerens skjermbilder er sjekket inn.
   * Les «Status – 14. november 2026: trinn 9 «magen» ferdig» i `V10.md`.
+* **14.11.2026 (dag): magen som STL.** Brukeren: «jeg klarer ikke å se dette
+  uten i en stl fil», så «lag det». `v10/verktoy/foto/py/mage_stl_sammenlign.py`
+  skriver `export/visning/mage_foer.stl`, `mage_naa.stl`, `mage_tillegg.stl`,
+  `mage_sammenligning.stl` og `mage_snitt.stl` (snitt ved 4,85 m: venstre
+  halvdel før, høyre nå, strek for det gamle omrisset). Kjør med
+  `memcap --gb 4 --lock` fra mappen (ca. 50 s). Filene ligger utenfor git.
+* **14.11.2026 (dag): stroppen i «nye 1» vurdert; brukeren ba om «ikke endre
+  nå, kun uttalelse».** Brukerens øye: buken må «pølses» litt mer, «veldig
+  forsiktig», der skroget svinger inn (innsvingen). Overdelen fra midten og
+  opp er en flat linje. Måling med `v10/verktoy/foto/py/n1_strap.py`: den aktre
+  stroppen er et spant ved ca. 5,6–6,2 m, like foran propellen. Med fem
+  kameraløsninger ligger stroppen tydelig utenfor modellen i svingen på
+  begge sider og litt innenfor ved kjølen. Båten er altså fyldigere i svingen
+  og flatere i bunnen der. Trinn 9 endret nesten ingenting ved 6 m
+  (bunnreisning 22,8° → 21,3°). Størrelsen i bildet (9–15 cm) er ikke til å
+  stole på, og IMG_9391 tillater bare et par cm fra 6,2 m og akterover.
+  Claudes anbefaling, ikke gjort: et forsiktig trinn 10 med 2–4 cm mer i
+  svingen ved ca. 5,0–6,2 m, flatere bunn der og jevnt til null før 6,5 m.
+  Ikke dypere, ikke mer ved 4,5–5,2 m, og største spant står. Gi samtidig
+  tilbake de 9 mm slanking høyt på siden, og vis det som STL med snitt ved
+  5,6 m før bygging. IMG_9389 (brukerens «bilde A») måler bare kjøllinja
+  forut og kan ikke avgjøre svingen. Et mål på hvor stroppmerket sitter
+  (avstand fra akterspeilet) ville gjort stroppen til et ekte mål.
+  * **Brukerens beslutning samme dag:** etter slicing i Bambu Studio er
+    skroget «ganske bra slik vi har det i dag». Trinn 10 er lagt bort; ikke
+    gjør det uten at brukeren ber om det. Brukeren printer båten slik den er
+    nå (trinn 9, b9d0d29).
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
   kalesjen (sprayhooden) skal være åpen, kanskje i stoff. Anbefaling: gjør den
   til en egen løs del, så både tynt printet skall og bøyler med stoff er

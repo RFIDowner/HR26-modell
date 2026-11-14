@@ -84,7 +84,8 @@ SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
 # stoerre enn det stoerste foran vinduet, n <= 5 der det var under 5, se
 # trinn 4). Resultat: kanobunn 2,52 m3 (foer 2,44), stoerste spant uendret
 # (0,617 m2 ved x 3 500), buken 5-8 cm fyldigere ved x 4 700-5 000 under vann,
-# 2-5 cm i DWL og under 0,6 cm ved listen, IMG_9391 rms 11,6 px (foer 12,1).
+# 2-5 cm i DWL, IMG_9391 rms 11,6 px (foer 12,1). 40-90 cm over DWL ved x 3 700-6 100
+# er siden opptil 0,9 cm slankere, fordi dekkskanten staar fast (funnet 14.11).
 BELLY_T = (0.45, 0.88)
 BELLY_KNOTS = (0.49, 0.53, 0.57, 0.61, 0.65, 0.69, 0.73, 0.77, 0.81, 0.85)
 BELLY_DEADRISE = (-1.59, -3.47, -4.04, -3.82, -4.00, -3.81, -2.84, -0.78, 0.10, 0.18)   # tillegg, grader
