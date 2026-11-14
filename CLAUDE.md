@@ -173,6 +173,13 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     tilpass mot «nye 1», IMG_9388, 9395, 9389 og 9391. Kanobunnen vil øke fra
     2,44 m³ til anslagsvis 2,8–3,0 m³, altså over brosjyrens deplasement
     (2,36 m³); bildene går foran. Vugger, kjølrot og innredning følger med.
+  * Brukerens blå strek (`docs/foto/blå strek.png`, tegnet på et skjermbilde
+    av modellen skrått ovenfra): streken ligger 4–14 px utenfor modellens
+    omriss fra ca. 3 m til hekken, størst like foran og like bak kjølen. Det
+    tilsvarer omtrent 4–7 cm ved kjølen og 2,5–4 cm akter (usikkert, vinkelen
+    er ukjent). Sted og retning stemmer med bildene. Bildene tyder på mer enn
+    streken midtskips og mindre den siste meteren mot akterspeilet, så streken
+    brukes som nedre grense, og stroppmålingen avgjør.
   * Brukeren har omdøpt `docs/foto/IMG_9395.jpg` til `IMG_9395_mage.jpg`
     (ikke sjekket inn). Verktøyene (`ovl9395.py` m.fl.) leser det gamle navnet.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
