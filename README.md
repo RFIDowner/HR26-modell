@@ -294,6 +294,10 @@ av fyllet (se under). Én rull på 1 kg holder med god margin.
 * Lag 0,12 mm gir renest skjøt mot ruff-taket (kragen under taket heller
   1,9°). Ingen brim — kjølen gir god vedheft.
 * Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
+  Ferdig Bambu-prosjekt: `export/3mf/01_skrog_farger.3mf` (rødt fra kjølen,
+  sort stripe fra 46,76 mm, hvitt fra 50,6 mm; tre-støtte bare fra platen,
+  15 % fyll, 0,12 mm lag). Lag det på nytt etter et nytt skrog med
+  `python tools/lag_3mf.py`.
 
 **Prøvebiter først (V10).** `export/test/` har tre små biter skåret ut av de
 ferdige delene (lag dem på nytt med `python tools/proevebiter.py`):
