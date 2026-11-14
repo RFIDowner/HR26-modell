@@ -23,6 +23,7 @@ from . import cabin as CB
 from . import curves as C
 from . import deckhouse as D
 from . import fittings as F
+from . import gangbord as G
 from . import hull as H
 from . import interior as I
 from . import params as P
@@ -220,7 +221,22 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         w = robust_union(w, D.coaming_block(), "cockpitkarm")
         w = robust_union(w, D.sprayhood(), "sprayhood")
         step("karm og sprayhood", w)
-    if getattr(P, "KNUCKLE_Z", None):
+    if getattr(P, "WALK", False):
+        # V11: flatt gangbord i knekkens hoeyde og en loddrett, rundet kant opp
+        # til karm og akterdekk (gangbord.py), etter karm og akterdekk, foer
+        # beslagene
+        gc = G.cutter()
+        expect = w.intersect(gc).val().Volume()
+        v0 = w.val().Volume()
+        w = robust_cut(w, gc, "gangbord og kant", strict=True)
+        # Et kutt med smaa kanter kan feile stille og levere skroget uroert
+        # (V11, foerste forsoek). Kontroller at det faktisk tok noe.
+        got = v0 - w.val().Volume()
+        if got < 0.7 * expect:
+            raise RuntimeError(f"gangbordkuttet tok {got / 1e6:.0f} liter, ventet {expect / 1e6:.0f}")
+        log(f"    gangbord: {got / 1e6:.0f} liter skaaret bort (ventet {expect / 1e6:.0f})")
+        step("gangbord og kant", w)
+    elif getattr(P, "KNUCKLE_Z", None):
         # etter karm og akterdekk (skulderen gaar opp til dem), foer beslagene
         w = robust_cut(w, H.shoulder_cutter(top_at=D.shoulder_top_z),
                        "skulderen over knekken", strict=True)
@@ -253,7 +269,10 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
         keep = [D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()]
         if P.CABIN:
             keep.append(I.keep_block())
-        if getattr(P, "KNUCKLE_Z", None):
+        if getattr(P, "WALK", False):
+            # gangbordet og veggen opp til karmen: samme tykkelse som skallet ellers
+            keep.append(G.cutter(shift=P.HULL_WALL + P.VOID_MARGIN))
+        elif getattr(P, "KNUCKLE_Z", None):
             # veggen under skulderen: samme tykkelse som skallet ellers
             keep.append(H.shoulder_cutter(shift=P.HULL_WALL + P.VOID_MARGIN, x0=5600.0, x1=7600.0,
                                           top_at=D.shoulder_top_z))

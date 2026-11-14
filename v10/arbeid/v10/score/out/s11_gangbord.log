@@ -1,0 +1,54 @@
+scoring ../../../../export/stl/01_skrog.stl
+  loaded 431054 triangles, 215520 vertices  (0.6s)
+  frame plate rot 45.00 anchor mast shift -0.00; 21 vertical + 2 pin holes  (1.8s)
+  mesh + shell  (4.0s)
+  lines  (4.8s)
+  fairness  (4.8s)
+  wall thickness  (6.5s)
+  sheet 1600x2633  (5.2s)
+wrote C:\Users\stig\Documents\GitHub\HR26-modell-v10\v10\arbeid\v10\score\out\s11_gangbord_score.json  (12s)
+  REQUIREMENTS
+  LOA (stem head to transom top) | 7941.1 | mm | 7950 +-40 | PASS | 7941.1 | 0.0
+  Beam at the deck line | 2679.5 | mm | 2680 +-13 | PASS | 2679.5 | 0.0
+  Draft (checked via rudder pins) | 1400.0 | mm | 1400 +-7 | PASS | 1400.0 | 0.0
+  Deck outline: max dev | 10.5 | mm | <= 12.5 | PASS | 10.5 | 0.0
+  Sheer: max dev at DECK_EDGE_Z pts | 7.6 | mm | <= 12.5 | PASS | 5.6 | 2.0
+  Strake height: max dev (x 750-7650) | 3.0 | mm | <= 12.5 | PASS | 3.0 | 0.0
+  Deck holes found (stanchion/pulpit) | 20 |  | = 20 | PASS | 20 | 0.0
+  Deck holes moved vs today (max) | 11.9 | mm | <= 15 | PASS | 11.9 | 0.0
+  Mast hole found / moved y | 0.0 | mm | <= 15 | PASS | 0.0 | 0.0
+  Rudder pin holes found | 2 |  | = 2 | PASS | 2 | 0.0
+  Rudder pin z error (max) | 0.0 | mm | <= 5 | PASS | 0.0 | 0.0
+  Closed manifold (1e-5 weld) | True |  | yes | PASS | True | None
+  Min wall, hull side (model) | 1.069 | mm | >= 0.8 | PASS | 0.916 | 0.15
+  Min wall, deck (model) | 1.978 | mm | >= 0.8 | PASS | 1.977 | 0.0
+  Side deck aft: tilt (max) | 3.3 | deg | <= 6 | PASS | None | None
+  Side deck aft: wall up (min) | 84.7 | deg | >= 70 | PASS | None | None
+  LINES (indicators)
+  Side deck aft: width min | 200.0 | mm |  | - | None | None
+  Side deck aft: width max | 210.0 | mm |  | - | None | None
+  Deck outline rms | 3.3 | mm |  | - | 3.3 | 0.0
+  Sheer rms | 2.6 | mm |  | - | 1.9 | 0.7
+  Strake height rms | 1.3 | mm |  | - | 1.3 | 0.0
+  UW profile canoe body fwd: max | 38.7 | mm |  | - | 38.7 | 0.0
+  UW profile keel LE: max | 59.1 | mm |  | - | 59.1 | 0.0
+  UW profile keel bottom: max | 9.9 | mm |  | - | 9.9 | 0.0
+  UW aft of keel: max | 14.7 | mm |  | - | 14.7 | 0.0
+  SMOOTHNESS (lower is better)
+  Dihedral > 5 deg, hull skin | 0.9 | % | <= 2 | PASS | 0.87 | 0.03
+  Dihedral > 10 deg, hull skin | 0.2 | % | <= 0.5 | PASS | 0.19 | 0.01
+  Slivers (aspect > 20), hull skin | 2.16 | % | <= 10 | PASS | 2.18 | -0.02
+  Waterline inflections, shape (4 WL) | 8 |  |  | - | 8 | 0.0
+  Waterline ripple (k25 - k60 rms) | 0.0746 | 1/m |  | - | 0.0723 | 0.0
+  Waterline max curvature jump | 1.185 | 1/m |  | - | 1.027 | 0.16
+  Waterline wiggle < 1 m (max) | 10.33 | mm |  | - | 10.33 | 0.0
+  Deck edge inflections plan+profile | 42 |  |  | - | 44 | -2.0
+  Section inflections (10 stations) | 11 |  |  | - | 13 | -2.0
+  DWL crease, max over stations | 8.0 | deg |  | - | 8.0 | 0.0
+  DWL crease, mean | 4.4 | deg |  | - | 4.4 | 0.0
+  FILE
+  Triangles | 431054 |  |  | - | 430800 | 254.0
+  File size | 21.55 | MB |  | - | 21.54 | 0.01
+  Material volume (model) | 337.71 | cm3 |  | - | 338.55 | -0.84
+  Wall p1, hull side (model) | 2.24 | mm |  | - | 2.245 | -0.0
+memcap: topp 1.33 GB av 3.0 GB, rc=0

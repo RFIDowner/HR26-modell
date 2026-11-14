@@ -17,8 +17,16 @@ CLEAR = 0.10 * P.SCALE          # klaring paa hulldiameter (0,10 mm i modell)
 HOLE_DEPTH = 7.0 * P.SCALE      # 7 mm dypt i modellen
 
 
+def _surface_z(x: float, y: float) -> float:
+    """Flaten hullet gaar ned fra: gangbordet der det er (V11), ellers dekket."""
+    if getattr(P, "WALK", False):
+        from . import gangbord as G
+        return G.surface_z(x, y)
+    return D.deck_z(x, y)
+
+
 def _pin_hole(x: float, y: float, dia: float, depth: float = HOLE_DEPTH):
-    z = D.deck_z(x, y)
+    z = _surface_z(x, y)
     return (
         cq.Workplane("XY")
         .workplane(offset=z - depth)

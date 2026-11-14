@@ -1,0 +1,1919 @@
+{
+ "meta": {
+  "stl": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\export\\stl\\01_skrog.stl",
+  "name": "s11_gangbord",
+  "script": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\v10\\arbeid\\v10\\score\\score.py",
+  "version": "1.6 (2026-11-14)",
+  "run_at": "2026-11-14T09:50:36",
+  "stl_format": "binary",
+  "frame": "plate",
+  "rotation_deg": 45.0,
+  "pca_deg": 45.019,
+  "flipped_180": false,
+  "bow_check_agrees": true,
+  "x_anchor": "mast",
+  "bow_tip_x": 4.0,
+  "x_shift_vs_bow_anchor": -0.0,
+  "dwl_model_z": 46.667,
+  "analysis_s": 6.5,
+  "ref": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\v10\\arbeid\\v10\\score\\out\\s10_mage_score.json",
+  "png": "C:\\Users\\stig\\Documents\\GitHub\\HR26-modell-v10\\v10\\arbeid\\v10\\score\\out\\s11_gangbord_score.png",
+  "runtime_s": 11.8
+ },
+ "mesh": {
+  "triangles": 431054,
+  "file_mb": 21.55,
+  "vertices": 215520,
+  "degenerate_triangles": 12,
+  "skin_triangles": 36905,
+  "skin_edges": 54369,
+  "dihedral_gt5_pct": 0.9,
+  "dihedral_gt10_pct": 0.2,
+  "dihedral_gt2_pct": 18.53,
+  "dihedral_p50_deg": 0.87,
+  "dihedral_p90_deg": 2.57,
+  "dihedral_p99_deg": 4.87,
+  "sliver_gt20_pct_skin": 2.16,
+  "sliver_gt20_pct_all": 11.11,
+  "edge_p50_model": 1.501,
+  "edge_p95_model": 3.107,
+  "edge_max_model": 33.87,
+  "note": "skin = hull topsides and bottom outside the strake band, keel root, window recess, anchor roller and ends; dihedral = angle between adjacent face normals"
+ },
+ "shell": {
+  "closed_manifold": true,
+  "nonmanifold_edges": 0,
+  "boundary_edges": 0,
+  "inconsistent_orientation_edges": 0,
+  "meshcheck_tol1e4_nonmanifold_edges": 0,
+  "meshcheck_note": "tools/meshcheck.py welds at 1e-4 mm; edges it calls non-manifold while the 1e-5 weld is clean come from vertices < 0.1 um apart (harmless, but meshcheck exits 1)",
+  "shells": 3,
+  "material_cm3_model": 337.71,
+  "outer_enclosed_cm3_model": 369.0,
+  "voids_cm3_model": -31.3,
+  "shells_raw": 3,
+  "cavities_closed_raw": 2,
+  "cavities_after_removing_hole_walls": 4,
+  "cavities_open_through_holes": 2,
+  "wall_thickness": {
+   "hull_side": {
+    "n": 22500,
+    "solid_or_gt_L_pct": 40.4,
+    "edge_samples_pct": 2.8,
+    "min_model": 1.069,
+    "p01_model": 2.206,
+    "p1_model": 2.24,
+    "p5_model": 2.323,
+    "p50_model": 3.57,
+    "thinnest": [
+     {
+      "x": 2485.0,
+      "y": -946.0,
+      "z": 1067.0,
+      "t_model": 1.069,
+      "nearest_hole": "stanchion_2500_port"
+     },
+     {
+      "x": 2474.0,
+      "y": -937.0,
+      "z": 1034.0,
+      "t_model": 1.104,
+      "nearest_hole": "stanchion_2500_port"
+     },
+     {
+      "x": 5640.0,
+      "y": 1280.0,
+      "z": 914.0,
+      "t_model": 1.183,
+      "nearest_hole": "stanchion_5650_stb"
+     },
+     {
+      "x": 1437.0,
+      "y": -622.0,
+      "z": 1118.0,
+      "t_model": 1.241,
+      "nearest_hole": "stanchion_1450_port"
+     },
+     {
+      "x": 5664.0,
+      "y": 1286.0,
+      "z": 958.0,
+      "t_model": 1.336,
+      "nearest_hole": "stanchion_5650_stb"
+     },
+     {
+      "x": 5649.0,
+      "y": 1290.0,
+      "z": 972.0,
+      "t_model": 1.375,
+      "nearest_hole": "stanchion_5650_stb"
+     },
+     {
+      "x": 2500.0,
+      "y": -954.0,
+      "z": 1088.0,
+      "t_model": 1.469,
+      "nearest_hole": "stanchion_2500_port"
+     },
+     {
+      "x": 2502.0,
+      "y": -954.0,
+      "z": 1081.0,
+      "t_model": 1.517,
+      "nearest_hole": "stanchion_2500_port"
+     }
+    ]
+   },
+   "deck": {
+    "n": 7500,
+    "solid_or_gt_L_pct": 66.8,
+    "edge_samples_pct": 0.5,
+    "min_model": 1.978,
+    "p01_model": 1.98,
+    "p1_model": 1.982,
+    "p5_model": 1.987,
+    "p50_model": 2.004,
+    "thinnest": [
+     {
+      "x": 1371.0,
+      "y": -367.0,
+      "z": 1215.0,
+      "t_model": 1.978
+     },
+     {
+      "x": 1359.0,
+      "y": 361.0,
+      "z": 1215.0,
+      "t_model": 1.979
+     },
+     {
+      "x": 1342.0,
+      "y": 357.0,
+      "z": 1215.0,
+      "t_model": 1.98
+     },
+     {
+      "x": 1321.0,
+      "y": 356.0,
+      "z": 1215.0,
+      "t_model": 1.98
+     },
+     {
+      "x": 1365.0,
+      "y": 361.0,
+      "z": 1215.0,
+      "t_model": 1.98
+     },
+     {
+      "x": 1319.0,
+      "y": 357.0,
+      "z": 1215.0,
+      "t_model": 1.98
+     },
+     {
+      "x": 870.0,
+      "y": 245.0,
+      "z": 1214.0,
+      "t_model": 1.98
+     },
+     {
+      "x": 1112.0,
+      "y": 304.0,
+      "z": 1215.0,
+      "t_model": 1.98
+     }
+    ]
+   }
+  },
+  "wall_nominal_model": {
+   "hull_side": 1.9,
+   "deck": 1.6,
+   "note": "HULL_WALL 1.5 + VOID_MARGIN 0.4; DECK_THICK 1.6"
+  }
+ },
+ "interfaces": {
+  "deck_holes": {
+   "expected": 20,
+   "found": 20,
+   "missing": [],
+   "extra_round_holes": [],
+   "other_small_pockets": [],
+   "holes": [
+    {
+     "name": "stanchion_1450_stb",
+     "found": true,
+     "x": 1450.0,
+     "y": 570.1,
+     "d": 36.0,
+     "z_top": 1202.9,
+     "z_bottom_closed": 997.9,
+     "closed_depth": 205.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 1.5,
+     "dd_today": -0.0,
+     "dz_top_today": -0.0
+    },
+    {
+     "name": "stanchion_1450_port",
+     "found": true,
+     "x": 1450.0,
+     "y": -570.1,
+     "d": 36.0,
+     "z_top": 1202.9,
+     "z_bottom_closed": 997.9,
+     "closed_depth": 205.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -1.5,
+     "dd_today": -0.0,
+     "dz_top_today": -0.0
+    },
+    {
+     "name": "stanchion_2500_stb",
+     "found": true,
+     "x": 2500.0,
+     "y": 899.0,
+     "d": 36.0,
+     "z_top": 1192.9,
+     "z_bottom_closed": 982.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 11.9,
+     "dd_today": -0.0,
+     "dz_top_today": 15.0
+    },
+    {
+     "name": "stanchion_2500_port",
+     "found": true,
+     "x": 2500.0,
+     "y": -899.0,
+     "d": 36.0,
+     "z_top": 1192.9,
+     "z_bottom_closed": 982.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -11.9,
+     "dd_today": -0.0,
+     "dz_top_today": 15.0
+    },
+    {
+     "name": "stanchion_3550_stb",
+     "found": true,
+     "x": 3550.0,
+     "y": 1142.6,
+     "d": 36.0,
+     "z_top": 1172.9,
+     "z_bottom_closed": 1127.9,
+     "closed_depth": 45.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 7.2,
+     "dd_today": -0.0,
+     "dz_top_today": 40.0
+    },
+    {
+     "name": "stanchion_3550_port",
+     "found": true,
+     "x": 3550.0,
+     "y": -1142.6,
+     "d": 36.0,
+     "z_top": 1172.9,
+     "z_bottom_closed": 1127.9,
+     "closed_depth": 45.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -7.2,
+     "dd_today": -0.0,
+     "dz_top_today": 40.0
+    },
+    {
+     "name": "stanchion_4600_stb",
+     "found": true,
+     "x": 4600.0,
+     "y": 1262.7,
+     "d": 36.0,
+     "z_top": 1137.9,
+     "z_bottom_closed": 1092.9,
+     "closed_depth": 45.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 1.1,
+     "dd_today": -0.0,
+     "dz_top_today": 30.0
+    },
+    {
+     "name": "stanchion_4600_port",
+     "found": true,
+     "x": 4600.0,
+     "y": -1262.7,
+     "d": 36.0,
+     "z_top": 1137.9,
+     "z_bottom_closed": 1092.9,
+     "closed_depth": 45.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -1.1,
+     "dd_today": -0.0,
+     "dz_top_today": 30.0
+    },
+    {
+     "name": "stanchion_5650_stb",
+     "found": true,
+     "x": 5650.0,
+     "y": 1232.3,
+     "d": 36.0,
+     "z_top": 1037.9,
+     "z_bottom_closed": 832.9,
+     "closed_depth": 205.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 5.9,
+     "dd_today": -0.0,
+     "dz_top_today": -50.0
+    },
+    {
+     "name": "stanchion_5650_port",
+     "found": true,
+     "x": 5650.0,
+     "y": -1232.3,
+     "d": 36.0,
+     "z_top": 1037.9,
+     "z_bottom_closed": 832.9,
+     "closed_depth": 205.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -5.9,
+     "dd_today": -0.0,
+     "dz_top_today": -50.0
+    },
+    {
+     "name": "stanchion_6700_stb",
+     "found": true,
+     "x": 6700.0,
+     "y": 1065.1,
+     "d": 36.0,
+     "z_top": 952.9,
+     "z_bottom_closed": 747.9,
+     "closed_depth": 205.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 3.6,
+     "dd_today": -0.0,
+     "dz_top_today": -115.0
+    },
+    {
+     "name": "stanchion_6700_port",
+     "found": true,
+     "x": 6700.0,
+     "y": -1065.1,
+     "d": 36.0,
+     "z_top": 952.9,
+     "z_bottom_closed": 747.9,
+     "closed_depth": 205.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -3.6,
+     "dd_today": -0.0,
+     "dz_top_today": -115.0
+    },
+    {
+     "name": "pulpit_520_stb",
+     "found": true,
+     "x": 520.0,
+     "y": 245.2,
+     "d": 36.0,
+     "z_top": 1207.9,
+     "z_bottom_closed": 1017.9,
+     "closed_depth": 190.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 4.0,
+     "dd_today": -0.0,
+     "dz_top_today": -0.0
+    },
+    {
+     "name": "pulpit_520_port",
+     "found": true,
+     "x": 520.0,
+     "y": -245.2,
+     "d": 36.0,
+     "z_top": 1207.9,
+     "z_bottom_closed": 1017.9,
+     "closed_depth": 190.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -4.0,
+     "dd_today": -0.0,
+     "dz_top_today": -0.0
+    },
+    {
+     "name": "pulpit_900_stb",
+     "found": true,
+     "x": 900.0,
+     "y": 381.2,
+     "d": 36.0,
+     "z_top": 1207.9,
+     "z_bottom_closed": 997.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 1.4,
+     "dd_today": -0.0,
+     "dz_top_today": -0.0
+    },
+    {
+     "name": "pulpit_900_port",
+     "found": true,
+     "x": 900.0,
+     "y": -381.2,
+     "d": 36.0,
+     "z_top": 1207.9,
+     "z_bottom_closed": 997.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -1.4,
+     "dd_today": -0.0,
+     "dz_top_today": -0.0
+    },
+    {
+     "name": "pushpit_7250_stb",
+     "found": true,
+     "x": 7250.0,
+     "y": 938.9,
+     "d": 36.0,
+     "z_top": 942.9,
+     "z_bottom_closed": 732.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 7.1,
+     "dd_today": -0.0,
+     "dz_top_today": -90.0
+    },
+    {
+     "name": "pushpit_7250_port",
+     "found": true,
+     "x": 7250.0,
+     "y": -938.9,
+     "d": 36.0,
+     "z_top": 942.9,
+     "z_bottom_closed": 732.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -7.1,
+     "dd_today": -0.0,
+     "dz_top_today": -90.0
+    },
+    {
+     "name": "pushpit_7680_stb",
+     "found": true,
+     "x": 7680.0,
+     "y": 824.1,
+     "d": 36.0,
+     "z_top": 957.9,
+     "z_bottom_closed": 747.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": -1.1,
+     "dd_today": -0.0,
+     "dz_top_today": -20.0
+    },
+    {
+     "name": "pushpit_7680_port",
+     "found": true,
+     "x": 7680.0,
+     "y": -824.1,
+     "d": 36.0,
+     "z_top": 957.9,
+     "z_bottom_closed": 747.9,
+     "closed_depth": 210.0,
+     "dx_design": 0.0,
+     "dx_today": 0.0,
+     "dy_today": 1.1,
+     "dd_today": -0.0,
+     "dz_top_today": -20.0
+    }
+   ],
+   "max_abs_dx_design": 0.0,
+   "max_pos_change_vs_today": 11.9,
+   "max_d_change_vs_today": 0.0,
+   "min_closed_depth": 45.0,
+   "holes_shorter_than_design": [
+    "stanchion_3550_stb",
+    "stanchion_3550_port",
+    "stanchion_4600_stb",
+    "stanchion_4600_port"
+   ]
+  },
+  "mast_hole": {
+   "found": true,
+   "x": 3400.0,
+   "y": 0.0,
+   "size_x": 135.0,
+   "size_y": 105.0,
+   "z_top": 1127.9,
+   "z_bottom": 1047.9,
+   "depth": 80.0,
+   "dsize_design": [
+    -0.0,
+    -0.0
+   ],
+   "dx_today": 0.0,
+   "dy_today": 0.0,
+   "dz_top_today": -250.0,
+   "ddepth_today": -250.0
+  },
+  "rudder_pins": {
+   "expected": 2,
+   "found": 2,
+   "pins": [
+    {
+     "z_design": -90.0,
+     "found": true,
+     "y": 0.0,
+     "z": -90.0,
+     "d": 42.0,
+     "x_bottom": 7730.9,
+     "x_mouth": 7790.9,
+     "depth": 60.0,
+     "dz": -0.0,
+     "dy_today": 0.0,
+     "dz_today": -0.0,
+     "dx_bottom_today": -0.0,
+     "ddepth_today": 0.0
+    },
+    {
+     "z_design": -200.0,
+     "found": true,
+     "y": 0.0,
+     "z": -200.0,
+     "d": 42.0,
+     "x_bottom": 7715.9,
+     "x_mouth": 7772.9,
+     "depth": 57.0,
+     "dz": -0.0,
+     "dy_today": 0.0,
+     "dz_today": -0.0,
+     "dx_bottom_today": -0.0,
+     "ddepth_today": 0.0
+    }
+   ],
+   "draft_from_pins": 1400.0
+  }
+ },
+ "lines": {
+  "deck_outline": {
+   "n": 84,
+   "max_abs": 10.5,
+   "rms": 3.3,
+   "mean": -0.7,
+   "within_tol": 84,
+   "x_at_max": 101.0,
+   "trace_x_lt_7300": {
+    "n": 72,
+    "max_abs": 10.5,
+    "rms": 3.2,
+    "mean": -1.1,
+    "within_tol": 72,
+    "x_at_max": 101.0
+   },
+   "virtual_corner_1_0": {
+    "n": 84,
+    "max_abs": 12.3,
+    "rms": 4.7,
+    "mean": 2.4,
+    "within_tol": 84,
+    "x_at_max": 201.0
+   },
+   "stern_outline": {
+    "n": 12,
+    "max_abs": 8.7,
+    "rms": 3.9,
+    "mean": 1.7,
+    "within_tol": 12,
+    "x_at_max": 7880.0
+   },
+   "virtual_corner_fits": 319,
+   "port_minus_stb_max": 3.01,
+   "sign": "+ = model outside the drawing"
+  },
+  "sheer": {
+   "n": 21,
+   "max_abs": 7.6,
+   "rms": 2.6,
+   "mean": 0.6,
+   "within_tol": 21,
+   "x_at_max": 7800.0,
+   "points": [
+    [
+     0.0,
+     4.0
+    ],
+    [
+     1000.0,
+     -0.1
+    ],
+    [
+     2000.0,
+     -2.8
+    ],
+    [
+     2500.0,
+     5.6
+    ],
+    [
+     3000.0,
+     -3.6
+    ],
+    [
+     3750.0,
+     -0.9
+    ],
+    [
+     4200.0,
+     -1.1
+    ],
+    [
+     4500.0,
+     -0.2
+    ],
+    [
+     5000.0,
+     -2.1
+    ],
+    [
+     5300.0,
+     0.7
+    ],
+    [
+     5500.0,
+     0.6
+    ],
+    [
+     5700.0,
+     0.7
+    ],
+    [
+     5900.0,
+     0.6
+    ],
+    [
+     6100.0,
+     0.3
+    ],
+    [
+     6300.0,
+     0.7
+    ],
+    [
+     6500.0,
+     0.7
+    ],
+    [
+     6700.0,
+     0.8
+    ],
+    [
+     7100.0,
+     0.8
+    ],
+    [
+     7400.0,
+     1.0
+    ],
+    [
+     7600.0,
+     0.3
+    ],
+    [
+     7800.0,
+     7.6
+    ]
+   ],
+   "sign": "+ = model above the reference",
+   "note": "x=0 evaluated at x=80; x=7950 skipped (transom); 1.5: KNUCKLE_Z points replace DECK_EDGE_Z where the hull side ends in the knuckle"
+  },
+  "strake_height": {
+   "n": 47,
+   "max_abs": 3.0,
+   "rms": 1.3,
+   "mean": 1.0,
+   "within_tol": 47,
+   "x_at_max": 3300.0,
+   "stations": 47,
+   "reliable": 47,
+   "outer_face_centre": {
+    "n": 47,
+    "max_abs": 4.5,
+    "rms": 2.6,
+    "mean": 2.3,
+    "within_tol": 47,
+    "x_at_max": 3300.0
+   },
+   "band_height_median": 54.0,
+   "proud_median": 27.7,
+   "note": "centre of the strake band seen from the side vs strake_z_mm (x 750-7650)"
+  },
+  "loa": {
+   "value": 7941.1,
+   "target": 7950.0,
+   "dev": -8.9,
+   "x_bow": 4.0,
+   "x_transom_top": 7945.1,
+   "overall_x_extent": 7951.8,
+   "note": "stem head to transom top on the centreline; overall extent includes the strake"
+  },
+  "beam": {
+   "deck": 2679.5,
+   "target": 2680.0,
+   "dev": -0.5,
+   "overall": 2679.5,
+   "x_at_max": 4920.0,
+   "virtual_corner_1_0": 2687.3
+  },
+  "draft": {
+   "assumed": 1400.0,
+   "from_rudder_pins": 1400.0,
+   "dev": 0.0,
+   "note": "keel bottom is z=0 in the STL; the pins (built at z=-90/-200) check it"
+  },
+  "underwater_profile": {
+   "segments": {
+    "canoe_fwd": {
+     "n": 105,
+     "max_abs": 38.7,
+     "rms": 24.9,
+     "mean": -20.0,
+     "within_tol": 32,
+     "x_at_max": 2329.0
+    },
+    "keel_le": {
+     "n": 84,
+     "max_abs": 59.1,
+     "rms": 29.1,
+     "mean": -15.6,
+     "within_tol": 26,
+     "x_at_max": 4170.0
+    },
+    "keel_bottom": {
+     "n": 43,
+     "max_abs": 9.9,
+     "rms": 7.0,
+     "mean": 5.1,
+     "within_tol": 43,
+     "x_at_max": 5150.0
+    },
+    "canoe_aft_of_keel": {
+     "n": 15,
+     "max_abs": 14.7,
+     "rms": 9.1,
+     "mean": 4.8,
+     "within_tol": 11,
+     "x_at_max": 5790.0
+    },
+    "aft_trace_uncertain": {
+     "n": 48,
+     "max_abs": 24.0,
+     "rms": 12.7,
+     "mean": 8.9,
+     "within_tol": 28,
+     "x_at_max": 7429.0
+    }
+   },
+   "sign": "+ = model above (shallower than) the drawing",
+   "note": "2-D distance from the traced lower silhouette; propeller (6030-6450) and rudder (>7450) are not part of the hull and are skipped"
+  },
+  "walk_deck": {
+   "rows": [
+    {
+     "x": 5600.0,
+     "side": "stb",
+     "edge_y": 1307.4,
+     "ledge_z": 1046.9,
+     "tilt_deg": 2.5,
+     "wall": {
+      "y_foot": 1102.4,
+      "width": 205.0,
+      "angle_deg": 85.5,
+      "top": 1160.4
+     }
+    },
+    {
+     "x": 5600.0,
+     "side": "port",
+     "edge_y": 1307.4,
+     "ledge_z": 1046.9,
+     "tilt_deg": 2.5,
+     "wall": {
+      "y_foot": 1102.4,
+      "width": 205.0,
+      "angle_deg": 85.5,
+      "top": 1160.4
+     }
+    },
+    {
+     "x": 5720.0,
+     "side": "stb",
+     "edge_y": 1294.6,
+     "ledge_z": 1033.3,
+     "tilt_deg": 2.5,
+     "wall": {
+      "y_foot": 1094.6,
+      "width": 200.0,
+      "angle_deg": 86.1,
+      "top": 1185.2
+     }
+    },
+    {
+     "x": 5720.0,
+     "side": "port",
+     "edge_y": 1294.5,
+     "ledge_z": 1033.3,
+     "tilt_deg": 2.5,
+     "wall": {
+      "y_foot": 1094.5,
+      "width": 200.0,
+      "angle_deg": 86.1,
+      "top": 1185.2
+     }
+    },
+    {
+     "x": 6300.0,
+     "side": "stb",
+     "edge_y": 1208.1,
+     "ledge_z": 973.9,
+     "tilt_deg": 2.7,
+     "wall": {
+      "y_foot": 998.1,
+      "width": 210.0,
+      "angle_deg": 84.9,
+      "top": 1146.9
+     }
+    },
+    {
+     "x": 6300.0,
+     "side": "port",
+     "edge_y": 1208.1,
+     "ledge_z": 973.9,
+     "tilt_deg": 2.7,
+     "wall": {
+      "y_foot": 998.1,
+      "width": 210.0,
+      "angle_deg": 84.9,
+      "top": 1146.9
+     }
+    },
+    {
+     "x": 6640.0,
+     "side": "stb",
+     "edge_y": 1146.8,
+     "ledge_z": 958.1,
+     "tilt_deg": 2.8,
+     "wall": {
+      "y_foot": 936.8,
+      "width": 210.0,
+      "angle_deg": 84.8,
+      "top": 1132.1
+     }
+    },
+    {
+     "x": 6640.0,
+     "side": "port",
+     "edge_y": 1146.8,
+     "ledge_z": 958.1,
+     "tilt_deg": 2.8,
+     "wall": {
+      "y_foot": 936.8,
+      "width": 210.0,
+      "angle_deg": 84.8,
+      "top": 1132.1
+     }
+    },
+    {
+     "x": 6760.0,
+     "side": "stb",
+     "edge_y": 1123.3,
+     "ledge_z": 954.3,
+     "tilt_deg": 2.8,
+     "wall": {
+      "y_foot": 913.3,
+      "width": 210.0,
+      "angle_deg": 84.8,
+      "top": 1126.8
+     }
+    },
+    {
+     "x": 6760.0,
+     "side": "port",
+     "edge_y": 1123.3,
+     "ledge_z": 954.3,
+     "tilt_deg": 2.8,
+     "wall": {
+      "y_foot": 913.3,
+      "width": 210.0,
+      "angle_deg": 84.8,
+      "top": 1126.8
+     }
+    },
+    {
+     "x": 7100.0,
+     "side": "stb",
+     "edge_y": 1047.2,
+     "ledge_z": 946.4,
+     "tilt_deg": 3.0,
+     "wall": {
+      "y_foot": 837.2,
+      "width": 210.0,
+      "angle_deg": 84.7,
+      "top": 1111.2
+     }
+    },
+    {
+     "x": 7100.0,
+     "side": "port",
+     "edge_y": 1047.2,
+     "ledge_z": 946.4,
+     "tilt_deg": 3.0,
+     "wall": {
+      "y_foot": 837.2,
+      "width": 210.0,
+      "angle_deg": 84.7,
+      "top": 1111.2
+     }
+    },
+    {
+     "x": 7400.0,
+     "side": "stb",
+     "edge_y": 969.8,
+     "ledge_z": 941.8,
+     "tilt_deg": 3.3,
+     "wall": {
+      "y_foot": 759.8,
+      "width": 210.0,
+      "angle_deg": 84.7,
+      "top": 1096.0
+     }
+    },
+    {
+     "x": 7400.0,
+     "side": "port",
+     "edge_y": 969.7,
+     "ledge_z": 941.8,
+     "tilt_deg": 3.3,
+     "wall": {
+      "y_foot": 759.7,
+      "width": 210.0,
+      "angle_deg": 84.7,
+      "top": 1096.1
+     }
+    }
+   ],
+   "n": 14,
+   "tilt_max_deg": 3.3,
+   "wall_min_deg": 84.7,
+   "width_min": 200.0,
+   "width_max": 210.0,
+   "note": "1.6: top profile across the side deck; tilt between 30 and 130 mm in from the hull edge; wall = first 60 mm rise inboard, angle over the 15-60 mm part (5 mm grid, ~85 deg resolvable); a section without a wall counts as 0 deg"
+  }
+ },
+ "fairness": {
+  "waterlines": {
+   "z150": {
+    "sign_changes": 4,
+    "sign_changes_fine": 27,
+    "ripple_rms": 0.0874,
+    "max_jump_50mm": 1.027,
+    "max_jump_x": 930.0,
+    "wiggle_lt1m_max": 5.35,
+    "wiggle_lt1m_rms": 2.46,
+    "covered_mm": 6570.0,
+    "port_stb_max_diff": 2.5
+   },
+   "z400": {
+    "sign_changes": 1,
+    "sign_changes_fine": 29,
+    "ripple_rms": 0.0791,
+    "max_jump_50mm": 0.64,
+    "max_jump_x": 840.0,
+    "wiggle_lt1m_max": 4.55,
+    "wiggle_lt1m_rms": 2.23,
+    "covered_mm": 6790.0,
+    "port_stb_max_diff": 2.2
+   },
+   "z700": {
+    "sign_changes": 1,
+    "sign_changes_fine": 14,
+    "ripple_rms": 0.0669,
+    "max_jump_50mm": 1.185,
+    "max_jump_x": 675.0,
+    "wiggle_lt1m_max": 3.72,
+    "wiggle_lt1m_rms": 2.0,
+    "covered_mm": 6800.0,
+    "port_stb_max_diff": 1.3
+   },
+   "z900": {
+    "sign_changes": 2,
+    "sign_changes_fine": 6,
+    "ripple_rms": 0.0623,
+    "max_jump_50mm": 0.854,
+    "max_jump_x": 675.0,
+    "wiggle_lt1m_max": 10.33,
+    "wiggle_lt1m_rms": 4.32,
+    "covered_mm": 3195.0,
+    "port_stb_max_diff": 1.0
+   }
+  },
+  "deck_edge": {
+   "plan": {
+    "sign_changes": 2,
+    "sign_changes_fine": 82,
+    "ripple_rms": 0.1759,
+    "thresholds_per_m": [
+     0.02,
+     0.05
+    ],
+    "max_jump_50mm": 2.537,
+    "max_jump_x": 5175.0,
+    "max_abs_k": 1.35,
+    "wiggle_lt1m_max": 5.45,
+    "wiggle_lt1m_rms": 1.94
+   },
+   "profile": {
+    "sign_changes": 40,
+    "sign_changes_fine": 104,
+    "ripple_rms": 0.4189,
+    "thresholds_per_m": [
+     0.005,
+     0.01
+    ],
+    "max_jump_50mm": 6.796,
+    "max_jump_x": 5175.0,
+    "max_abs_k": 4.702,
+    "wiggle_lt1m_max": 12.56,
+    "wiggle_lt1m_rms": 1.99
+   }
+  },
+  "sections": [
+   {
+    "x": 1400.0,
+    "sign_changes": 0,
+    "dwl_crease_deg": 4.3,
+    "dwl_turn_concentration": 1.45,
+    "angle_below_deg": 33.3,
+    "angle_above_deg": 29.0,
+    "max_abs_k": 1.83,
+    "z_from": -102.0,
+    "z_to": 858.0
+   },
+   {
+    "x": 2050.0,
+    "sign_changes": 1,
+    "dwl_crease_deg": 3.4,
+    "dwl_turn_concentration": 0.73,
+    "angle_below_deg": 26.7,
+    "angle_above_deg": 23.3,
+    "max_abs_k": 2.55,
+    "z_from": -232.0,
+    "z_to": 750.0
+   },
+   {
+    "x": 2700.0,
+    "sign_changes": 0,
+    "dwl_crease_deg": 3.1,
+    "dwl_turn_concentration": 0.81,
+    "angle_below_deg": 26.5,
+    "angle_above_deg": 23.4,
+    "max_abs_k": 2.43,
+    "z_from": -313.0,
+    "z_to": 796.0
+   },
+   {
+    "x": 3350.0,
+    "sign_changes": 0,
+    "dwl_crease_deg": 3.2,
+    "dwl_turn_concentration": 0.9,
+    "angle_below_deg": 29.8,
+    "angle_above_deg": 26.6,
+    "max_abs_k": 1.84,
+    "z_from": -449.0,
+    "z_to": 736.0
+   },
+   {
+    "x": 4000.0,
+    "sign_changes": 2,
+    "dwl_crease_deg": 3.3,
+    "dwl_turn_concentration": 0.95,
+    "angle_below_deg": 36.4,
+    "angle_above_deg": 33.1,
+    "max_abs_k": 1.89,
+    "z_from": -446.0,
+    "z_to": 726.0
+   },
+   {
+    "x": 4650.0,
+    "sign_changes": 2,
+    "dwl_crease_deg": 4.0,
+    "dwl_turn_concentration": 1.04,
+    "angle_below_deg": 43.2,
+    "angle_above_deg": 39.2,
+    "max_abs_k": 1.64,
+    "z_from": -435.0,
+    "z_to": 706.0
+   },
+   {
+    "x": 5300.0,
+    "sign_changes": 2,
+    "dwl_crease_deg": 4.6,
+    "dwl_turn_concentration": 1.04,
+    "angle_below_deg": 48.0,
+    "angle_above_deg": 43.3,
+    "max_abs_k": 1.91,
+    "z_from": -432.0,
+    "z_to": 691.0
+   },
+   {
+    "x": 5950.0,
+    "sign_changes": 2,
+    "dwl_crease_deg": 5.6,
+    "dwl_turn_concentration": 1.3,
+    "angle_below_deg": 52.3,
+    "angle_above_deg": 46.7,
+    "max_abs_k": 4.93,
+    "z_from": -443.0,
+    "z_to": 665.0
+   },
+   {
+    "x": 6600.0,
+    "sign_changes": 2,
+    "dwl_crease_deg": 8.0,
+    "dwl_turn_concentration": 1.67,
+    "angle_below_deg": 54.8,
+    "angle_above_deg": 46.7,
+    "max_abs_k": 6.35,
+    "z_from": -430.0,
+    "z_to": 619.0
+   },
+   {
+    "x": 7250.0,
+    "sign_changes": 0,
+    "dwl_crease_deg": null,
+    "dwl_turn_concentration": null,
+    "angle_below_deg": null,
+    "angle_above_deg": null,
+    "max_abs_k": 0.12,
+    "z_from": 411.0,
+    "z_to": 679.0
+   }
+  ],
+  "sections_total_sign_changes": 11,
+  "dwl_crease_max_deg": 8.0,
+  "dwl_crease_mean_deg": 4.4,
+  "note": "sign changes count curvature reversals with |k| above the threshold (1/m) after Gaussian smoothing (shape: sigma 60 mm, fine: 25 mm along waterlines; 15 mm along sections). max_jump_50mm = largest change of curvature over 50 mm (1/m). wiggle = deviation from a 1 m low-pass, x 1500-6800 (mm)."
+ },
+ "summary": {
+  "table": [
+   [
+    "REQUIREMENTS"
+   ],
+   [
+    "LOA (stem head to transom top)",
+    7941.1,
+    "mm",
+    "7950 +-40",
+    "PASS",
+    7941.1,
+    0.0
+   ],
+   [
+    "Beam at the deck line",
+    2679.5,
+    "mm",
+    "2680 +-13",
+    "PASS",
+    2679.5,
+    0.0
+   ],
+   [
+    "Draft (checked via rudder pins)",
+    1400.0,
+    "mm",
+    "1400 +-7",
+    "PASS",
+    1400.0,
+    0.0
+   ],
+   [
+    "Deck outline: max dev",
+    10.5,
+    "mm",
+    "<= 12.5",
+    "PASS",
+    10.5,
+    0.0
+   ],
+   [
+    "Sheer: max dev at DECK_EDGE_Z pts",
+    7.6,
+    "mm",
+    "<= 12.5",
+    "PASS",
+    5.6,
+    2.0
+   ],
+   [
+    "Strake height: max dev (x 750-7650)",
+    3.0,
+    "mm",
+    "<= 12.5",
+    "PASS",
+    3.0,
+    0.0
+   ],
+   [
+    "Deck holes found (stanchion/pulpit)",
+    20,
+    "",
+    "= 20",
+    "PASS",
+    20,
+    0.0
+   ],
+   [
+    "Deck holes moved vs today (max)",
+    11.9,
+    "mm",
+    "<= 15",
+    "PASS",
+    11.9,
+    0.0
+   ],
+   [
+    "Mast hole found / moved y",
+    0.0,
+    "mm",
+    "<= 15",
+    "PASS",
+    0.0,
+    0.0
+   ],
+   [
+    "Rudder pin holes found",
+    2,
+    "",
+    "= 2",
+    "PASS",
+    2,
+    0.0
+   ],
+   [
+    "Rudder pin z error (max)",
+    0.0,
+    "mm",
+    "<= 5",
+    "PASS",
+    0.0,
+    0.0
+   ],
+   [
+    "Closed manifold (1e-5 weld)",
+    true,
+    "",
+    "yes",
+    "PASS",
+    true,
+    null
+   ],
+   [
+    "Min wall, hull side (model)",
+    1.069,
+    "mm",
+    ">= 0.8",
+    "PASS",
+    0.916,
+    0.15
+   ],
+   [
+    "Min wall, deck (model)",
+    1.978,
+    "mm",
+    ">= 0.8",
+    "PASS",
+    1.977,
+    0.0
+   ],
+   [
+    "Side deck aft: tilt (max)",
+    3.3,
+    "deg",
+    "<= 6",
+    "PASS",
+    null,
+    null
+   ],
+   [
+    "Side deck aft: wall up (min)",
+    84.7,
+    "deg",
+    ">= 70",
+    "PASS",
+    null,
+    null
+   ],
+   [
+    "LINES (indicators)"
+   ],
+   [
+    "Side deck aft: width min",
+    200.0,
+    "mm",
+    "",
+    "-",
+    null,
+    null
+   ],
+   [
+    "Side deck aft: width max",
+    210.0,
+    "mm",
+    "",
+    "-",
+    null,
+    null
+   ],
+   [
+    "Deck outline rms",
+    3.3,
+    "mm",
+    "",
+    "-",
+    3.3,
+    0.0
+   ],
+   [
+    "Sheer rms",
+    2.6,
+    "mm",
+    "",
+    "-",
+    1.9,
+    0.7
+   ],
+   [
+    "Strake height rms",
+    1.3,
+    "mm",
+    "",
+    "-",
+    1.3,
+    0.0
+   ],
+   [
+    "UW profile canoe body fwd: max",
+    38.7,
+    "mm",
+    "",
+    "-",
+    38.7,
+    0.0
+   ],
+   [
+    "UW profile keel LE: max",
+    59.1,
+    "mm",
+    "",
+    "-",
+    59.1,
+    0.0
+   ],
+   [
+    "UW profile keel bottom: max",
+    9.9,
+    "mm",
+    "",
+    "-",
+    9.9,
+    0.0
+   ],
+   [
+    "UW aft of keel: max",
+    14.7,
+    "mm",
+    "",
+    "-",
+    14.7,
+    0.0
+   ],
+   [
+    "SMOOTHNESS (lower is better)"
+   ],
+   [
+    "Dihedral > 5 deg, hull skin",
+    0.9,
+    "%",
+    "<= 2",
+    "PASS",
+    0.87,
+    0.03
+   ],
+   [
+    "Dihedral > 10 deg, hull skin",
+    0.2,
+    "%",
+    "<= 0.5",
+    "PASS",
+    0.19,
+    0.01
+   ],
+   [
+    "Slivers (aspect > 20), hull skin",
+    2.16,
+    "%",
+    "<= 10",
+    "PASS",
+    2.18,
+    -0.02
+   ],
+   [
+    "Waterline inflections, shape (4 WL)",
+    8,
+    "",
+    "",
+    "-",
+    8,
+    0.0
+   ],
+   [
+    "Waterline ripple (k25 - k60 rms)",
+    0.0746,
+    "1/m",
+    "",
+    "-",
+    0.0723,
+    0.0
+   ],
+   [
+    "Waterline max curvature jump",
+    1.185,
+    "1/m",
+    "",
+    "-",
+    1.027,
+    0.16
+   ],
+   [
+    "Waterline wiggle < 1 m (max)",
+    10.33,
+    "mm",
+    "",
+    "-",
+    10.33,
+    0.0
+   ],
+   [
+    "Deck edge inflections plan+profile",
+    42,
+    "",
+    "",
+    "-",
+    44,
+    -2.0
+   ],
+   [
+    "Section inflections (10 stations)",
+    11,
+    "",
+    "",
+    "-",
+    13,
+    -2.0
+   ],
+   [
+    "DWL crease, max over stations",
+    8.0,
+    "deg",
+    "",
+    "-",
+    8.0,
+    0.0
+   ],
+   [
+    "DWL crease, mean",
+    4.4,
+    "deg",
+    "",
+    "-",
+    4.4,
+    0.0
+   ],
+   [
+    "FILE"
+   ],
+   [
+    "Triangles",
+    431054,
+    "",
+    "",
+    "-",
+    430800,
+    254.0
+   ],
+   [
+    "File size",
+    21.55,
+    "MB",
+    "",
+    "-",
+    21.54,
+    0.01
+   ],
+   [
+    "Material volume (model)",
+    337.71,
+    "cm3",
+    "",
+    "-",
+    338.55,
+    -0.84
+   ],
+   [
+    "Wall p1, hull side (model)",
+    2.24,
+    "mm",
+    "",
+    "-",
+    2.245,
+    -0.0
+   ]
+  ],
+  "rows": [
+   {
+    "label": "LOA (stem head to transom top)",
+    "value": 7941.1,
+    "unit": "mm",
+    "rule": "7950 +-40",
+    "status": "PASS",
+    "ref": 7941.1,
+    "delta": 0.0
+   },
+   {
+    "label": "Beam at the deck line",
+    "value": 2679.5,
+    "unit": "mm",
+    "rule": "2680 +-13",
+    "status": "PASS",
+    "ref": 2679.5,
+    "delta": 0.0
+   },
+   {
+    "label": "Draft (checked via rudder pins)",
+    "value": 1400.0,
+    "unit": "mm",
+    "rule": "1400 +-7",
+    "status": "PASS",
+    "ref": 1400.0,
+    "delta": 0.0
+   },
+   {
+    "label": "Deck outline: max dev",
+    "value": 10.5,
+    "unit": "mm",
+    "rule": "<= 12.5",
+    "status": "PASS",
+    "ref": 10.5,
+    "delta": 0.0
+   },
+   {
+    "label": "Sheer: max dev at DECK_EDGE_Z pts",
+    "value": 7.6,
+    "unit": "mm",
+    "rule": "<= 12.5",
+    "status": "PASS",
+    "ref": 5.6,
+    "delta": 2.0
+   },
+   {
+    "label": "Strake height: max dev (x 750-7650)",
+    "value": 3.0,
+    "unit": "mm",
+    "rule": "<= 12.5",
+    "status": "PASS",
+    "ref": 3.0,
+    "delta": 0.0
+   },
+   {
+    "label": "Deck holes found (stanchion/pulpit)",
+    "value": 20,
+    "unit": "",
+    "rule": "= 20",
+    "status": "PASS",
+    "ref": 20,
+    "delta": 0.0
+   },
+   {
+    "label": "Deck holes moved vs today (max)",
+    "value": 11.9,
+    "unit": "mm",
+    "rule": "<= 15",
+    "status": "PASS",
+    "ref": 11.9,
+    "delta": 0.0
+   },
+   {
+    "label": "Mast hole found / moved y",
+    "value": 0.0,
+    "unit": "mm",
+    "rule": "<= 15",
+    "status": "PASS",
+    "ref": 0.0,
+    "delta": 0.0
+   },
+   {
+    "label": "Rudder pin holes found",
+    "value": 2,
+    "unit": "",
+    "rule": "= 2",
+    "status": "PASS",
+    "ref": 2,
+    "delta": 0.0
+   },
+   {
+    "label": "Rudder pin z error (max)",
+    "value": 0.0,
+    "unit": "mm",
+    "rule": "<= 5",
+    "status": "PASS",
+    "ref": 0.0,
+    "delta": 0.0
+   },
+   {
+    "label": "Closed manifold (1e-5 weld)",
+    "value": true,
+    "unit": "",
+    "rule": "yes",
+    "status": "PASS",
+    "ref": true,
+    "delta": null
+   },
+   {
+    "label": "Min wall, hull side (model)",
+    "value": 1.069,
+    "unit": "mm",
+    "rule": ">= 0.8",
+    "status": "PASS",
+    "ref": 0.916,
+    "delta": 0.15
+   },
+   {
+    "label": "Min wall, deck (model)",
+    "value": 1.978,
+    "unit": "mm",
+    "rule": ">= 0.8",
+    "status": "PASS",
+    "ref": 1.977,
+    "delta": 0.0
+   },
+   {
+    "label": "Side deck aft: tilt (max)",
+    "value": 3.3,
+    "unit": "deg",
+    "rule": "<= 6",
+    "status": "PASS",
+    "ref": null,
+    "delta": null
+   },
+   {
+    "label": "Side deck aft: wall up (min)",
+    "value": 84.7,
+    "unit": "deg",
+    "rule": ">= 70",
+    "status": "PASS",
+    "ref": null,
+    "delta": null
+   },
+   {
+    "label": "Side deck aft: width min",
+    "value": 200.0,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": null,
+    "delta": null
+   },
+   {
+    "label": "Side deck aft: width max",
+    "value": 210.0,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": null,
+    "delta": null
+   },
+   {
+    "label": "Deck outline rms",
+    "value": 3.3,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 3.3,
+    "delta": 0.0
+   },
+   {
+    "label": "Sheer rms",
+    "value": 2.6,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 1.9,
+    "delta": 0.7
+   },
+   {
+    "label": "Strake height rms",
+    "value": 1.3,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 1.3,
+    "delta": 0.0
+   },
+   {
+    "label": "UW profile canoe body fwd: max",
+    "value": 38.7,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 38.7,
+    "delta": 0.0
+   },
+   {
+    "label": "UW profile keel LE: max",
+    "value": 59.1,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 59.1,
+    "delta": 0.0
+   },
+   {
+    "label": "UW profile keel bottom: max",
+    "value": 9.9,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 9.9,
+    "delta": 0.0
+   },
+   {
+    "label": "UW aft of keel: max",
+    "value": 14.7,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 14.7,
+    "delta": 0.0
+   },
+   {
+    "label": "Dihedral > 5 deg, hull skin",
+    "value": 0.9,
+    "unit": "%",
+    "rule": "<= 2",
+    "status": "PASS",
+    "ref": 0.87,
+    "delta": 0.03
+   },
+   {
+    "label": "Dihedral > 10 deg, hull skin",
+    "value": 0.2,
+    "unit": "%",
+    "rule": "<= 0.5",
+    "status": "PASS",
+    "ref": 0.19,
+    "delta": 0.01
+   },
+   {
+    "label": "Slivers (aspect > 20), hull skin",
+    "value": 2.16,
+    "unit": "%",
+    "rule": "<= 10",
+    "status": "PASS",
+    "ref": 2.18,
+    "delta": -0.02
+   },
+   {
+    "label": "Waterline inflections, shape (4 WL)",
+    "value": 8,
+    "unit": "",
+    "rule": "",
+    "status": "-",
+    "ref": 8,
+    "delta": 0.0
+   },
+   {
+    "label": "Waterline ripple (k25 - k60 rms)",
+    "value": 0.0746,
+    "unit": "1/m",
+    "rule": "",
+    "status": "-",
+    "ref": 0.0723,
+    "delta": 0.0
+   },
+   {
+    "label": "Waterline max curvature jump",
+    "value": 1.185,
+    "unit": "1/m",
+    "rule": "",
+    "status": "-",
+    "ref": 1.027,
+    "delta": 0.16
+   },
+   {
+    "label": "Waterline wiggle < 1 m (max)",
+    "value": 10.33,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 10.33,
+    "delta": 0.0
+   },
+   {
+    "label": "Deck edge inflections plan+profile",
+    "value": 42,
+    "unit": "",
+    "rule": "",
+    "status": "-",
+    "ref": 44,
+    "delta": -2.0
+   },
+   {
+    "label": "Section inflections (10 stations)",
+    "value": 11,
+    "unit": "",
+    "rule": "",
+    "status": "-",
+    "ref": 13,
+    "delta": -2.0
+   },
+   {
+    "label": "DWL crease, max over stations",
+    "value": 8.0,
+    "unit": "deg",
+    "rule": "",
+    "status": "-",
+    "ref": 8.0,
+    "delta": 0.0
+   },
+   {
+    "label": "DWL crease, mean",
+    "value": 4.4,
+    "unit": "deg",
+    "rule": "",
+    "status": "-",
+    "ref": 4.4,
+    "delta": 0.0
+   },
+   {
+    "label": "Triangles",
+    "value": 431054,
+    "unit": "",
+    "rule": "",
+    "status": "-",
+    "ref": 430800,
+    "delta": 254.0
+   },
+   {
+    "label": "File size",
+    "value": 21.55,
+    "unit": "MB",
+    "rule": "",
+    "status": "-",
+    "ref": 21.54,
+    "delta": 0.01
+   },
+   {
+    "label": "Material volume (model)",
+    "value": 337.71,
+    "unit": "cm3",
+    "rule": "",
+    "status": "-",
+    "ref": 338.55,
+    "delta": -0.84
+   },
+   {
+    "label": "Wall p1, hull side (model)",
+    "value": 2.24,
+    "unit": "mm",
+    "rule": "",
+    "status": "-",
+    "ref": 2.245,
+    "delta": -0.0
+   }
+  ],
+  "requirements_failed": [],
+  "requirements_ok": true
+ }
+}

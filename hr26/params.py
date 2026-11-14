@@ -351,7 +351,27 @@ KNUCKLE_Z = [
 ]
 KNUCKLE_FADE = (7600.0, 7780.0)
 KNUCKLE_LIFT = 3.0
-KNUCKLE_ANGLE = 40.0         # skulderens helning fra vannrett (nye (2), kant2: bred, slak flate)
+KNUCKLE_ANGLE = 40.0         # V10: skulderens helning fra vannrett. Brukes ikke fra V11 (WALK)
+
+# V11 «gangbordet» (14.11.2026, hr26/gangbord.py): det finnes ingen skraa
+# skulder. Brukeren: «Rekka der du gaar, den er flat hele veien rundt, og saa
+# kommer det en kant, en forhoeyning opp», og ved trosse-snella akter «90 grader
+# ned, ... en buet kant» ned til gangbordet (kant2.jpg). I «nye (4)» staar
+# rekkepaalens fot ved 5 650 paa knekklinjen, ikke over den. Gangbordet ligger
+# derfor flatt i knekkens hoeyde fra skrogsiden inn til en nesten loddrett vegg
+# med rundet overkant opp til karmen og akterdekket, rundt hjoernet og tvers
+# over akterspeilet (der i dekkets hoeyde, kant.jpeg).
+WALK = True
+WALK_X0 = 5000.0             # kuttet begynner her (i lufta: gangbordet vokser fram ved ca. 5 080)
+WALK_W_SIDE = 210.0          # veggen staar saa langt innenfor dekkskanten langs sidene: som ruffens
+                             # side forut (SIDEDECK) og dekksplanens karm akter (dhb - 200)
+WALK_W_AFT = 110.0           # ... og saa langt innenfor akterspeilets overkant (anslag fra kant.jpeg)
+WALK_SIDE_END = 7600.0       # sidene gaar over i hjoernet her
+WALK_Y_AFT = 300.0           # og hjoernet over i akterspeilet ved denne halvbredden
+WALK_WALL_ANGLE = 85.0       # veggen fra vannrett (brukeren: «90 grader ned»; litt slipp)
+WALK_EDGE_R = 40.0           # avrundingen paa veggens overkant mot karm og akterdekk (1,3 mm i 1:30)
+WALK_EXIT = 12.0             # avrundingen moeter toppflaten med denne restvinkelen (ikke tangent)
+WALK_CLEAR = 12.0            # veggen staar saa langt utenfor ruffens og sprayhoodens fot
 
 # ------------------------------------------------------------ ruff/dekk
 # Hoyder og lengder er maalt ut av profiltegningen 1:50, bredder av
@@ -469,8 +489,10 @@ COAMING_TOP_Z = [            # karmens og akterdekkets overflate (x, z over DWL)
     (6300.0, 1146.0), (6700.0, 1128.0), (7100.0, 1111.0), (7400.0, 1096.0),
     (7700.0, 1086.0), (7950.0, 1084.0),
 ]
-AFTDECK_X0 = 6040.0          # trinnet opp fra sidedekket: herfra gaar karmtoppen helt ut til
-                             # skulderen (nye (4): silhuetten hopper 40-60 mm mellom 5 900 og 6 100)
+AFTDECK_X0 = 6000.0          # trinnet opp fra sidedekket: herfra gaar karmtoppen helt ut til
+                             # skulderen (nye (4): silhuetten hopper 40-60 mm mellom 5 900 og 6 100).
+                             # V11: 6 000 (foer 6 040), like bak sprayhoodens bein (5 990), saa det
+                             # ikke blir en lomme i dekkets hoeyde mellom karmen og veggen
 AFTDECK_EDGE = 8.0           # akterdekkets ytterkant staar saa langt innenfor dekkskanten (skulderen
                              # skjaerer den bort der knekken ligger under dekkskanten)
 AFTDECK_SINK = 15.0          # karm og akterdekk gaar saa langt ned i dekket ved dekkskantens hoyde

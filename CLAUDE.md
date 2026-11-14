@@ -275,6 +275,21 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     skroget «ganske bra slik vi har det i dag». Trinn 10 er lagt bort; ikke
     gjør det uten at brukeren ber om det. Brukeren printer båten slik den er
     nå (trinn 9, b9d0d29).
+* **14.11.2026: V11 «gangbordet», grenen `v11`.** Brukeren: kanten akter
+  på sidene har «ingen 45 graders vinkel»; «rekka der du går, den er flat
+  hele veien rundt, og så kommer det en kant, en forhøyning opp», og ved
+  trosse-snella akter «90 grader ned ... en buet kant» (kant2.jpg). Brukeren
+  ba Claude gjøre endringen selv som versjon 11. Gjort og pushet til `v11`:
+  V10s skrå skulder (40°, et anslag) er erstattet av et flatt gangbord i
+  knekkens høyde, 210 mm bredt langs sidene og 110 mm over akterspeilet
+  (anslag), og en 85° kant med R 40 opp til karm og akterdekk, rundt hjørnet
+  (`hr26/gangbord.py`, `WALK_*`, `AFTDECK_X0` 6 000). Langs ruff og
+  sprayhoodbein går kanten bare opp til dekket, og lokket passer som før.
+  Poengkortet `s11_gangbord` (`score.py` 1.6, to nye krav for gangbordet)
+  består 19 av 19. STL-er: `export/visning/kant_foer.stl`, `kant_naa.stl`,
+  `kant_snitt.stl`. Lærdom: et OCC-kutt med kanter på 0,07 mm feilet stille og
+  lot skroget være urørt; bygget sjekker nå volumet kuttet tar. Les «V11 –
+  14. november 2026» øverst i `V10.md`.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
   kalesjen (sprayhooden) skal være åpen, kanskje i stoff. Anbefaling: gjør den
   til en egen løs del, så både tynt printet skall og bøyler med stoff er

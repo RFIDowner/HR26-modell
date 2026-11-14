@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.5 (2026-11-13)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin; 1.5: DECK_EDGE_Z lifted x 2000-6000 from the photos, KNUCKLE_Z (hull side ends in a knuckle aft of the window) is the reference there
+VERSION = "1.6 (2026-11-14)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin; 1.5: DECK_EDGE_Z lifted x 2000-6000 from the photos, KNUCKLE_Z (hull side ends in a knuckle aft of the window) is the reference there; 1.6 (V11): the side deck aft of the window is flat and meets the coaming/aft deck in a near-vertical wall (no 40 deg shoulder) - walk_deck
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -912,6 +912,76 @@ def station_sweep(slx, xs, fn=None):
         rows.append(dict(x=float(x), zlow=zlow, ymax=float(np.abs(pts[:, 1]).max()), stb=d_s, port=d_p, sec=sec,
                          sil=dict(stb=plan_silhouette_at(sec, x, 1), port=plan_silhouette_at(sec, x, -1))))
     return rows
+
+
+# 1.6 (V11 "gangbordet"): sections across the side deck aft of the window.
+# The user: the side deck "er flat hele veien rundt, og saa kommer det en kant,
+# en forhoeyning opp" - no 45 degree shoulder under the stanchions.
+WALK_X = (5600.0, 5720.0, 6300.0, 6640.0, 6760.0, 7100.0, 7400.0)   # clear of the stanchion holes 5650/6700
+WALK_TILT_MAX = 6.0      # side deck tilt across, 30-130 mm in from the hull edge (deg)
+WALK_WALL_MIN = 70.0     # the step up to the coaming / aft deck (deg from horizontal)
+
+
+def _top_profile(sec, side, ys):
+    """Highest section point above each y (vertical rays from above)."""
+    y0, z0, y1, z1 = _seg_yz(sec, side)
+    out = np.full(len(ys), np.nan)
+    for i, yg in enumerate(ys):
+        m = (np.minimum(y0, y1) <= yg) & (np.maximum(y0, y1) >= yg) & (np.abs(y1 - y0) > 1e-9)
+        if not m.any():
+            continue
+        t = (yg - y0[m]) / (y1[m] - y0[m])
+        out[i] = float(np.max(z0[m] + t * (z1[m] - z0[m])))
+    return out
+
+
+def walk_deck(slx):
+    rows = []
+    for x in WALK_X:
+        sec = slx.section(x)
+        if sec is None:
+            continue
+        for side in (1, -1):
+            y0, z0, y1, z1 = _seg_yz(sec, side)
+            zk = float(edge_meas(x))
+            P = np.r_[np.c_[y0, z0], np.c_[y1, z1]]
+            m = (P[:, 1] > zk - 40.0) & (P[:, 1] < zk + 250.0) & (P[:, 0] > 0)
+            if m.sum() < 3:
+                continue
+            e = float(P[m, 0].max())
+            ys = np.arange(e - 20.0, e - 420.0, -5.0)
+            zt = _top_profile(sec, side, ys)
+            za, zb = np.interp([e - 30.0, e - 130.0], ys[::-1], zt[::-1])
+            tilt = math.degrees(math.atan2(abs(za - zb), 100.0))
+            zl = float(np.nanmedian(zt[(ys <= e - 30.0) & (ys >= e - 130.0)]))
+            # the wall: going inboard from the side deck, first rise of 60 mm
+            wall = None
+            for j in range(len(ys)):
+                if ys[j] > e - 120.0 or not np.isfinite(zt[j]):
+                    continue
+                if zt[j] > zl + 60.0:
+                    # last point still on the side deck (<= 15 mm up) before the
+                    # first point 60 mm up; angle between them (5 mm grid: a
+                    # vertical wall reads about 80-85 deg, the V10 shoulder 40)
+                    k0 = next((i for i in range(j, -1, -1) if np.isfinite(zt[i]) and zt[i] <= zl + 15.0), None)
+                    if k0 is None:
+                        break
+                    dy = max(abs(ys[k0] - ys[j]), 1e-6)
+                    wall = dict(y_foot=r1(ys[k0]), width=r1(e - ys[k0]),
+                                angle_deg=r1(math.degrees(math.atan2(zt[j] - zt[k0], dy)), 1),
+                                top=r1(float(np.nanmax(zt[j:j + 40]))))
+                    break
+            rows.append(dict(x=x, side="stb" if side > 0 else "port", edge_y=r1(e), ledge_z=r1(zl),
+                             tilt_deg=r1(tilt, 1), wall=wall))
+    tilts = [r["tilt_deg"] for r in rows]
+    walls = [r["wall"]["angle_deg"] for r in rows if r["wall"]]
+    widths = [r["wall"]["width"] for r in rows if r["wall"]]
+    return dict(rows=rows, n=len(rows), tilt_max_deg=r1(max(tilts), 1) if tilts else None,
+                wall_min_deg=(r1(min(walls), 1) if len(walls) == len(rows) and walls else 0.0),
+                width_min=r1(min(widths)) if widths else None, width_max=r1(max(widths)) if widths else None,
+                note="1.6: top profile across the side deck; tilt between 30 and 130 mm in from the hull edge; "
+                     "wall = first 60 mm rise inboard, angle over the 15-60 mm part (5 mm grid, ~85 deg resolvable); "
+                     "a section without a wall counts as 0 deg")
 
 
 def assemble_deck_line(rows):
@@ -1728,6 +1798,7 @@ def analyze(path, args):
     lines["underwater_profile"] = dict(segments=seg, sign="+ = model above (shallower than) the drawing",
                                        note="2-D distance from the traced lower silhouette; propeller (6030-6450) "
                                             "and rudder (>7450) are not part of the hull and are skipped")
+    lines["walk_deck"] = walk_deck(slx)
     res["lines"] = lines
     log(f"  lines  ({time.time() - t0:.1f}s)")
     # ---- fairness -----------------------------------------------------------------
@@ -1814,7 +1885,11 @@ SUMMARY_ROWS = [
     ("Closed manifold (1e-5 weld)", "shell.closed_manifold", "", ("true",)),
     ("Min wall, hull side (model)", "shell.wall_thickness.hull_side.min_model", "mm", ("min", 0.8)),
     ("Min wall, deck (model)", "shell.wall_thickness.deck.min_model", "mm", ("min", 0.8)),
+    ("Side deck aft: tilt (max)", "lines.walk_deck.tilt_max_deg", "deg", ("max", WALK_TILT_MAX)),
+    ("Side deck aft: wall up (min)", "lines.walk_deck.wall_min_deg", "deg", ("min", WALK_WALL_MIN)),
     ("LINES (indicators)", None, None, None),
+    ("Side deck aft: width min", "lines.walk_deck.width_min", "mm", None),
+    ("Side deck aft: width max", "lines.walk_deck.width_max", "mm", None),
     ("Deck outline rms", "lines.deck_outline.rms", "mm", None),
     ("Sheer rms", "lines.sheer.rms", "mm", None),
     ("Strake height rms", "lines.strake_height.rms", "mm", None),

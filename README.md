@@ -103,9 +103,17 @@ dekkskanten ligger 36–44 mm høyere over vinduet enn brosjyreprofilen ble lest
 til (`DECK_EDGE_Z`). Vinduet står der det sto: fra 3 580 til 5 150 mm, med
 underkanten 50 mm over listens senter og overkanten 86 mm (forut) og 70 mm
 (akter) under dekkskanten. Aktenfor vinduet slutter skrogsiden i en knekk som
-faller fra dekkskanten til ca. 135 mm over listen (`KNUCKLE_Z`), og over den
-ligger en skrå skulder (40°, `hull.shoulder_cutter`) opp til sidedekket og
-karmen. Linjene lagt over to av bildene ligger i `v10/rapporter/13nov_kant/`.
+faller fra dekkskanten til ca. 135 mm over listen (`KNUCKLE_Z`). Linjene lagt
+over to av bildene ligger i `v10/rapporter/13nov_kant/`.
+
+**Merk om gangbordet (V11, 14.11.2026):** V10 hadde en skrå skulder (40°) fra
+knekken opp til karmen og akterdekket, og rekkepålene akter sto i skråningen.
+Den finnes ikke på båten. Gangbordet er flatt i knekkens høyde, fra
+skrogsiden og 210 mm inn, og så går en nesten loddrett kant (85°) med rundet
+overkant (R 40 mm) opp til karmen og akterdekket. Gangbordet går rundt
+hjørnet og tvers over akterspeilet, der det er 110 mm dypt. Langs ruffen og
+sprayhoodens bein går kanten bare opp til dekket, så lokket passer som før.
+Alt er ett kutt (`hr26/gangbord.py`). Bilder: `v10/rapporter/14nov_gangbord/`.
 
 **Merk om magen (V10 trinn 9, 14.11.2026):** på båten er buken under vann
 rund og full, «som en stor pølse» (IMG_9395, IMG_9389). Modellen smalnet inn
@@ -145,10 +153,10 @@ sidene (`COCKPIT_INSET`) og hekkens runding akterover etter den målte tabellen
 `COCKPIT_AFT`, fram til en nesten rett bakkant ved 7 735 mm — som i
 dekksplanen, der brønnen følger hekkens kurve hele veien rundt. Karmtoppen
 (`COAMING_TOP_Z`) faller fra 1 190 mm over vannlinjen ved forkanten til
-1 084 mm helt akter. Fra et trinn opp fra sidedekket ved 6 040 mm
-(`AFTDECK_X0`) går den ut til skulderen og videre som akterdekk, og den
-skråner ned mot akterspeilet (V10 trinn 8; før gikk karmen i ett med dekket
-ved 6 800–6 900). Overlegget under er fra før V10 og viser modellens
+1 084 mm helt akter. Fra et trinn opp fra sidedekket ved 6 000 mm
+(`AFTDECK_X0`) går den ut til kanten over gangbordet og videre som akterdekk
+rundt brønnen (V11; i V10 trinn 8 skrånet den ned mot knekken og
+akterspeilet, og før det gikk karmen i ett med dekket ved 6 800–6 900). Overlegget under er fra før V10 og viser modellens
 dekksutlinje (rødt) og brønnen (blått, snitt 850 mm over vannlinjen) på
 dekksplanen 1:50.
 
@@ -545,19 +553,19 @@ Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
 ## Videre arbeid
 
 * Cockpiten har seter, fotbrønn og brodekk (V10 trinn 7), men ingen luker i
-  setene. Dekkskanten ved vinduet, knekken, skulderen, karmen og akterdekket
-  («kanten») er lagt inn i V10 trinn 8. Knekken og skulderens overkant er
-  skarpe kanter; på båten er de runde.
+  setene. Dekkskanten ved vinduet, knekken, karmen og akterdekket («kanten»)
+  er lagt inn i V10 trinn 8, gangbordet og den loddrette kanten i V11.
+  Kanten opp til karmen er rundet; knekken (skrogsiden mot gangbordet) er
+  skarp, og på båten er den trolig litt rundet.
 * Roret er bare bladet under vannlinjen. På originalen går rorhodet opp til
   dekkshøyde, med rorkulten inn over akterdekket.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
-* Rundt akterdekket fortsetter karmtoppen som en bred flate med skrå skulder
-  ned til knekken (V10 trinn 8, etter bildene). På båten går knekken videre
-  rundt hjørnet og tvers over akterspeilet; i modellen går den over i
-  dekkskanten ved 7 780 mm.
+* Gangbordets dybde over akterspeilet (110 mm) er et anslag fra kant.jpeg.
+  Et mål med målebånd fra akterspeilets overkant til kanten opp til
+  akterdekket gjør det sikkert (`WALK_W_AFT`).
 * Bildene øverst i denne fila og overleggene på tegningene er fra før V10.
 * Formen under vann akter følger bildene (V10, 13.11). Et mål med
   målebånd ved båten kan bekrefte den; se `V10.md`.

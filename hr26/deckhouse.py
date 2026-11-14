@@ -706,7 +706,11 @@ def coaming_block() -> cq.Workplane:
     under = _roof_body(x0 - 300.0, P.LOA + 400.0,
                        lambda x: C.sheer_z(min(x, P.LOA)) - P.AFTDECK_SINK,
                        1600.0, 2000.0, camber=0.0, steps=48)
-    block = block.cut(under).cut(_aft_slope_cutter())
+    block = block.cut(under)
+    if not getattr(P, "WALK", False):
+        # V10: akterdekket skraaner ned mot akterspeilet. Fra V11 skjaerer
+        # gangbordets kutt det loddrett ned til gangbordet (gangbord.py).
+        block = block.cut(_aft_slope_cutter())
     # under skraaningens fot ville platen stukket ut gjennom akterspeilet
     block = block.cut(H._plain_cutter(-20.0))
     sol = sorted(block.val().Solids(), key=lambda v: -v.Volume())
