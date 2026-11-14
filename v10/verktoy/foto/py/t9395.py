@@ -1,6 +1,6 @@
 """Sporing i IMG_9395 (baaten henger i travelliften, sett forfra-nedenfra paa babord baug).
 
-Alle koordinater er piksler i docs/foto/IMG_9395.jpg (2400 x 1800), u mot hoeyre, v nedover.
+Alle koordinater er piksler i docs/foto/IMG_9395_mage.jpg (2400 x 1800; foer 14.11 IMG_9395.jpg), u mot hoeyre, v nedover.
 Skriver out/t9395_raw.json: alle spor (fenderlist, stripe, silhuetter, kjol, ror, roedt/graatt-grensen).
 forkropp9395.py lager out/t9395_forkropp.json (forkroppen, med beskrivelse) av dette og kameraet.
 
@@ -13,7 +13,7 @@ from PIL import Image
 
 import common as c
 
-IMG = c.FOTO + "/IMG_9395.jpg"
+IMG = c.FOTO + "/IMG_9395_mage.jpg"
 A = np.asarray(Image.open(IMG).convert("RGB")).astype(float)
 H, W = A.shape[:2]
 R_, G_, B_ = A[..., 0], A[..., 1], A[..., 2]

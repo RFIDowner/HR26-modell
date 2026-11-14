@@ -24,7 +24,7 @@ def a(k):
 
 
 DESC = {
-    "_photo": "docs/foto/IMG_9395.jpg, 2400 x 1800 px, u mot hoeyre, v nedover. Baaten henger i travelliften, "
+    "_photo": "docs/foto/IMG_9395_mage.jpg (foer 14.11 IMG_9395.jpg), 2400 x 1800 px, u mot hoeyre, v nedover. Baaten henger i travelliften, "
               "sett forfra-nedenfra fra babord side (kamera ca. 3,8 m foran stevnen, 2,9 m ut til babord, "
               "1,6 m under DWL; se out/cam9395.json).",
     "outline_rows": "[v, u] per bilderad: venstre/nedre omriss av forkroppen mot himmelen (det som ligger lengst "

@@ -119,10 +119,20 @@ def _union_strake_piece(w, wires, area, what, depth=0):
     exp = area * length
     piece = cq.Workplane("XY").newObject([H._loft3(wires)])
     before, n0 = w.val().Volume(), _n_solids(w)
+    before_p = None
     for dx in NUDGES:
         cand = w.union(piece.translate((dx, 0.0, 0.0)) if dx else piece)
+        if _n_solids(cand) > n0:
+            continue
         inc = cand.val().Volume() - before
-        if _n_solids(cand) <= n0 and 0.6 * exp < inc < 2.5 * exp:
+        if 0.6 * exp < inc < 2.5 * exp:
+            return cand
+        # V10 trinn 9: den raske Volume() paa hele skroget (18 m3) kan bomme
+        # med flere liter, mer enn bitens 0,3-0,7 liter. Da avgjoer den presise
+        # (ca. 1 s), som i robust_union.
+        if before_p is None:
+            before_p = _volume(w)
+        if 0.6 * exp < _volume(cand) - before_p < 2.5 * exp:
             return cand
     if len(wires) > 3 and depth < 3:
         mid = len(wires) // 2

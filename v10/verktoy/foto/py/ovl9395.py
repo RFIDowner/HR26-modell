@@ -46,7 +46,7 @@ def outline_pts(cam, V, F, r0=250, r1=1300, c0=820, c1=1820):
 
 def main():
     cam = E.CAM
-    im = Image.open(c.FOTO + "/IMG_9395.jpg").convert("RGB")
+    im = Image.open(c.FOTO + "/IMG_9395_mage.jpg").convert("RGB")
     d = ImageDraw.Draw(im)
     V, F = photos.mesh()
     VK, FK = G.keel_mesh()

@@ -398,6 +398,22 @@ _DZ_X0, _DZ_X1 = (float(_DZ_TAB[0][0]), float(_DZ_TAB[-1][0])) if _DZ_TAB else (
 _FLARE = _pchip(P.SECTION_FLARE)
 _NEXP = _pchip(P.SECTION_N)
 _DEADRISE = _pchip(P.SECTION_DEADRISE)
+
+
+# V10 trinn 9 (14.11.2026): «magen». Tillegg til de tre tabellene mellom
+# P.BELLY_T[0] (vinduets forkant) og P.BELLY_T[1] (ca. 7 m), null og med null
+# stigning i endene, saa spantene foran vinduet og aktenfor ca. 7 m er bit for
+# bit som foer (PCHIP gjennom nullpunkter utenfor sonen).
+def _belly(vals):
+    t0, t1 = P.BELLY_T
+    return _pchip([(0.0, 0.0), (t0, 0.0)] + list(zip(P.BELLY_KNOTS, vals)) + [(t1, 0.0), (1.0, 0.0)])
+
+
+if getattr(P, "BELLY_KNOTS", None):
+    _BELLY_D, _BELLY_N, _BELLY_F = _belly(P.BELLY_DEADRISE), _belly(P.BELLY_N), _belly(P.BELLY_FLARE)
+    _DEADRISE = (lambda f0: lambda t: f0(t) + _BELLY_D(t))(_DEADRISE)
+    _NEXP = (lambda f0: lambda t: max(f0(t) + _BELLY_N(t), 1.6))(_NEXP)
+    _FLARE = (lambda f0: lambda t: f0(t) + _BELLY_F(t))(_FLARE)
 _DEADWOOD = _pchip(getattr(P, "DEADWOOD_H", [(0.0, 0.0), (1.0, 0.0)]))
 _DWW_TAB = getattr(P, "DEADWOOD_W", 180.0)
 _DWW = _pchip(_DWW_TAB) if isinstance(_DWW_TAB, (list, tuple)) else (lambda x, w=float(_DWW_TAB): w)

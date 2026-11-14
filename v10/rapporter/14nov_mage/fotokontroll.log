@@ -1,0 +1,152 @@
+=== foer trinn 9: kanobunn 2.439 m3, stoerste spant 0.617 m2 ved x 3500
+  nye 1 (+ = bildet utenfor modellen):
+    ppk1_corn  sil_l v 1250-1400: ut  +28.8 px =   +94 mm  (x  4547, z   841, |y| 1277)
+    ppk1_corn  sil_l v 1400-1550: ut  +56.4 px =  +191 mm  (x  4182, z   537, |y| 1169)
+    ppk1_corn  sil_l v 1550-1700: ut  +61.1 px =  +215 mm  (x  3653, z   228, |y| 1003)
+    ppk1_corn  sil_l v 1700-1860: ut  -40.6 px =  -158 mm  (x  2766, z  -155, |y|  646)
+    ppk1_corn  sil_r v 1250-1400: ut  +23.8 px =   +66 mm  (x  6392, z   366, |y| 1065)
+    ppk1_corn  sil_r v 1400-1550: ut  +64.5 px =  +197 mm  (x  5429, z   209, |y| 1023)
+    ppk1_corn  sil_r v 1550-1700: ut  +53.4 px =  +181 mm  (x  4340, z   163, |y|  999)
+    ppk1_corn  sil_r v 1700-1860: ut  -25.9 px =   -98 mm  (x  3391, z  -178, |y|  704)
+    ppk12      sil_l v 1250-1400: ut  +25.4 px =   +89 mm  (x  4596, z   872, |y| 1286)
+    ppk12      sil_l v 1400-1550: ut  +52.5 px =  +190 mm  (x  4202, z   590, |y| 1187)
+    ppk12      sil_l v 1550-1700: ut  +57.4 px =  +217 mm  (x  3720, z   279, |y| 1032)
+    ppk12      sil_l v 1700-1860: ut  -49.9 px =  -208 mm  (x  2902, z  -116, |y|  709)
+    ppk12      sil_r v 1250-1400: ut  +26.9 px =   +78 mm  (x  6531, z   365, |y| 1046)
+    ppk12      sil_r v 1400-1550: ut  +57.6 px =  +186 mm  (x  5574, z   256, |y| 1057)
+    ppk12      sil_r v 1550-1700: ut  +48.7 px =  +173 mm  (x  4601, z   198, |y| 1017)
+    ppk12      sil_r v 1700-1860: ut  -41.5 px =  -166 mm  (x  3619, z  -132, |y|  769)
+    pp_corn    sil_l v 1250-1400: ut  +34.9 px =  +103 mm  (x  4610, z   791, |y| 1267)
+    pp_corn    sil_l v 1400-1550: ut  +58.7 px =  +182 mm  (x  4204, z   485, |y| 1152)
+    pp_corn    sil_l v 1550-1700: ut  +62.3 px =  +205 mm  (x  3639, z   186, |y|  984)
+    pp_corn    sil_l v 1700-1860: ut  -30.9 px =  -117 mm  (x  2727, z  -192, |y|  600)
+    pp_corn    sil_r v 1250-1400: ut  +20.6 px =   +51 mm  (x  6386, z   281, |y| 1033)
+    pp_corn    sil_r v 1400-1550: ut  +74.3 px =  +219 mm  (x  5122, z   230, |y| 1034)
+    pp_corn    sil_r v 1550-1700: ut  +62.2 px =  +203 mm  (x  4205, z   130, |y|  980)
+    pp_corn    sil_r v 1700-1860: ut   -8.3 px =   -31 mm  (x  3282, z  -204, |y|  655)
+  IMG_9391 L +6.4 R -2.7 rms 12.1 px (+ = modellen utenfor)
+  e9395 foer trinn 9: resid n=351 mean -3.3 rms 4.7 px (vektet rms 4.9)
+    forfot rad 705-850                 mean   -1.8  rms   2.3 px  (~   -6 mm)  x   982- 1588  z    56..  339  |y|  207- 365
+    styrbord bunn rad 850-945          mean   -0.7  rms   1.7 px  (~   -3 mm)  x  1591- 2386  z  -194..   52  |y|  354- 534
+    bunn u 1121-1180 (stropp)          mean   -3.7  rms   3.9 px  (~  -15 mm)  x  2341- 3060  z  -308.. -185  |y|  516- 585
+    bunn u 1180-1215                   mean   -5.9  rms   5.9 px  (~  -25 mm)  x  3074- 3355  z  -377.. -310  |y|  496- 573
+    bunn foran kjolen u 1252-1299      mean   -9.9  rms  10.0 px  (~  -44 mm)  x  3369- 3543  z  -443.. -378  |y|  295- 499
+    kjolrot u 1300-1335 (ikke i resid) mean  -17.1  rms  17.2 px  (~  -76 mm)  x  3543- 3682  z  -449.. -440  |y|  181- 291
+    baug over vann rad 545-705 (ikke i resid) mean   +3.8  rms   4.6 px  (~  +12 mm)  x   670-  978  z   342..  751  |y|  192- 242
+    kjollinje mot roedt/graatt x 800-1500 mean   +4.3  rms   4.5 px  (ikke i resid)
+    kjollinje mot roedt/graatt x 1500-2500 mean   +4.4  rms   5.1 px  (ikke i resid)
+    stripe z=106 x 800-1500            mean   +1.9  rms   2.2 px  (ikke i resid)
+    stripe z=106 x 1500-2500           mean   +2.6  rms   2.9 px  (ikke i resid)
+    stripe z=106 x 2500-3500           mean   +8.0  rms   8.2 px  (ikke i resid)
+    stripe z=106 x 3500-4600           mean  +31.6  rms  31.8 px  (ikke i resid)
+  IMG_9389 forkropp foer trinn 9: alle n 251 middel +14.1 rms 15.0 px (+ = modellen utenfor bildets omriss)  [0.011 s]
+    front: forfot (rad 352-440)    n  44  middel   +6.7 px (   +9 mm)  rms   6.8 px (   9 mm)  maks   +9.5 px
+    bunn x    0-1500               n  99  middel  +15.9 px (  +24 mm)  rms  16.5 px (  26 mm)  maks  +21.2 px
+    bunn x 1500-2000               n  79  middel  +17.5 px (  +31 mm)  rms  17.6 px (  31 mm)  maks  +21.1 px
+    bunn x 2000-2500               n  21  middel  +10.2 px (  +21 mm)  rms  10.4 px (  21 mm)  maks  +12.6 px
+    bunn x 2500-3000               n   8  middel   +9.0 px (  +19 mm)  rms   9.0 px (  19 mm)  maks  +10.0 px
+    stripens nedre kant x<4600     n 354  middel   +0.6 px  rms   2.2 px (kontroll av kamera/stripehoeyde)
+  areal:  3000:0.529  3400:0.606  3800:0.586  4200:0.529  4600:0.472  5000:0.435  5400:0.413  5800:0.396  6200:0.383  6600:0.350  7000:0.275  7400:0.121
+  z   600:  994 1080 1147 1192 1214 1220 1222 1204 1159 1093 1011  909
+  z   300:  922  997 1051 1078 1079 1076 1085 1085 1065 1017  943  833
+  z   100:  855  920  958  964  943  927  933  937  936  910  847  677
+  z     0:  811  870  898  889  855  830  828  828  831  813  749  489
+  z  -100:  756  809  824  797  747  711  697  686  684  664  573  239
+  z  -200:  683  732  729  678  608  560  529  502  487  443  308   81
+  z  -300:  572  627  596  508  417  357  311  279  249  181   99   54
+  z  -380:  398  497  418  273  218  187  164  149  124   88   55   30
+=== opt_mage2_trinn9.json: kanobunn 2.522 m3, stoerste spant 0.617 m2 ved x 3500
+  nye 1 (+ = bildet utenfor modellen):
+    ppk1_corn  sil_l v 1250-1400: ut  +30.8 px =  +101 mm  (x  4565, z   834, |y| 1271)
+    ppk1_corn  sil_l v 1400-1550: ut  +58.7 px =  +199 mm  (x  4167, z   542, |y| 1162)
+    ppk1_corn  sil_l v 1550-1700: ut  +61.8 px =  +219 mm  (x  3611, z   241, |y| 1001)
+    ppk1_corn  sil_l v 1700-1860: ut  -40.6 px =  -158 mm  (x  2766, z  -155, |y|  646)
+    ppk1_corn  sil_r v 1250-1400: ut  +21.0 px =   +58 mm  (x  6452, z   342, |y| 1056)
+    ppk1_corn  sil_r v 1400-1550: ut  +58.7 px =  +179 mm  (x  5467, z   197, |y| 1030)
+    ppk1_corn  sil_r v 1550-1700: ut  +49.2 px =  +163 mm  (x  4538, z   102, |y|  971)
+    ppk1_corn  sil_r v 1700-1860: ut  -26.2 px =   -99 mm  (x  3428, z  -187, |y|  698)
+    ppk12      sil_l v 1250-1400: ut  +27.2 px =   +95 mm  (x  4584, z   878, |y| 1282)
+    ppk12      sil_l v 1400-1550: ut  +54.7 px =  +198 mm  (x  4220, z   584, |y| 1180)
+    ppk12      sil_l v 1550-1700: ut  +58.5 px =  +221 mm  (x  3721, z   279, |y| 1028)
+    ppk12      sil_l v 1700-1860: ut  -49.9 px =  -208 mm  (x  2902, z  -116, |y|  709)
+    ppk12      sil_r v 1250-1400: ut  +24.2 px =   +70 mm  (x  6530, z   366, |y| 1054)
+    ppk12      sil_r v 1400-1550: ut  +53.9 px =  +172 mm  (x  5677, z   217, |y| 1042)
+    ppk12      sil_r v 1550-1700: ut  +43.3 px =  +151 mm  (x  4777, z   140, |y|  996)
+    ppk12      sil_r v 1700-1860: ut  -42.1 px =  -168 mm  (x  3653, z  -142, |y|  765)
+    pp_corn    sil_l v 1250-1400: ut  +36.7 px =  +108 mm  (x  4639, z   780, |y| 1261)
+    pp_corn    sil_l v 1400-1550: ut  +60.6 px =  +187 mm  (x  4216, z   483, |y| 1147)
+    pp_corn    sil_l v 1550-1700: ut  +63.0 px =  +208 mm  (x  3606, z   196, |y|  982)
+    pp_corn    sil_l v 1700-1860: ut  -30.9 px =  -117 mm  (x  2727, z  -192, |y|  600)
+    pp_corn    sil_r v 1250-1400: ut  +17.8 px =   +44 mm  (x  6407, z   274, |y| 1034)
+    pp_corn    sil_r v 1400-1550: ut  +66.2 px =  +192 mm  (x  5227, z   194, |y| 1031)
+    pp_corn    sil_r v 1550-1700: ut  +58.1 px =  +184 mm  (x  4417, z    66, |y|  946)
+    pp_corn    sil_r v 1700-1860: ut   -8.5 px =   -32 mm  (x  3317, z  -213, |y|  650)
+  IMG_9391 L +5.8 R -3.5 rms 11.6 px (+ = modellen utenfor)
+  e9395 opt_mage2_trinn9.json: resid n=351 mean -3.3 rms 4.7 px (vektet rms 4.9)
+    forfot rad 705-850                 mean   -1.8  rms   2.3 px  (~   -6 mm)  x   982- 1588  z    56..  339  |y|  207- 365
+    styrbord bunn rad 850-945          mean   -0.7  rms   1.7 px  (~   -3 mm)  x  1591- 2386  z  -194..   52  |y|  354- 534
+    bunn u 1121-1180 (stropp)          mean   -3.7  rms   3.9 px  (~  -15 mm)  x  2341- 3060  z  -308.. -185  |y|  516- 585
+    bunn u 1180-1215                   mean   -5.9  rms   5.9 px  (~  -25 mm)  x  3074- 3355  z  -377.. -310  |y|  496- 573
+    bunn foran kjolen u 1252-1299      mean   -9.9  rms  10.0 px  (~  -44 mm)  x  3369- 3543  z  -443.. -378  |y|  295- 499
+    kjolrot u 1300-1335 (ikke i resid) mean  -17.0  rms  17.1 px  (~  -76 mm)  x  3543- 3729  z  -446.. -440  |y|  196- 291
+    baug over vann rad 545-705 (ikke i resid) mean   +3.8  rms   4.6 px  (~  +12 mm)  x   670-  978  z   342..  751  |y|  192- 242
+    kjollinje mot roedt/graatt x 800-1500 mean   +4.3  rms   4.5 px  (ikke i resid)
+    kjollinje mot roedt/graatt x 1500-2500 mean   +4.4  rms   5.1 px  (ikke i resid)
+    stripe z=106 x 800-1500            mean   +1.9  rms   2.2 px  (ikke i resid)
+    stripe z=106 x 1500-2500           mean   +2.6  rms   2.9 px  (ikke i resid)
+    stripe z=106 x 2500-3500           mean   +8.0  rms   8.2 px  (ikke i resid)
+    stripe z=106 x 3500-4600           mean  +30.7  rms  30.8 px  (ikke i resid)
+  IMG_9389 forkropp opt_mage2_trinn9.json: alle n 251 middel +14.1 rms 15.0 px (+ = modellen utenfor bildets omriss)  [0.009 s]
+    front: forfot (rad 352-440)    n  44  middel   +6.7 px (   +9 mm)  rms   6.8 px (   9 mm)  maks   +9.5 px
+    bunn x    0-1500               n  99  middel  +15.9 px (  +24 mm)  rms  16.5 px (  26 mm)  maks  +21.2 px
+    bunn x 1500-2000               n  79  middel  +17.5 px (  +31 mm)  rms  17.6 px (  31 mm)  maks  +21.1 px
+    bunn x 2000-2500               n  21  middel  +10.2 px (  +21 mm)  rms  10.4 px (  21 mm)  maks  +12.6 px
+    bunn x 2500-3000               n   8  middel   +9.0 px (  +19 mm)  rms   9.0 px (  19 mm)  maks  +10.0 px
+    stripens nedre kant x<4600     n 354  middel   +0.6 px  rms   2.2 px (kontroll av kamera/stripehoeyde)
+  areal:  3000:0.529  3400:0.606  3800:0.596  4200:0.559  4600:0.520  5000:0.484  5400:0.452  5800:0.422  6200:0.389  6600:0.350  7000:0.275  7400:0.121
+  z   600:  994 1080 1140 1186 1210 1222 1218 1200 1159 1098 1011  909
+  z   300:  922  997 1045 1076 1089 1095 1094 1089 1069 1024  943  833
+  z   100:  855  920  955  970  970  966  960  956  944  915  847  677
+  z     0:  811  870  897  901  892  880  868  857  841  816  749  489
+  z  -100:  756  809  827  817  795  772  749  725  696  663  573  239
+  z  -200:  683  732  737  709  670  630  590  546  496  441  308   81
+  z  -300:  572  627  611  556  491  426  364  306  253  180   99   54
+  z  -380:  398  497  444  339  255  212  180  157  125   88   55   30
+
+endring (forslag - foer trinn 9):
+  n1_ppk1_corn_sil_l_1250         +6.57
+  n1_ppk1_corn_sil_l_1400         +7.96
+  n1_ppk1_corn_sil_l_1550         +3.66
+  n1_ppk1_corn_sil_l_1700         +0.00
+  n1_ppk1_corn_sil_r_1250         -8.08
+  n1_ppk1_corn_sil_r_1400        -18.43
+  n1_ppk1_corn_sil_r_1550        -18.27
+  n1_ppk1_corn_sil_r_1700         -1.21
+  n1_ppk12_sil_l_1250             +6.62
+  n1_ppk12_sil_l_1400             +7.74
+  n1_ppk12_sil_l_1550             +3.89
+  n1_ppk12_sil_l_1700             +0.00
+  n1_ppk12_sil_r_1250             -7.86
+  n1_ppk12_sil_r_1400            -14.37
+  n1_ppk12_sil_r_1550            -22.00
+  n1_ppk12_sil_r_1700             -2.37
+  n1_pp_corn_sil_l_1250           +4.74
+  n1_pp_corn_sil_l_1400           +5.48
+  n1_pp_corn_sil_l_1550           +3.14
+  n1_pp_corn_sil_l_1700           +0.00
+  n1_pp_corn_sil_r_1250           -7.23
+  n1_pp_corn_sil_r_1400          -26.70
+  n1_pp_corn_sil_r_1550          -18.64
+  n1_pp_corn_sil_r_1700           -0.83
+  e9395_wrms                      +0.00
+  e9395_rows                      +0.00
+  e9395_cols                      +0.00
+  e9391_L                         -0.58
+  e9391_R                         -0.77
+  e9391_rms                       -0.49
+  e9395_keelroot                  +0.09
+  e9389_bottom                    +0.00
+  vol                             +0.08
+  Amax                            +0.00
+  xAmax                           +0.00
+memcap: topp 0.37 GB av 3.0 GB, rc=0

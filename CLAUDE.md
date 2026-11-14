@@ -209,18 +209,34 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     skroget og ute fra kanten oppe og bak og foran». Altså: jevnhet er
     kriteriet. Kjøllinjen, dekkskanten, alt foran vinduet og alt fra ca. 7 m
     står.
-  * **Der arbeidet står (14.11 kl. 02:10, før brukeren kjørte compact):**
-    `v10/verktoy/foto/py/opt_mage.py` er skrevet, men ikke kjørt ferdig. Det
-    regner ut tillegg til `SECTION_DEADRISE`, `SECTION_N` og `SECTION_FLARE`
-    som er null for t <= 0,45 og t >= 0,88 (pchip med nullpunkter utenfor), og
-    minimerer annenderiverte av vannlinjene med tak på dagens største
-    halvbredde. Neste: kjør det, se på tallene, legg tilleggene inn i
-    `curves.py`/`params.py` (f.eks. `SECTION_FILL`), kontroller at ingenting
-    utenfor sonen flytter seg, sjekk mot «nye 1», IMG_9395 og 9391 (lette
-    jobber), bygg skrog og vugge 2, kjør poengkortet, lag sammensetningen og
-    bilder i samme vinkler som brukerens skjermbilder, og push hvis grønt.
-  * Brukeren har omdøpt `docs/foto/IMG_9395.jpg` til `IMG_9395_mage.jpg`
-    (ikke sjekket inn). Verktøyene (`ovl9395.py` m.fl.) leser det gamle navnet.
+  * Brukeren gjentok kl. 02:30 (og la seg): strekene er «for å peke på
+    hensikten», ikke «rettesnor for mål»; de peker på området der pølsa skal
+    fikses. «Bare hold på til ferdig.»
+* **14.11.2026 (natt): trinn 9 «magen» ferdig og pushet.** Poengkortet
+  `s10_mage` består alle krav. Tillegg til bunnreisning, slag og utfall
+  mellom t 0,45 (3 578) og 0,88 (6 996), null med null stigning i endene
+  (`BELLY_*` i `params.py`, `curves._belly`), fra `opt_mage2.py` variant f.
+  Kriteriet: ingen midje (ingen hul krumning i vannlinjer og diagonaler),
+  glatt, IMG_9391 ikke verre, ingen halvbredde under DWL og intet spant
+  større enn foran vinduet, og n ≤ 5 akter (det myke slaget fra trinn 4).
+  Buken er 5–8 cm fyldigere under vann ved 4,7–5,0 m, 2–5 cm i DWL, opptil
+  4 cm 10 cm over vannet og under 0,6 cm ved listen. Kanobunnen er 2,52 m³
+  (før 2,44), største spant er uendret, og alt utenfor sonen er uendret
+  (vugge 1 byte-lik). IMG_9391 ble litt bedre (rms 11,6 mot 12,1).
+  * **«nye 1» er ikke til å stole på kvantitativt** for buken. Å lukke
+    avviket på 15–22 cm ville krevd 3,0–3,2 m³ og en vannlinjebredde på
+    2,2–2,4 m, og IMG_9391 ville bommet med 75–110 px. Bildet er et
+    skjermbilde fra redigering i Bilder-appen, og de nedre radene bommer
+    motsatt vei. Det er brukt bare som retning.
+  * Vil brukeren ha mer «pølse», er neste knapp variant a
+    (`out/opt_mage2_a.json`: DWL-bredden holdes til ca. 5,6 m, +0,1 m³) eller å
+    løfte taket for største spant. Aktenfor ca. 5,5 m er spantene fortsatt
+    V-formet (17–22°); IMG_9391 bekrefter hjerteformen fra ca. 6,2 m.
+  * Rettet: fenderlistens kontroll (`build._union_strake_piece`) brukte rask
+    `Volume()` på hele skroget, som bommer med liter. Nå avgjør den presise.
+  * `docs/foto/IMG_9395.jpg` heter nå `IMG_9395_mage.jpg` (brukerens navn),
+    og verktøyene er rettet. Brukerens skjermbilder er sjekket inn.
+  * Les «Status – 14. november 2026: trinn 9 «magen» ferdig» i `V10.md`.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
   kalesjen (sprayhooden) skal være åpen, kanskje i stoff. Anbefaling: gjør den
   til en egen løs del, så både tynt printet skall og bøyler med stoff er
@@ -242,7 +258,7 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   * IMG_9391: akterspeilet
   * IMG_9389: skrått bakfra
   * IMG_9387, 9374 og 9370: fra siden
-  * IMG_9395: baugen nedenfra
+  * IMG_9395_mage.jpg (før 14.11 IMG_9395.jpg): baugen og buken nedenfra
   * kant2.jpg (før IMG_9304) og IMG_9372: dekket ovenfra
   * nye4_babord_side (fra siden, beste kamera), nye6_akterhjorne,
     nye1_akter_nedenfra og nye2_cockpit_ovenfra (13.11). kant3.jpeg:
@@ -284,6 +300,14 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   ble avsluttet (resultatet ble byte-likt). La skriptet sjekke en stoppfil,
   eller avslutt `bash`-prosessen selv.
 * `01_skrog.stl` ligger dreid +45° om Z på platen.
+* **Volumkontroller (14.11.2026):** OCCs raske `Volume()` på hele skroget
+  (18 m³ i full skala) kan bomme med flere liter. En kontroll som sammenligner
+  små volumer (en fenderlistbit er 0,3–0,7 liter) må bruke den presise
+  beregningen (`build._volume`, ca. 1 s) når den raske sier nei. Ellers
+  stopper bygget på en riktig union, eller godtar en gal en.
+* En endring i spantene midtskips flytter loftflaten ørlite også forut (loften
+  er en spline gjennom alle spantene), så skjøre OCC-operasjoner forut kan
+  oppføre seg annerledes selv om spantene der er uendret.
 * `python tools/sammensetning.py` lager `export/visning/hr26_sammensatt.stl`:
   alle delene satt sammen i én STL, bare til å se på (eieren ba om det
   14.11.2026). Lett jobb (1,2 GB, 30 s), fordi skroget hentes fra den ferdige

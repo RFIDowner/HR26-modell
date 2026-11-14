@@ -1,0 +1,25 @@
+  skrog loftet               0s
+  kjol                       1s
+    fenderlist: 16 biter
+  fenderlist                 9s
+  akterspeilets overkant    10s
+  krage, kant og karm       28s
+  knekk og skulder          32s
+  dekksbeslag               34s
+  cockpit, nedgang, vinduer    37s
+  hull for rigg og rekke    38s
+  aapning i dekket          45s
+  uthult                    52s
+    kahytt: rom under taket, vinduer, doerer
+    kahytt: innredning trukket fra
+    kahytt: kappet ved skrogets innside
+  kahytt                    62s
+  aapne vinduer             66s
+  plastforbruk (skall og innredning): 338 cm3
+skroget bygget (67 s)
+  test-vindusbro.stl       62.3 x  14.7 x  14.7 mm   3.70 cm3
+    test-lokk-skrog.stl: tettet 1 trekanthull i nettet
+  test-lokk-skrog.stl      23.3 x  60.0 x   5.1 mm   2.57 cm3
+  test-lokk-tak.stl        23.4 x  60.0 x   5.5 mm   5.07 cm3
+ferdig (95 s)
+memcap: topp 2.35 GB av 5.0 GB, rc=0

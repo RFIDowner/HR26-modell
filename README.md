@@ -107,6 +107,15 @@ faller fra dekkskanten til ca. 135 mm over listen (`KNUCKLE_Z`), og over den
 ligger en skrå skulder (40°, `hull.shoulder_cutter`) opp til sidedekket og
 karmen. Linjene lagt over to av bildene ligger i `v10/rapporter/13nov_kant/`.
 
+**Merk om magen (V10 trinn 9, 14.11.2026):** på båten er buken under vann
+rund og full, «som en stor pølse» (IMG_9395, IMG_9389). Modellen smalnet inn
+fra vinduets forkant, med en midje i vannlinjene ved 4,7–6 m. Spantene
+mellom 3 578 og 6 996 mm har fått tillegg til bunnreisning, slag og utfall
+(`BELLY_*` i `params.py`), så vannlinjene er jevne uten midje. Buken er
+5–8 cm fyldigere under vann ved 4,7–5,0 m. Det største spantet og alt foran
+vinduet og aktenfor ca. 7 m er uendret. Halvbreddeplan og spantriss før og
+etter ligger i `v10/rapporter/14nov_mage/`.
+
 **Merk om fenderlisten:** listen er en list utenpå skrogsiden, 95 mm høy og
 55 mm utstikkende (`STRAKE_*`), bygget som en loft langs den målte senter-
 linjen (`strake_z_mm` i `data/hull_stations.csv`). Den ligger *under*

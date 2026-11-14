@@ -73,6 +73,23 @@ SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
     (0.00, 45.0), (0.127, 24.2), (0.20, 1.5), (0.30, 5.1), (0.45, 0.1),
     (0.60, 13.1), (0.75, 22.8), (0.90, 19.1), (0.95, 23.9), (1.00, 28.8),
 ]
+# V10 trinn 9 (14.11.2026): «magen». Paa baaten er buken under vann rund og
+# full «som en stor poelse» (IMG_9395, IMG_9389, «nye 1»); i modellen smalnet
+# den inn fra vinduets forkant til ca. 7 m, med en midje i vannlinjene ved x
+# 4 800-6 000 (bunnen ble en kile). Tilleggene under fyller midjen: null og
+# med null stigning ved t 0,45 (vinduets forkant, x 3 578) og t 0,88 (x 6 996),
+# saa alt foran vinduet og aktenfor ca. 7 m staar. Tallene er fra
+# v10/verktoy/foto/py/opt_mage2.py (variant f: glatte vannlinjer og diagonaler
+# uten midje, IMG_9391 ikke verre, ingen halvbredde under DWL og intet spant
+# stoerre enn det stoerste foran vinduet, n <= 5 der det var under 5, se
+# trinn 4). Resultat: kanobunn 2,52 m3 (foer 2,44), stoerste spant uendret
+# (0,617 m2 ved x 3 500), buken 5-8 cm fyldigere ved x 4 700-5 000 under vann,
+# 2-5 cm i DWL og under 0,6 cm ved listen, IMG_9391 rms 11,6 px (foer 12,1).
+BELLY_T = (0.45, 0.88)
+BELLY_KNOTS = (0.49, 0.53, 0.57, 0.61, 0.65, 0.69, 0.73, 0.77, 0.81, 0.85)
+BELLY_DEADRISE = (-1.59, -3.47, -4.04, -3.82, -4.00, -3.81, -2.84, -0.78, 0.10, 0.18)   # tillegg, grader
+BELLY_N = (0.145, 0.054, 0.157, 0.252, 0.146, 0.053, -0.022, 0.123, 0.001, -0.012)       # tillegg til eksponenten
+BELLY_FLARE = (1.44, 1.26, 1.86, 1.86, 1.34, 1.55, 0.88, 0.36, -0.90, -0.50)            # tillegg, grader
 # Doedtre (vinglass-spant): spantets konvekse kanobunn bygges paa et kjolpunkt
 # DEADWOOD_H over senterlinjen, og bunnen trekkes ned til senterlinjen med
 # (1 - (y/DEADWOOD_W)^2)^2: en hul overgang. Gir hjertets spiss akterfra.
