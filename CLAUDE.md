@@ -199,6 +199,16 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     er ukjent). Sted og retning stemmer med bildene. Brukeren mener streken
     er «ikke så langt unna». Den er målet for formen, og stroppmålingen
     kontrollerer den.
+  * **`docs/foto/område.png` (14.11 kl. 01:38) er brukerens siste og
+    gjeldende markering.** Vinduet er rammet inn som referanse. Streken under
+    skroget ligger på skroget ved vinduets forkant (ca. 3,5–3,8 m, ingen
+    endring), går ut langs kjølen, er lengst ute like bak kjølen (ca.
+    5,9–6,1 m: 20–25 px, omtrent 10–14 cm i den vinkelen, usikkert) og er
+    tilbake på skroget ved ca. 6,8–6,95 m. Mot den første streken: den
+    begynner på null ved vinduet (ikke 0,5 m lenger forut), er størst bak
+    kjølen i stedet for foran, og slutter ved ca. 6,9 m i stedet for 7,5 m.
+    Fyllingen må altså være null igjen ved ca. 6,9 m; legg et styrepunkt der
+    (t ca. 0,87), siden tabellpunktet t 0,90 ligger ved 7 155.
   * Brukeren har omdøpt `docs/foto/IMG_9395.jpg` til `IMG_9395_mage.jpg`
     (ikke sjekket inn). Verktøyene (`ovl9395.py` m.fl.) leser det gamle navnet.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
