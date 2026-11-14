@@ -327,6 +327,27 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
   nytt fordi de følger tverrsnittene.
 
+* **14.11.2026: private bilder fjernet fra GitHub («sjefsavgjørelse: slett
+  alle private bilder fra GitHub, men ikke lokalt»).** Repoet er offentlig.
+  En gjennomgang fant et identifiserbart ansikt i utsnitt av IMG_9304 som
+  originalen har dekket til, personer i utsnitt av IMG_9370, og et bilskilt og
+  et nabobåtnummer i IMG_9395. Historikken på alle grener er skrevet om med
+  `git filter-repo` og force-pushet:
+  * Alle bildene i `docs/foto` er fjernet, og det samme gjelder alle utsnitt,
+    overlegg og poengkort laget av dem (91 stier, listet i `.gitignore`).
+  * E-posten i alle commits er byttet til GitHubs noreply-adresse.
+
+  Filene ligger fortsatt lokalt. Commit-ID-ene som er nevnt i dette notatet
+  og i `V10.md`, er fra før omskrivingen. En sikkerhetskopi av den gamle
+  historikken ligger lokalt i `~/Documents/HR26-backup-foer-rensing-2026-11-14.git`.
+  **Regel:** bilder av den ekte båten og alt som lages av dem (utsnitt,
+  overlegg, poengkort med foto) skal aldri committes. Legg nye slike
+  utdatafiler i `.gitignore` eller skriv dem utenfor repoet.
+* **Fargefil for Bambu (14.11.2026).** Brukeren ville bare ha fargeskift i
+  høyden («ikke en to-timers jobb»). `python tools/lag_3mf.py` lager
+  `export/3mf/01_skrog_farger.3mf`: rødt fra kjølen, sort fra 46,76 mm og hvitt
+  fra 50,6 mm, med innstillingene fra README. Velg den enkle løsningen først.
+
 ## Referanser
 
 * Bilder av den ekte båten ligger i `docs/foto/`, uten metadata og nedskalert
