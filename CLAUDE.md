@@ -14,6 +14,11 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   «jeg klarer ikke å se dette uten i en stl fil»). Når formen endres, lag
   før og etter som STL i `export/visning/`, i samme ramme og med et snitt
   der endringen er størst (se `v10/verktoy/foto/py/mage_stl_sammenlign.py`).
+  **Senere 14.11 (V11b):** «Jeg trenger kun den ene filen, altså skroget. jeg
+  kan heller be om andre filer» og «Kjør kun prosesser som du trenger, jeg vil
+  bare se det ferdige nå, printbar fil». Standard er nå bare den printbare
+  `export/stl/01_skrog.stl` (`--only skrog`), og bare de kjøringene som trengs:
+  bygg, meshcheck og poengkort. STL-er for før og etter lages bare når brukeren ber om det.
 * Brukeren vurderer fasongen med øyet, ved å se 3D-modellen rett på og se på
   buen (14.11.2026). At «pølsa» vises på alle bildene, er for brukeren
   «uomtvistelig» og kan ikke konkluderes bort med usikre kameraer. Si hva en
@@ -290,6 +295,25 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   `kant_snitt.stl`. Lærdom: et OCC-kutt med kanter på 0,07 mm feilet stille og
   lot skroget være urørt; bygget sjekker nå volumet kuttet tar. Les «V11 –
   14. november 2026» øverst i `V10.md`.
+* **14.11.2026: V11b, vinsjen og akterklampen (pushet til `v11`).** Brukeren
+  tegnet på `kant2.1.jpg` (i `~/Downloads`, ikke i git) at gangbordet fra
+  «trossesnellen» og akterover bare er 4–6 cm, og at forhøyningen smalner inn
+  mot B like bak sprayhoodens bein. «Fortøyningssnurren» skal henge loddrett
+  på veggen. Claudes tolkning: trossesnellen er vinsjen (6 540), og
+  fortøyningssnurren er akterklampen (7 500). Gjort:
+  * Gangbordet er 170 mm ved B, 55 mm fra 6 450 og 45 mm ved 7 600
+    (`WALK_W_SIDE_TAB`, `WALK_TAPER_X1`).
+  * Vinsjen står nå på flat topp. Akterklampen henger på veggens utside med
+    45° fas under, så den printes uten support (brukeren: «kan den legge
+    minste grad undenfra»).
+  * Hullene ved 6 700, 7 250 og 7 680 er flyttet inn på akterdekket
+    (`gangbord.hole_y`).
+  * Poengkortet `s12_vinsj` (`score.py` 1.7).
+
+  Lærdom: snittparet ved trinnet (2 mm fra hverandre) krysset hverandre, og
+  gangbordkuttet tok da ingenting uten å si fra. Nå får tette par samme
+  normal. Brukeren håper V11 er skroget man blir fornøyd med. Les «V11b» i
+  `V10.md`.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
   kalesjen (sprayhooden) skal være åpen, kanskje i stoff. Anbefaling: gjør den
   til en egen løs del, så både tynt printet skall og bøyler med stoff er

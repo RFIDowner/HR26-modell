@@ -114,7 +114,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-VERSION = "1.6 (2026-11-14)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin; 1.5: DECK_EDGE_Z lifted x 2000-6000 from the photos, KNUCKLE_Z (hull side ends in a knuckle aft of the window) is the reference there; 1.6 (V11): the side deck aft of the window is flat and meets the coaming/aft deck in a near-vertical wall (no 40 deg shoulder) - walk_deck
+VERSION = "1.7 (2026-11-14)"  # 1.1: DECK_HB x 2616-3019 re-traced; deck outline measured at the plan silhouette; 1.3: strake band must agree with its own outer face; 1.4: interior seen through the hull windows is not hull skin; 1.5: DECK_EDGE_Z lifted x 2000-6000 from the photos, KNUCKLE_Z (hull side ends in a knuckle aft of the window) is the reference there; 1.6 (V11): the side deck aft of the window is flat and meets the coaming/aft deck in a near-vertical wall (no 40 deg shoulder) - walk_deck
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================================
@@ -796,6 +796,12 @@ def deck_edge_at(sec, x, side=1):
     if m.sum() < 3:
         return None
     Q = P[m]
+    # 1.7 (V11b): aft of the winch the side deck is only 45-55 mm wide and the
+    # aft deck stands 150 mm above it; max(y + z/2) then picked the top of
+    # that wall instead of the hull edge. The support point must lie on the
+    # outer edge: within 12 mm of the outermost point (a rounded deck edge
+    # puts it 2-4 mm inboard).
+    Q = Q[Q[:, 0] > Q[:, 0].max() - 12.0]
     i = int(np.argmax(Q[:, 0] + 0.5 * Q[:, 1]))
     yc, zc = float(Q[i, 0]), float(Q[i, 1])
     out = [yc, zc, np.nan, np.nan, False]
@@ -920,6 +926,21 @@ def station_sweep(slx, xs, fn=None):
 WALK_X = (5600.0, 5720.0, 6300.0, 6640.0, 6760.0, 7100.0, 7400.0)   # clear of the stanchion holes 5650/6700
 WALK_TILT_MAX = 6.0      # side deck tilt across, 30-130 mm in from the hull edge (deg)
 WALK_WALL_MIN = 70.0     # the step up to the coaming / aft deck (deg from horizontal)
+# 1.7 (V11b, kant2.1.jpg): from the winch aft the side deck is 4-6 cm wide, the
+# winch stands on the flat coaming top, the aft cleat hangs on the outside of
+# the wall (45 deg underside), and the aft stanchion/pushpit holes moved inboard
+# onto the flat top (they would otherwise cut the wall).
+WALK_NARROW_X0 = 6640.0
+WALK_NARROW_W = (40.0, 60.0)
+WINCH_XY = (6540.0, 905.0)      # winch centre (hr26 WINCH_X, mid coaming)
+WINCH_RB = 48.4                 # winch base radius
+AFT_CLEAT_X = 7500.0
+AFT_CLEAT_OLD_Y = 693.0         # V11: the cleat lay on the aft deck here
+
+
+def _aft_width(rows, f):
+    w = [r["wall"]["width"] for r in rows if r["wall"] and r["x"] >= WALK_NARROW_X0]
+    return r1(f(w)) if w else None
 
 
 def _top_profile(sec, side, ys):
@@ -949,15 +970,25 @@ def walk_deck(slx):
             if m.sum() < 3:
                 continue
             e = float(P[m, 0].max())
-            ys = np.arange(e - 20.0, e - 420.0, -5.0)
+            ys = np.arange(e - 10.0, e - 420.0, -5.0)
             zt = _top_profile(sec, side, ys)
-            za, zb = np.interp([e - 30.0, e - 130.0], ys[::-1], zt[::-1])
-            tilt = math.degrees(math.atan2(abs(za - zb), 100.0))
-            zl = float(np.nanmedian(zt[(ys <= e - 30.0) & (ys >= e - 130.0)]))
+            # 1.7 (V11b): the side deck aft of the winch is only 45-55 mm wide.
+            # Ledge level from the first 10-25 mm inboard of the hull edge; the
+            # wall is the first 60 mm rise inboard of that; tilt over the ledge
+            # itself (10 mm in from the edge to 10 mm short of the wall, at
+            # most 120 mm in, as 1.6 measured 30-130).
+            z_edge = float(np.nanmedian(zt[(ys <= e - 10.0) & (ys >= e - 25.0)]))
+            jw = next((j for j in range(len(ys)) if np.isfinite(zt[j]) and zt[j] > z_edge + 60.0), None)
+            y_in = max(ys[jw] + 15.0 if jw is not None else e - 130.0, e - 130.0)
+            y_in = min(y_in, e - 20.0)
+            ok = (ys <= e - 10.0) & (ys >= y_in) & np.isfinite(zt)
+            zl = float(np.nanmedian(zt[ok]))
+            za, zb = np.interp([e - 10.0, y_in], ys[::-1], zt[::-1])
+            tilt = math.degrees(math.atan2(abs(za - zb), max(e - 10.0 - y_in, 1.0)))
             # the wall: going inboard from the side deck, first rise of 60 mm
             wall = None
             for j in range(len(ys)):
-                if ys[j] > e - 120.0 or not np.isfinite(zt[j]):
+                if not np.isfinite(zt[j]):
                     continue
                 if zt[j] > zl + 60.0:
                     # last point still on the side deck (<= 15 mm up) before the
@@ -979,9 +1010,81 @@ def walk_deck(slx):
     return dict(rows=rows, n=len(rows), tilt_max_deg=r1(max(tilts), 1) if tilts else None,
                 wall_min_deg=(r1(min(walls), 1) if len(walls) == len(rows) and walls else 0.0),
                 width_min=r1(min(widths)) if widths else None, width_max=r1(max(widths)) if widths else None,
-                note="1.6: top profile across the side deck; tilt between 30 and 130 mm in from the hull edge; "
+                width_min_aft=_aft_width(rows, min), width_max_aft=_aft_width(rows, max),
+                note="1.7: tilt over the side deck itself (10 mm in from the hull edge to 15 mm short of the wall, "
+                     "at most 130 mm in); widths aft of the winch (x >= WALK_NARROW_X0) reported separately. "
+                     "1.6: top profile across the side deck; tilt between 30 and 130 mm in from the hull edge; "
                      "wall = first 60 mm rise inboard, angle over the 15-60 mm part (5 mm grid, ~85 deg resolvable); "
                      "a section without a wall counts as 0 deg")
+
+
+def _top_at(slx, x, y):
+    sec = slx.section(x)
+    if sec is None:
+        return float("nan")
+    side = 1 if y >= 0 else -1
+    return float(_top_profile(sec, side, np.array([abs(y)]))[0])
+
+
+def v11b_checks(slx, holes):
+    """1.7 (V11b): winch on a flat top, the aft cleat on the wall, the moved
+    deck holes on flat ground, and the aft deck clear where the cleat was."""
+    out = {}
+    # winch: outboard half of a ring 8 mm outside the base, both sides
+    wx, wy = WINCH_XY
+    rr = WINCH_RB + 8.0
+    drop = []
+    for side in (1, -1):
+        aa = np.radians(np.arange(-80.0, 81.0, 20.0))
+        xr = wx + rr * np.sin(aa)
+        ring = np.array([_top_at(slx, xi, side * (wy + rr * math.cos(a))) for xi, a in zip(xr, aa)])
+        # the coaming top falls ~5 cm/m aft: remove the slope along x first
+        A = np.c_[np.ones_like(xr), xr - wx]
+        ok = np.isfinite(ring)
+        coef = np.linalg.lstsq(A[ok], ring[ok], rcond=None)[0]
+        res_ = ring[ok] - A[ok] @ coef
+        drop.append(float(res_.max() - res_.min()))
+    out["winch_ring_drop_max"] = r1(max(drop))
+    # aft cleat: the section at AFT_CLEAT_X
+    sec = slx.section(AFT_CLEAT_X)
+    prot, inside, bump = [], [], []
+    for side in (1, -1):
+        y0, z0, y1, z1 = _seg_yz(sec, side)
+        Pp = np.r_[np.c_[y0, z0], np.c_[y1, z1]]
+        zk = float(edge_meas(AFT_CLEAT_X))
+        m = (Pp[:, 1] > zk - 40.0) & (Pp[:, 1] < zk + 250.0) & (Pp[:, 0] > 0)
+        e = float(Pp[m, 0].max())
+        ys = np.arange(e - 5.0, e - 300.0, -2.5)
+        zt = _top_profile(sec, side, ys)
+        z_edge = float(np.nanmin(zt[:6]))                 # side deck (the cleat may hang over part of it)
+        jw = next((j for j in range(len(ys)) if np.isfinite(zt[j]) and zt[j] > z_edge + 120.0), None)
+        foot = float(ys[jw]) if jw is not None else float("nan")
+        band = (Pp[:, 1] > z_edge + 15.0) & (Pp[:, 1] < z_edge + 90.0) & (Pp[:, 0] > 0)
+        y_out = float(Pp[band, 0].max()) if band.any() else float("nan")
+        low = (Pp[:, 1] < z_edge - 5.0) & (Pp[:, 1] > z_edge - 60.0) & (Pp[:, 0] > 0)
+        hull_edge = float(Pp[low, 0].max()) if low.any() else float("nan")
+        prot.append(y_out - foot)
+        inside.append(hull_edge - y_out)
+        bump.append(_top_at(slx, AFT_CLEAT_X, side * AFT_CLEAT_OLD_Y)
+                    - _top_at(slx, AFT_CLEAT_X, side * (AFT_CLEAT_OLD_Y + 60.0)))
+    out["aft_cleat_protrusion_min"] = r1(min(prot))
+    out["aft_cleat_inside_edge_min"] = r1(min(inside))
+    out["aft_deck_bump_at_old_cleat"] = r1(max(bump))
+    # moved deck holes: 4 points 10 mm outside the hole, height spread
+    spread = []
+    for r in holes:
+        if not r.get("found") or not any(k in r["name"] for k in ("stanchion_6700", "pushpit_7250", "pushpit_7680")):
+            continue
+        rad = 0.5 * r["d"] + 10.0
+        za, zb = _top_at(slx, r["x"] + rad, r["y"]), _top_at(slx, r["x"] - rad, r["y"])
+        zz = [0.5 * (za + zb), _top_at(slx, r["x"], r["y"] + rad), _top_at(slx, r["x"], r["y"] - rad)]
+        spread.append(float(np.nanmax(zz) - np.nanmin(zz)))     # fore/aft averaged: the aft deck slopes along x
+    out["moved_holes_top_spread_max"] = r1(max(spread)) if spread else None
+    out["note"] = ("1.7: winch ring = outboard half of a ring 8 mm outside the base (max-min top after removing the slope along x); aft cleat in the "
+                   "section at 7500: protrusion beyond the wall foot (15-90 mm over the side deck) and margin to the "
+                   "hull side below the side deck; aft deck bump = top at the old cleat y minus 60 mm further out; "
+                   "moved holes: top height spread 10 mm outside the hole")
+    return out
 
 
 def assemble_deck_line(rows):
@@ -1513,6 +1616,16 @@ TODAY_HOLES = {
     },
 }
 
+# 1.7 (V11b): the aft stanchion (6700) and pushpit (7250, 7680) holes moved
+# inboard onto the flat coaming / aft deck top: the side deck aft of the winch
+# is 45-55 mm wide, too narrow for a 36 mm hole, and at the old place the holes
+# would cut the new wall (hr26 gangbord.hole_y). New design positions:
+for _n, _y, _z in (("stanchion_6700", 994.0, 1129.0), ("pushpit_7250", 873.0, 1103.0),
+                   ("pushpit_7680", 691.0, 1086.0)):
+    for _s, _sg in (("stb", 1.0), ("port", -1.0)):
+        _r = TODAY_HOLES["deck"][f"{_n}_{_s}"]
+        TODAY_HOLES["deck"][f"{_n}_{_s}"] = (_r[0], _sg * _y, _r[2], _z, _z - 210.0)
+
 
 # ============================================================================
 # Interfaces
@@ -1799,6 +1912,7 @@ def analyze(path, args):
                                        note="2-D distance from the traced lower silhouette; propeller (6030-6450) "
                                             "and rudder (>7450) are not part of the hull and are skipped")
     lines["walk_deck"] = walk_deck(slx)
+    lines["v11b"] = v11b_checks(slx, dget(res, "interfaces.deck_holes.holes") or [])
     res["lines"] = lines
     log(f"  lines  ({time.time() - t0:.1f}s)")
     # ---- fairness -----------------------------------------------------------------
@@ -1887,6 +2001,13 @@ SUMMARY_ROWS = [
     ("Min wall, deck (model)", "shell.wall_thickness.deck.min_model", "mm", ("min", 0.8)),
     ("Side deck aft: tilt (max)", "lines.walk_deck.tilt_max_deg", "deg", ("max", WALK_TILT_MAX)),
     ("Side deck aft: wall up (min)", "lines.walk_deck.wall_min_deg", "deg", ("min", WALK_WALL_MIN)),
+    ("Side deck aft of winch: width (min)", "lines.walk_deck.width_min_aft", "mm", ("min", WALK_NARROW_W[0])),
+    ("Side deck aft of winch: width (max)", "lines.walk_deck.width_max_aft", "mm", ("max", WALK_NARROW_W[1])),
+    ("Winch base on flat top (ring drop)", "lines.v11b.winch_ring_drop_max", "mm", ("max", 3.0)),
+    ("Aft cleat on the wall (protrusion)", "lines.v11b.aft_cleat_protrusion_min", "mm", ("min", 20.0)),
+    ("Aft cleat inside the hull edge", "lines.v11b.aft_cleat_inside_edge_min", "mm", ("min", 3.0)),
+    ("Aft deck clear at old cleat", "lines.v11b.aft_deck_bump_at_old_cleat", "mm", ("max", 3.0)),
+    ("Moved deck holes on flat top", "lines.v11b.moved_holes_top_spread_max", "mm", ("max", 3.0)),
     ("LINES (indicators)", None, None, None),
     ("Side deck aft: width min", "lines.walk_deck.width_min", "mm", None),
     ("Side deck aft: width max", "lines.walk_deck.width_max", "mm", None),

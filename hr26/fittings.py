@@ -25,6 +25,15 @@ def _surface_z(x: float, y: float) -> float:
     return D.deck_z(x, y)
 
 
+def _hole_y(x: float, inset: float, r: float) -> float:
+    """Hullets halvbredde: `inset` fra dekkskanten, eller (V11b) inne paa
+    akterdekket der gangbordet er for smalt til hullet."""
+    if getattr(P, "WALK", False):
+        from . import gangbord as G
+        return G.hole_y(x, inset, r)
+    return C.deck_half_breadth(x) - inset
+
+
 def _pin_hole(x: float, y: float, dia: float, depth: float = HOLE_DEPTH):
     z = _surface_z(x, y)
     return (
@@ -41,8 +50,7 @@ def stanchion_holes() -> cq.Workplane:
     out = None
     d = P.STANCHION_D + CLEAR
     for x in P.STANCHION_X:
-        hb = C.deck_half_breadth(x)
-        y = hb - P.STANCHION_INSET
+        y = _hole_y(x, P.STANCHION_INSET, 0.5 * d)
         depth = HOLE_DEPTH
         if getattr(P, "CABIN", False) and P.WIN_X0 - 60.0 <= x <= P.WIN_X1 + 60.0:
             # over et aapent vindu (kahytt): blindhull i vindusoverkanten, som
@@ -61,8 +69,7 @@ def pulpit_holes() -> cq.Workplane:
     d = P.STANCHION_D + CLEAR
     for xs in (P.PULPIT_X, P.PUSHPIT_X):
         for x in xs:
-            hb = C.deck_half_breadth(x)
-            y = max(hb - P.STANCHION_INSET, 60.0)
+            y = max(_hole_y(x, P.STANCHION_INSET, 0.5 * d), 60.0)
             for sign in (1, -1):
                 h = _pin_hole(x, sign * y, d)
                 out = h if out is None else out.union(h)
@@ -153,14 +160,67 @@ def _cleat(x: float, y: float) -> cq.Workplane:
     return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=False)])
 
 
+def _cleat_on_wall(x: float, sign: int) -> cq.Workplane:
+    """V11b: akterklampen («fortoeyningssnurren») paa utsiden av veggen opp
+    til akterdekket, med lengden langs baaten og hornene utover. Hornprofilen
+    ligger i lagplanet; undersiden har en 45 graders fas ned mot veggen
+    (utstikket krymper like mye som snittet senkes), saa klampen printes uten
+    stoette. Oversiden er avrundet. Foten gaar 25 mm inn i veggen."""
+    from . import gangbord as G
+    L, H, W = P.CLEAT_L, P.CLEAT_WALL_OUT, P.CLEAT_WALL_W
+    yf, (tx, ty), (nx, ny), zl, zt = G.wall_frame(x)
+    a = 0.5 * L
+    half = [(0.0, -25.0), (0.18 * L, -25.0), (0.22 * L, -10.0), (0.22 * L, 0.13 * H),
+            (0.29 * L, 0.3 * H), (0.39 * L, 0.45 * H), (0.48 * L, 0.6 * H), (a, 0.77 * H),
+            (0.49 * L, 0.93 * H), (0.42 * L, H), (0.22 * L, 1.01 * H), (0.0, 1.02 * H)]
+    prof = half + [(-px, pq) for (px, pq) in reversed(half[1:-1])]
+    qmax = 1.02 * H
+    # plass paa veggen: fasen over gangbordet, toppen under avrundingen
+    room = (zt - P.WALK_EDGE_R - 5.0) - (zl + 6.0)
+    if room < W + qmax:
+        raise RuntimeError(f"akterklampen faar ikke plass paa veggen ved {x:.0f} ({room:.0f} mm)")
+    zb = zl + 6.0 + qmax + 0.5 * (room - W - qmax)          # klampens underkant (fasen under)
+    zm = zb + 0.5 * W
+    cot = 1.0 / math.tan(math.radians(P.WALK_WALL_ANGLE))
+    yface = yf - (zm - zl) * cot                            # veggflaten midt paa klampen
+    r = min(9.0, 0.3 * W)
+    e = 0.5 * W - r
+    # (hoeyde over klampens senter, skala langs, skala utover om foten q = -25)
+    secs = []
+    for c in (qmax + 12.0, 0.75 * qmax, 0.5 * qmax, 0.25 * qmax, 0.0):   # fasen, nedenfra
+        secs.append((-0.5 * W - c, 1.0, 1.0 - c / (qmax + 25.0)))
+    secs.append((0.0, 1.0, 1.0))
+    for ww in (e, e + 0.6 * r, e + 0.95 * r):                          # avrundet overkant
+        u = max(0.0, ww - e)
+        s = r - math.sqrt(max(r * r - u * u, 0.0))
+        secs.append((ww, (a - s) / a, (qmax + 25.0 - s) / (qmax + 25.0)))
+    wires = []
+    for ww, sp, sq in secs:
+        pts = []
+        for px, pq in prof:
+            p = px * sp
+            q = -25.0 + (pq + 25.0) * sq
+            pts.append(cq.Vector(x + p * tx + q * nx, sign * (yface + p * ty + q * ny), zm + ww))
+        wires.append(cq.Wire.assembleEdges([cq.Edge.makeSpline(pts, periodic=True)]))
+    solid = cq.Solid.makeLoft(wires, ruled=True)
+    if not solid.isValid():
+        raise RuntimeError("ugyldig akterklamp paa veggen")
+    return cq.Workplane("XY").newObject([solid])
+
+
 def cleats() -> cq.Workplane:
-    """Fortoyningsklamper: smaa hornklamper, innenfor dekkskanten."""
+    """Fortoyningsklamper: smaa hornklamper, innenfor dekkskanten. V11b: den
+    aktre henger paa utsiden av veggen (CLEAT_AFT_ON_WALL)."""
     out = None
     for x in P.CLEAT_X:
         hb = C.deck_half_breadth(x)
+        aft = x >= getattr(P, "AFTDECK_X0", 1e9)
         for sign in (1, -1):
-            inset = P.CLEAT_INSET_AFT if x >= getattr(P, "AFTDECK_X0", 1e9) else P.CLEAT_INSET
-            c = _cleat(x, sign * (hb - inset))
+            if aft and getattr(P, "CLEAT_AFT_ON_WALL", False) and getattr(P, "WALK", False):
+                c = _cleat_on_wall(x, sign)
+            else:
+                inset = P.CLEAT_INSET_AFT if aft else P.CLEAT_INSET
+                c = _cleat(x, sign * (hb - inset))
             out = c if out is None else out.union(c)
     return out
 

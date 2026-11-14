@@ -77,7 +77,27 @@ def _obstacle(x: float) -> float:
     return ob
 
 
-_TAPER = 260.0          # bak sprayhoodens bein gaar veggen jevnt inn til dhb - WALK_W_SIDE
+_TAPER = 260.0          # V11: bak sprayhoodens bein gaar veggen jevnt inn til dhb - WALK_W_SIDE
+
+
+def _sstep(u: float) -> float:
+    u = min(max(u, 0.0), 1.0)
+    return u * u * (3.0 - 2.0 * u)
+
+
+def walk_w(x: float) -> float:
+    """Gangbordets bredde langs sidene, fra dekkskanten til veggens fot,
+    aktenfor sprayhoodens bein. V11b: WALK_W_SIDE_TAB (glatt mellom
+    punktene, konstant utenfor); V11: WALK_W_SIDE."""
+    tab = getattr(P, "WALK_W_SIDE_TAB", None)
+    if not tab:
+        return P.WALK_W_SIDE
+    if x <= tab[0][0]:
+        return tab[0][1]
+    for (x0, w0), (x1, w1) in zip(tab[:-1], tab[1:]):
+        if x <= x1:
+            return w0 + (w1 - w0) * _sstep((x - x0) / (x1 - x0))
+    return tab[-1][1]
 
 
 def _wall_fwd(x: float) -> float:
@@ -90,16 +110,18 @@ def _wall_fwd(x: float) -> float:
 
 def side_wall_y(x: float) -> float:
     """Veggens fot i plan langs sidene (styrbord): utenfor ruffens og
-    sprayhoodens fot forut, saa jevnt (smoothstep, uten knekk) inn til
-    WALK_W_SIDE innenfor dekkskanten."""
+    sprayhoodens fot forut, saa jevnt (smoothstep, uten knekk) ut til
+    walk_w(x) innenfor dekkskanten (V11b: ferdig ved WALK_TAPER_X1, foer
+    vinsjen)."""
     xb = P.SPRAY_X1
     if x <= xb:
         return _wall_fwd(x)
-    base = C.deck_half_breadth(x) - P.WALK_W_SIDE
-    u = (x - xb) / _TAPER
+    base = C.deck_half_breadth(x) - walk_w(x)
+    x1 = getattr(P, "WALK_TAPER_X1", xb + _TAPER)
+    u = (x - xb) / (x1 - xb)
     if u >= 1.0:
         return base
-    w = u * u * (3.0 - 2.0 * u)
+    w = _sstep(u)
     return (1.0 - w) * _wall_fwd(xb) + w * base
 
 
@@ -161,6 +183,14 @@ def path(step_pair: bool = True):
     pts = np.vstack([s, port[1:]])
     t = np.gradient(pts, axis=0)
     t /= np.linalg.norm(t, axis=1)[:, None]
+    # V11b: snittparet ved trinnet ligger 2 mm fra hverandre. Med litt ulik
+    # normal krysset de to tverrsnittene hverandre (de er ca. 450 mm brede),
+    # loften fikk negativt volum der, og hele kuttet tok ingenting. Tette par
+    # faar derfor samme normal: parallelle plan.
+    gap = np.hypot(*np.diff(pts, axis=0).T)
+    for i in np.nonzero(gap < 0.5 * _STEP)[0]:
+        m = t[i] + t[i + 1]
+        t[i] = t[i + 1] = m / np.linalg.norm(m)
     n = np.c_[-t[:, 1], t[:, 0]]           # styrbord gaar akterover (+x): normal ut = +y
     # paa babord (motsatt vei) blir samme formel -y: utover der ogsaa
     return pts, n
@@ -227,11 +257,56 @@ def on_ledge(x: float, y: float) -> bool:
 
 def surface_z(x: float, y: float) -> float:
     """Overflaten et beslag eller et hull staar paa: gangbordet der det er,
-    ellers dekket."""
-    z = C.deck_z(x, y)
+    ellers akterdekket/karmtoppen (fra AFTDECK_X0) eller dekket."""
     if on_ledge(x, y):
-        z = min(z, ledge_z(x, y))
-    return z
+        return min(C.deck_z(x, y), ledge_z(x, y))
+    return D.top_z(x, y)
+
+
+def wall_y_at(x: float) -> float:
+    """Veggens fot i plan (styrbord) ved x, langs sidene og rundt hjoernet
+    (der stien fortsatt gaar akterover)."""
+    if x <= P.WALK_SIDE_END:
+        return side_wall_y(x)
+    pl = _path_stb()
+    m = pl[:, 1] >= P.WALK_Y_AFT
+    xs, ys = pl[m, 0], pl[m, 1]
+    k = int(np.argmax(xs))
+    return float(np.interp(x, xs[:k + 1], ys[:k + 1]))
+
+
+def hole_y(x: float, inset: float, r: float) -> float:
+    """Halvbredden til et dekkshull (radius r) som skulle staa `inset` fra
+    dekkskanten. Ligger det ikke helt ute paa gangbordet (minst 10 mm utenfor
+    veggens fot), flyttes det inn paa den flate toppen, HOLE_TOP_CLEAR
+    innenfor veggens fot, saa det aldri skjaerer veggen eller avrundingen
+    (V11b: gangbordet er bare 45-55 mm bredt aktenfor vinsjen)."""
+    y = C.deck_half_breadth(x) - inset
+    if x < P.WALK_X0 or x > P.LOA:
+        return y
+    yw = wall_y_at(x)
+    if y - r >= yw + 10.0:
+        return y
+    # inn paa toppen; i hjoernet staar veggen skraatt, saa avstanden maales
+    # vinkelrett paa veggens fot (stien), ikke bare i y
+    pl = _path_stb()
+    clear = getattr(P, "HOLE_TOP_CLEAR", 85.0)
+    y = min(y, yw - clear)
+    while float(np.min(np.hypot(pl[:, 0] - x, pl[:, 1] - y))) < clear:
+        y -= 2.0
+    return y
+
+
+def wall_frame(x: float):
+    """Veggen ved x (styrbord side): fotpunktets y, retning langs veggen i
+    plan (tx, ty, akterover), normal utover (nx, ny), gangbordets og
+    toppflatens hoeyde."""
+    yf = side_wall_y(x)
+    d = 5.0
+    t = np.array([2.0 * d, side_wall_y(x + d) - side_wall_y(x - d)])
+    t /= np.linalg.norm(t)
+    n = np.array([-t[1], t[0]])
+    return yf, (float(t[0]), float(t[1])), (float(n[0]), float(n[1])), ledge_z(x, yf + 5.0), D.coaming_top_z(x)
 
 
 # ------------------------------------------------------- tverrsnittet

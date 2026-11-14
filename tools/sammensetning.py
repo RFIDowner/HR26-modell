@@ -147,7 +147,11 @@ def one_stanchion(P):
 
 
 def surface_z(x: float, y: float, P, C, D) -> float:
-    """Flaten et rekkehull staar i: dekket, akterdekket eller skulderen."""
+    """Flaten et rekkehull staar i: dekket, akterdekket eller skulderen
+    (V11: gangbordet)."""
+    if getattr(P, "WALK", False):
+        from hr26 import gangbord as G
+        return G.surface_z(x, abs(y))
     hb = C.deck_half_breadth(x)
     z = D.top_z(x, abs(y)) if hasattr(D, "top_z") else C.deck_z(x, abs(y))
     if getattr(P, "KNUCKLE_Z", None) and C.knuckle_drop(x) > 0.0:
@@ -200,6 +204,9 @@ def main() -> None:
         allst = []
         for x in P.STANCHION_X:
             y = C.deck_half_breadth(x) - P.STANCHION_INSET
+            if getattr(P, "WALK", False):            # V11b: samme plass som hullet
+                from hr26 import gangbord as G
+                y = G.hole_y(x, P.STANCHION_INSET, 0.5 * (P.STANCHION_D + 0.1 * P.SCALE))
             for sign in (1.0, -1.0):
                 allst.append(move(st, x * s, sign * y * s, surface_z(x, y, P, C, D) * s))
         add("rekkepaaler", np.concatenate(allst))

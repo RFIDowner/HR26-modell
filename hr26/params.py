@@ -372,6 +372,15 @@ WALK_WALL_ANGLE = 85.0       # veggen fra vannrett (brukeren: «90 grader ned»;
 WALK_EDGE_R = 40.0           # avrundingen paa veggens overkant mot karm og akterdekk (1,3 mm i 1:30)
 WALK_EXIT = 12.0             # avrundingen moeter toppflaten med denne restvinkelen (ikke tangent)
 WALK_CLEAR = 12.0            # veggen staar saa langt utenfor ruffens og sprayhoodens fot
+# V11b (14.11.2026, kant2.1.jpg): fra vinsjen og akterover er gangbordet bare
+# 4-6 cm («ikke mer enn kanskje 4-5 cm helt bakerst»), og forhoeyningen smalner
+# inn mot B like bak sprayhoodens bein. Med 210 mm sto halve vinsjsokkelen paa
+# avrundingen. Bredden fra dekkskanten til veggens fot langs sidene:
+WALK_W_SIDE_TAB = [(6450.0, 55.0), (7600.0, 45.0)]
+WALK_TAPER_X1 = 6450.0       # fra sprayhoodens bein (SPRAY_X1, punkt B) gaar veggen jevnt ut til
+                             # tabellen hit, foer vinsjsokkelens forkant (6 492)
+HOLE_TOP_CLEAR = 85.0        # et hull som ville truffet veggen, staar saa langt innenfor veggens fot
+                             # (veggens helning 12 + WALK_EDGE_R 40 + hullets radius 18 + margin)
 
 # ------------------------------------------------------------ ruff/dekk
 # Hoyder og lengder er maalt ut av profiltegningen 1:50, bredder av
@@ -550,6 +559,12 @@ WINCH_H = 90.0                # hoyde over karmen, med kuppel paa toppen
 CLEAT_X = [700.0, 4900.0, 7500.0]
 CLEAT_INSET = 150.0           # klampene staar saa langt inn fra dekkskanten
 CLEAT_L, CLEAT_W, CLEAT_H = 180.0, 45.0, 60.0   # hornklamp: lengde, bredde, hoyde
+# V11b: akterklampen («fortoeyningssnurren») henger loddrett paa utsiden av
+# veggen opp til akterdekket, ikke vannrett paa akterdekket (kant2.1, kant.jpeg).
+# Undersiden har en 45 graders fas ned mot veggen, saa den printes uten stoette.
+CLEAT_AFT_ON_WALL = True
+CLEAT_WALL_OUT = 32.0        # utstikk fra veggen: tuppen ca. 8 mm innenfor skrogsiden ved gangbordet
+CLEAT_WALL_W = 40.0          # hoeyden paa veggen (klampens bredde)
 STEMHEAD_X = (60.0, 360.0)    # stevnbeslaget paa fordekket, for-akter
 STEMHEAD_W = 90.0
 STEMHEAD_H = 55.0             # over dekket; beslaget staar bare paa dekket

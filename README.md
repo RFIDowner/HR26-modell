@@ -109,9 +109,12 @@ over to av bildene ligger i `v10/rapporter/13nov_kant/`.
 **Merk om gangbordet (V11, 14.11.2026):** V10 hadde en skrå skulder (40°) fra
 knekken opp til karmen og akterdekket, og rekkepålene akter sto i skråningen.
 Den finnes ikke på båten. Gangbordet er flatt i knekkens høyde, fra
-skrogsiden og 210 mm inn, og så går en nesten loddrett kant (85°) med rundet
-overkant (R 40 mm) opp til karmen og akterdekket. Gangbordet går rundt
-hjørnet og tvers over akterspeilet, der det er 110 mm dypt. Langs ruffen og
+skrogsiden inn til en nesten loddrett kant (85°) med rundet overkant
+(R 40 mm) opp til karmen og akterdekket. Bak sprayhoodens bein er det ca.
+170 mm bredt; fra vinsjen og akterover bare 45–55 mm (V11b, eierens bilde),
+så vinsjen står på flat karmtopp. Gangbordet går rundt hjørnet og tvers over
+akterspeilet, der det er 110 mm dypt. Akterklampen henger loddrett på kantens
+utside, med 45° fas under (printes uten støtte). Langs ruffen og
 sprayhoodens bein går kanten bare opp til dekket, så lokket passer som før.
 Alt er ett kutt (`hr26/gangbord.py`). Bilder: `v10/rapporter/14nov_gangbord/`.
 
@@ -479,7 +482,10 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 * Infill 15 %: innredningen i kahytten står på fyllet. Forut og akter er
   skroget uthult med 2 mm vegg og spant hver 26 mm.
 * Støtte bare fra platen, så ingenting kommer inn i kahytten.
-* Lag: 0,12–0,16 mm. Fin dyse (0,2 mm) gir tydeligere fenderlist og vinduer.
+* Dyse 0,4 mm og lag på 0,12 mm, eller variabel laghøyde (0,08–0,16). Det er
+  laghøyden som gjør skroget glatt og kantene skarpe. En 0,2-dyse gir lite
+  mer på skroget og tar flere ganger så lang tid; bruk den eventuelt til
+  rekkepålene og de minste delene. 0,8 mister fenderlisten og gangbordkanten.
 * Ingen brim nødvendig; kjølen gir god vedheft. Vil du ha brim, er det plass.
 
 **Ruff-taket (16)**
