@@ -209,6 +209,16 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     skroget og ute fra kanten oppe og bak og foran». Altså: jevnhet er
     kriteriet. Kjøllinjen, dekkskanten, alt foran vinduet og alt fra ca. 7 m
     står.
+  * **Der arbeidet står (14.11 kl. 02:10, før brukeren kjørte compact):**
+    `v10/verktoy/foto/py/opt_mage.py` er skrevet, men ikke kjørt ferdig. Det
+    regner ut tillegg til `SECTION_DEADRISE`, `SECTION_N` og `SECTION_FLARE`
+    som er null for t <= 0,45 og t >= 0,88 (pchip med nullpunkter utenfor), og
+    minimerer annenderiverte av vannlinjene med tak på dagens største
+    halvbredde. Neste: kjør det, se på tallene, legg tilleggene inn i
+    `curves.py`/`params.py` (f.eks. `SECTION_FILL`), kontroller at ingenting
+    utenfor sonen flytter seg, sjekk mot «nye 1», IMG_9395 og 9391 (lette
+    jobber), bygg skrog og vugge 2, kjør poengkortet, lag sammensetningen og
+    bilder i samme vinkler som brukerens skjermbilder, og push hvis grønt.
   * Brukeren har omdøpt `docs/foto/IMG_9395.jpg` til `IMG_9395_mage.jpg`
     (ikke sjekket inn). Verktøyene (`ovl9395.py` m.fl.) leser det gamle navnet.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
