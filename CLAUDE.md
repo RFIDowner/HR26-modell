@@ -166,20 +166,39 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     sider. Kameraet er svakt, men retningen er den samme.
   * IMG_9395: modellen mangler 25, 44 og 76 mm ved x 3,1–3,7 m (kjølroten).
   * Baugen fram til ca. 2,4 m og akterspeilet stemmer (IMG_9395, IMG_9391).
-  * Plan: mål spantene direkte (løftestroppene i «nye 1» og IMG_9395 ligger
-    rundt skroget i hvert sitt spant), gjør midtskroget fra ca. 2,5 til 7,2 m
-    til fulle U-spant med fast slag (`SECTION_DEADRISE`, `SECTION_N`, trolig
-    en egen styring av vannlinjebredden), la baugen og akterspeilets V stå, og
-    tilpass mot «nye 1», IMG_9388, 9395, 9389 og 9391. Kanobunnen vil øke fra
-    2,44 m³ til anslagsvis 2,8–3,0 m³, altså over brosjyrens deplasement
-    (2,36 m³); bildene går foran. Vugger, kjølrot og innredning følger med.
+  * **Brukerens rammer (14.11, etter vurderingen):** ingenting skal endres
+    foran vinduet (x < 3 580). Buken er fin ved starten av vinduet, kanskje de
+    første 10 cm, og fra omtrent der smalner modellen for mye inn. Den er fin
+    igjen mellom vinsjen (6 540) og akterklampen (7 500), altså fra ca. 7 000,
+    og helt akter. Det største spantet skal ikke bli større («vi må ikke øke
+    tykkelsen på pølsa på midten»); fylden skal holdes akterover i stedet for
+    å krympe. Slankingen 13.11 hadde sin egen grunn og skal ikke gjøres om
+    ellers.
+  * **Claudes rettelse:** 20–30 cm fra «nye 1» er omrissets avstand i et bilde
+    tatt aktenfra, der nærmere spant ser større ut. Holder båten fylden
+    akterover, dannes omrisset av de nærmere spantene, uten at båten er
+    tykkere enn modellens største spant. Påstandene om bredere vannlinje
+    (2,1–2,2 m), om endring fra 2,5 m og om at streken var for forsiktig
+    midtskips, er trukket. Modellens tall passer med brukerens beskrivelse:
+    spantarealet er størst ved 3 500 (0,62 m²) og faller til 0,56 (4 000),
+    0,49 (4 500), 0,44 (5 000), 0,41 (5 500), 0,39 (6 000), 0,36 (6 500) og
+    0,28 (7 000). Vannlinjen holder seg (halvbredde 897 → 820); det er under
+    vann buken krymper (halvbredde 300 mm under vannlinjen: 633 → 202).
+  * **Plan:** lås alt foran 3 580 og aktenfor ca. 7 000. Tabellpunktene ligger
+    alt slik: t 0,45 (3 578) og t 0,90 (7 155) står, og bare punktene imellom
+    i `SECTION_DEADRISE` og `SECTION_N` (og dødtreet) justeres. Kontroller at
+    ingenting foran 3 580 flytter seg (pchip-tangenten ved 0,45 avhenger av
+    naboen). Mål spantene ved løftestroppene, og tilpass mot «nye 1»,
+    IMG_9395, 9389, 9391 og den blå streken. Kanobunnen øker da anslagsvis
+    0,25–0,35 m³ (til ca. 2,7–2,8 m³), alt mellom 3,6 og 7,0 m. Vugge 2
+    (6 100), kjølroten og innredningen akter følger med; vugge 1 (2 900) står.
   * Brukerens blå strek (`docs/foto/blå strek.png`, tegnet på et skjermbilde
     av modellen skrått ovenfra): streken ligger 4–14 px utenfor modellens
     omriss fra ca. 3 m til hekken, størst like foran og like bak kjølen. Det
     tilsvarer omtrent 4–7 cm ved kjølen og 2,5–4 cm akter (usikkert, vinkelen
-    er ukjent). Sted og retning stemmer med bildene. Bildene tyder på mer enn
-    streken midtskips og mindre den siste meteren mot akterspeilet, så streken
-    brukes som nedre grense, og stroppmålingen avgjør.
+    er ukjent). Sted og retning stemmer med bildene. Brukeren mener streken
+    er «ikke så langt unna». Den er målet for formen, og stroppmålingen
+    kontrollerer den.
   * Brukeren har omdøpt `docs/foto/IMG_9395.jpg` til `IMG_9395_mage.jpg`
     (ikke sjekket inn). Verktøyene (`ovl9395.py` m.fl.) leser det gamle navnet.
 * **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
