@@ -152,6 +152,37 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   knekken, knekken rundt akterspeilet og nye README-bilder. Eieren kan måle
   den skrå flaten ved vinsjen (modellen ca. 275 mm langs flaten). Les
   «Status – 14. november 2026» i `V10.md`.
+* **14.11.2026: trinn 9 «magen» er vurdert og venter på «kjør».** Brukeren
+  pekte på IMG_9395 og to skjermbilder av modellen: på båten er buken
+  «sprengfull», rund og glatt «som en stor pølse», mens modellen er en kile.
+  Claude er enig, og tallene støtter det:
+  * Modellens vannlinjebredde er bare 1,80 m (bredde i dekk 2,68), og spantene
+    aktenfor kjølens forkant er V-formet (fyldighet 0,53–0,60 mot 0,76–0,77
+    forut). Største spantareal ligger ved x 3 500.
+  * «nye 1» (aktenfra, nedenfra): bildets omriss ligger 20–30 cm utenfor
+    modellens i den nedre delen, på begge sider (`out/n1_meas.json`, `sil`).
+    Målingen ble gjort 13.11, men bare brukt til akterspeilet.
+  * IMG_9388 (rett forfra): modellen er 50–65 px for smal under vann på begge
+    sider. Kameraet er svakt, men retningen er den samme.
+  * IMG_9395: modellen mangler 25, 44 og 76 mm ved x 3,1–3,7 m (kjølroten).
+  * Baugen fram til ca. 2,4 m og akterspeilet stemmer (IMG_9395, IMG_9391).
+  * Plan: mål spantene direkte (løftestroppene i «nye 1» og IMG_9395 ligger
+    rundt skroget i hvert sitt spant), gjør midtskroget fra ca. 2,5 til 7,2 m
+    til fulle U-spant med fast slag (`SECTION_DEADRISE`, `SECTION_N`, trolig
+    en egen styring av vannlinjebredden), la baugen og akterspeilets V stå, og
+    tilpass mot «nye 1», IMG_9388, 9395, 9389 og 9391. Kanobunnen vil øke fra
+    2,44 m³ til anslagsvis 2,8–3,0 m³, altså over brosjyrens deplasement
+    (2,36 m³); bildene går foran. Vugger, kjølrot og innredning følger med.
+  * Brukeren har omdøpt `docs/foto/IMG_9395.jpg` til `IMG_9395_mage.jpg`
+    (ikke sjekket inn). Verktøyene (`ovl9395.py` m.fl.) leser det gamle navnet.
+* **Kalesjen (14.11.2026, bare vurdert):** brukeren vil spørre båtens eier om
+  kalesjen (sprayhooden) skal være åpen, kanskje i stoff. Anbefaling: gjør den
+  til en egen løs del, så både tynt printet skall og bøyler med stoff er
+  mulig; det under (nedgang, skyveluke) må da modelleres. Dremel frarådes
+  (lokket har 15 % infill). Vinduer i kalesjen: «vi lar vinduet være».
+* **Hvem er hvem (14.11.2026, Claudes tolkning):** brukeren bygger modellen.
+  Båten ser ut til å eies av en annen («han eieren»). Eldre notater her
+  kaller brukeren «eieren».
 * Krav i korte trekk: LOA 7 950 mm, bredde 2 680 mm (±0,5 %), dypgang 1 400 mm.
   Dekkslinje, spring og listehøyde skal ligge innen 12,5 mm av målepunktene.
   Rorhull, masthull og rekkehull blir der de er. Stativvuggene eksporteres på
