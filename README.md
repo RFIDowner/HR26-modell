@@ -323,6 +323,20 @@ akter har høyst 45° overheng. Forkanten følger akterspeilets helning med
 under vannlinjen. Hodet har et hakk der fenderlisten går tvers over
 akterspeilet, så roret passer på skrog som alt er printet.
 
+Med farger printes roret stående, som på båten:
+`export/3mf/02_ror_farger.3mf` (`python tools/lag_3mf.py ror`).
+* Rødt fra bunnen, sort stripe fra 33,92 mm og hvitt fra 37,76 mm, i samme
+  høyde over vannlinjen som stripa på skroget.
+* Brim 8 mm. Bare ca. 7 × 2 mm av bunnen ligger på platen.
+* Tre-støtte bare fra platen, under bunnen som stiger forover.
+* Arachne-vegger og 0,12 mm lag.
+* Korden ligger langs platens bevegelse (y), så A1-en rister roret på den
+  stive leden.
+* Tappene og taket i hakket for listen printes uten støtte. Det er korte
+  utheng under 1,3 mm.
+* Roret er 74 mm høyt og bare 3,5 mm tykt. Følg med på de første
+  millimeterne og hodet, og senk hastigheten hvis det vipper.
+
 **03 Mast, 354 mm, for A1** — ligger allerede diagonalt og fyller
 253,2 × 253,2 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
 Ingen plass til brim. Se «Masten».

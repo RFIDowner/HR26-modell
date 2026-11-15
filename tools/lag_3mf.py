@@ -1,7 +1,15 @@
-"""Lager et Bambu Studio-prosjekt (.3mf) av skroget med fargeskift i hoeyden:
-roedt bunnstoff fra kjolen, sort vannlinjestripe og hvitt resten.
+"""Lager et Bambu Studio-prosjekt (.3mf) av skroget eller roret med
+fargeskift i hoeyden: roedt bunnstoff nederst, sort vannlinjestripe og hvitt
+resten.
 
-  python tools/lag_3mf.py
+  python tools/lag_3mf.py          # skroget: export/3mf/01_skrog_farger.3mf
+  python tools/lag_3mf.py ror      # roret staaende: export/3mf/02_ror_farger.3mf
+
+Roret (V12, 15.11.2026) staar paa bunnen, som paa baaten, og stripa ligger i
+samme hoeyde over vannlinjen som paa skroget (DWL + 2,6 til + 118 mm i full
+skala). Det har brim, fordi bare den flate bakre delen av bunnen (ca.
+6 x 1-2 mm) ligger paa platen, og tre-stoette fra platen under bunnen som
+stiger forover. Arachne-veggene fyller den smale bakkanten.
 
 Innstillingene (tools/bambu/project_settings_A1_04.json) er hentet fra et
 prosjekt laget i Bambu Studio 02.08 (A1, 0,4-dyse, 0.12mm High Quality, PLA
@@ -12,6 +20,7 @@ bare to ganger. Hoeydene kan flyttes i Bambu Studio etterpaa.
 """
 import json
 import os
+import sys
 import uuid
 import zipfile
 
@@ -19,13 +28,27 @@ import numpy as np
 import trimesh
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STL = os.path.join(ROOT, "export", "stl", "01_skrog.stl")
-OUT = os.path.join(ROOT, "export", "3mf", "01_skrog_farger.3mf")
 SETTINGS = os.path.join(ROOT, "tools", "bambu", "project_settings_A1_04.json")
 
 # laghoeyde 0,12 med foerste lag 0,20: lagtoppene ligger paa 0,20 + 0,12 k
-BLACK_FROM = 46.76   # foerste lag over DWL (46,67 mm = 1 400 mm over kjolbunnen i 1:30)
-WHITE_FROM = 50.60   # stripa ca. 3,8 mm i 1:30 = ca. 115 mm paa baaten
+PARTS = {
+    "skrog": dict(
+        stl="01_skrog.stl", out="01_skrog_farger.3mf", name="HR26 HUGO skrog",
+        black=46.76,     # foerste lag over DWL (46,67 mm = 1 400 mm over kjolbunnen i 1:30)
+        white=50.60,     # stripa ca. 3,8 mm i 1:30 = ca. 115 mm paa baaten
+        standing=False, extra={}),
+    "ror": dict(
+        stl="02_ror.stl", out="02_ror_farger.3mf", name="HR26 HUGO ror",
+        black=33.92,     # lag 281: 33,92 mm = DWL + 2,6 mm (bunnen paa -1 015); skroget DWL + 2,8
+        white=37.76,     # lag 313: DWL + 117,8 mm; skroget DWL + 118
+        standing=True,
+        extra={
+            "brim_type": "outer_only",
+            "brim_width": "8",
+            "support_threshold_angle": "30",   # bunnen stiger 4-45 grader forover
+            "wall_generator": "arachne",       # bakkanten er 0,55 mm
+        }),
+}
 COLOURS = ["#C12E1F", "#000000", "#FFFFFF"]   # 1 roed, 2 sort, 3 hvit
 FLUSH = ["0", "153", "511",      # fra roed  til roed, sort, hvit
          "558", "0", "608",      # fra sort
@@ -51,7 +74,7 @@ SLICE_INFO = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
-def settings():
+def settings(extra):
     with open(SETTINGS, encoding="utf-8") as f:
         ps = json.load(f)
     ps["filament_colour"] = COLOURS
@@ -64,6 +87,7 @@ def settings():
         "enable_prime_tower": "0",      # bare to bytter; A1 spyler i sjakten
         "curr_bed_type": "Textured PEI Plate",
     })
+    ps.update(extra)
     return json.dumps(ps, indent=4, ensure_ascii=False)
 
 
@@ -91,14 +115,27 @@ def object_model(V, F):
 
 
 def main():
+    part = sys.argv[1] if len(sys.argv) > 1 else "skrog"
+    cfg = PARTS[part]
+    STL = os.path.join(ROOT, "export", "stl", cfg["stl"])
+    OUT = os.path.join(ROOT, "export", "3mf", cfg["out"])
+    BLACK_FROM, WHITE_FROM = cfg["black"], cfg["white"]
     m = trimesh.load(STL)
+    if cfg["standing"]:
+        # 02_ror.stl ligger paa bakkanten med bunnen mot -x: dreies -90 grader
+        # om y, saa bunnen staar paa platen og hodet peker opp, og 90 grader
+        # om z, saa korden (23 mm) gaar langs platens y. A1 flytter platen i
+        # y; da rister den roret paa den stive leden, ikke paa de 3,5 mm.
+        R = np.eye(4)
+        R[:3, :3] = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
+        m.apply_transform(R)
     lo, hi = m.bounds
     c = 0.5 * (lo + hi)
     V = m.vertices - c                     # objektets origo i midten av boksen
     F = m.faces
     tz = c[2] - lo[2]                      # kjolen paa platen
     tr = f"1 0 0 0 1 0 0 0 1 {PLATE_C} {PLATE_C} {tz:.5f}"
-    name = "HR26 HUGO skrog"
+    name = cfg["name"]
 
     model = f"""<?xml version="1.0" encoding="UTF-8"?>
 <model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" requiredextensions="p">
@@ -134,9 +171,9 @@ def main():
     <metadata key="extruder" value="1"/>
     <metadata face_count="{len(F)}"/>
     <part id="1" subtype="normal_part" uuid="{uuid.uuid4()}">
-      <metadata key="name" value="01_skrog.stl"/>
+      <metadata key="name" value="{cfg['stl']}"/>
       <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>
-      <metadata key="source_file" value="01_skrog.stl"/>
+      <metadata key="source_file" value="{cfg['stl']}"/>
       <metadata key="source_object_id" value="0"/>
       <metadata key="source_volume_id" value="0"/>
       <mesh_stat face_count="{len(F)}" edges_fixed="0" degenerate_facets="0" facets_removed="0" facets_reversed="0" backwards_edges="0"/>
@@ -178,7 +215,7 @@ def main():
         z.writestr("3D/_rels/3dmodel.model.rels", rels_model)
         z.writestr("3D/Objects/object_1.model", object_model(V, F))
         z.writestr("Metadata/model_settings.config", msettings)
-        z.writestr("Metadata/project_settings.config", settings())
+        z.writestr("Metadata/project_settings.config", settings(cfg["extra"]))
         z.writestr("Metadata/custom_gcode_per_layer.xml", gcodes)
         z.writestr("Metadata/slice_info.config", SLICE_INFO)
     print(f"{OUT}: {os.path.getsize(OUT) / 1e6:.1f} MB, {len(F)} trekanter, "
