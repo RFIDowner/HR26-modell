@@ -47,6 +47,31 @@ PARTS = {
             "brim_width": "8",
             "support_threshold_angle": "30",   # bunnen stiger 4-45 grader forover
             "wall_generator": "arachne",       # bakkanten er 0,55 mm
+            # Sakte (brukeren 15.11.2026: «redusere hastighet betraktelig»).
+            # Paa A1 rister platen i y, saa akselerasjonen betyr mest for et
+            # 74 mm hoyt og 3,5 mm tykt ror; farten tas ned ogsaa.
+            "outer_wall_speed": ["30"],
+            "inner_wall_speed": ["40"],
+            "small_perimeter_speed": ["50%"],
+            "sparse_infill_speed": ["50"],
+            "internal_solid_infill_speed": ["50"],
+            "top_surface_speed": ["30"],
+            "gap_infill_speed": ["30"],
+            "support_speed": ["50"],
+            "support_interface_speed": ["40"],
+            "bridge_speed": ["25"],
+            "initial_layer_speed": ["30"],
+            "initial_layer_infill_speed": ["40"],
+            "travel_speed": ["200"],
+            "default_acceleration": ["1000"],
+            "outer_wall_acceleration": ["500"],
+            "inner_wall_acceleration": ["1000"],
+            "top_surface_acceleration": ["500"],
+            "travel_acceleration": ["1500"],
+            "initial_layer_travel_acceleration": ["1500"],
+            # minst 12 s per lag: hvert lag avkjoeles foer neste
+            "slow_down_layer_time": ["12", "12", "12"],
+            "slow_down_min_speed": ["10", "10", "10"],
         }),
 }
 COLOURS = ["#C12E1F", "#000000", "#FFFFFF"]   # 1 roed, 2 sort, 3 hvit
