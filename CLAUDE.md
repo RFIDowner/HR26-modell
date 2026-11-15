@@ -361,6 +361,9 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
     fenderlisten (z 817–874 på skroget).
   * Klaringen sjekkes mot den printede STL-en med `tools/ror_klaring.py`.
   * Rorkulten er ikke laget.
+  * Med farger printes roret stående: `python tools/lag_3mf.py ror` lager
+    `export/3mf/02_ror_farger.3mf`, med samme stripehøyde over DWL som
+    skroget, brim 8 mm, tre-støtte fra platen og korden langs A1-platens y.
 
   V11c (massive kamre forut og under cockpiten) lå ulagret i arbeidstreet og
   ble latt ligge etter brukerens ønske.
