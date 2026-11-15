@@ -256,7 +256,7 @@ bruker en god del mindre plast enn tallet sier; se slicerens anslag.
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
 | 01 | `01_skrog.stl` | 205,5 × 205,5 × 89,2 | 317 cm³ geometri, mindre med fyll |
-| 02 | `02_ror.stl` | 34,5 × 3,2 × 16,4 | 1,0 cm³ / 1 g |
+| 02 | `02_ror.stl` | 73,8 × 3,5 × 23,0 | 2,1 cm³ / 3 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
 | 05 | `05_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
@@ -313,9 +313,15 @@ sprayhood. Løftes det av, ser man ned i kahytten.
   en 1,0 × 1,1 mm kant rundt åpningen i dekket, med 0,22–0,25 mm klaring.
   Går det tregt, puss kanten lett. Lokket skal ikke limes.
 
-**02 Ror** — printes liggende, 3 mm tykt. Støtte av. Forkanten følger
-akterspeilets helning, og de to tappene på den passer i hullene i akterspeilet
-rett under vannlinjen.
+**02 Ror** — printes liggende på bakkanten, 3–3,5 mm tykt og 23 mm høyt.
+Støtte av, brim på (bakkanten er smal). Fra V12 (15.11.2026) går roret fra
+bunnen og opp langs akterspeilet til et rorhode ca. 4 mm over akterdekket,
+som på båten, og under skroget stikker den nedre delen ca. 9 mm fram under
+dødtreet. Bunnen stiger forover og runder inn i forkanten. Hjørnet øverst
+akter har høyst 45° overheng. Forkanten følger akterspeilets helning med
+0,5 mm klaring, og de to tappene passer i de samme hullene som før, rett
+under vannlinjen. Hodet har et hakk der fenderlisten går tvers over
+akterspeilet, så roret passer på skrog som alt er printet.
 
 **03 Mast, 354 mm, for A1** — ligger allerede diagonalt og fyller
 253,2 × 253,2 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
@@ -555,7 +561,9 @@ Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
    når lokket løftes av; 365-masten går gjennom lokket og ned i mastestøtten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
 7. Roret: tappene passer i de to hullene i akterspeilet, rett under
-   vannlinjen. Forkanten skal ligge parallelt med akterspeilet.
+   vannlinjen. Forkanten skal ligge parallelt med akterspeilet, og
+   fenderlisten går inn i hakket i rorhodet. Lim tappene, og eventuelt en
+   dråpe mellom hodet og akterspeilets overkant.
 8. Tre livlinene gjennom øynene, stram lett, og lim endene i pulpit og pushpit.
 
 ---
@@ -567,8 +575,8 @@ Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
   er lagt inn i V10 trinn 8, gangbordet og den loddrette kanten i V11.
   Kanten opp til karmen er rundet; knekken (skrogsiden mot gangbordet) er
   skarp, og på båten er den trolig litt rundet.
-* Roret er bare bladet under vannlinjen. På originalen går rorhodet opp til
-  dekkshøyde, med rorkulten inn over akterdekket.
+* Rorkulten mangler. Rorhodet går opp over akterdekket (V12), og på båten er
+  kulten boltet på toppen av det og går forover over akterdekket.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.

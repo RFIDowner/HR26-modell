@@ -347,6 +347,23 @@ GitHub. Når noe lagres som minne, skrives det også hit og pushes.
   høyden («ikke en to-timers jobb»). `python tools/lag_3mf.py` lager
   `export/3mf/01_skrog_farger.3mf`: rødt fra kjølen, sort fra 46,76 mm og hvitt
   fra 50,6 mm, med innstillingene fra README. Velg den enkle løsningen først.
+* **15.11.2026: V12, roret (`02_ror.stl`).** Brukeren: skroget er ferdig og
+  printet («print av skrog ble bra»). Roret skulle få et hode over kanten
+  (skjermklipp), og bunnen skulle få riktig form. Gjort:
+  * Hodet går til z 1 200, ca. 115 mm over akterdekket. Hjørnet øverst akter
+    er rundet med høyst 45° overheng.
+  * Den nedre delen stikker fram under dødtreet (forkant 7 490 ved −432,
+    14 mm under skroget). Bunnen stiger forover og runder inn i forkanten.
+    Bakkanten står på 8 175.
+  * Kilder: «nye (4)» med kamera k1_F, «nye (6)», Enderlein 448-5 og verftets
+    `HR26rudder.pdf`.
+  * Skroget er ikke endret. Tappene står som før, og hodet har et hakk for
+    fenderlisten (z 817–874 på skroget).
+  * Klaringen sjekkes mot den printede STL-en med `tools/ror_klaring.py`.
+  * Rorkulten er ikke laget.
+
+  V11c (massive kamre forut og under cockpiten) lå ulagret i arbeidstreet og
+  ble latt ligge etter brukerens ønske.
 
 ## Referanser
 

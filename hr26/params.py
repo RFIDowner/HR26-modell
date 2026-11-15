@@ -231,7 +231,6 @@ TRANSOM_CORNER_Z = (-100.0, 0.0)   # rundingen bygges opp mellom disse hoydene
 # Akterhengt ror. Forkanten foelger akterspeilet med en liten klaring, og
 # tappene paa forkanten gaar inn i akterspeilet under vannlinjen.
 RUDDER_GAP = 15.0       # klaring mellom rorets forkant og akterspeilet
-RUDDER_TE_X = 8150.0    # bakkanten er loddrett (profilen), saa korden vokser nedover
 RUDDER_TOP_Z = -60.0
 RUDDER_BOT_Z = -1015.0      # V10 trinn 6: bildene foran tegningen: nye (4) -990 (-960..-1 012),
                             # IMG_9389 -1 025..-1 055, nye (6) -860..-1 045; Enderlein -1 047
@@ -239,6 +238,40 @@ RUDDER_BOT_Z = -1015.0      # V10 trinn 6: bildene foran tegningen: nye (4) -990
 RUDDER_T = 90.0
 RUDDER_X = TRANSOM_WL_X + TRANSOM_RAKE * RUDDER_TOP_Z + RUDDER_GAP   # forkant ved topp
 RUDDER_RAKE = TRANSOM_RAKE * (RUDDER_BOT_Z - RUDDER_TOP_Z)   # forkanten forover nedover, som akterspeilet
+# (RUDDER_TOP_Z og RUDDER_X bestemmer bare linja langs akterspeilet og
+# rortappene; rorets virkelige topp er RUDDER_HEAD_Z.)
+#
+# V12 (15.11.2026): rorhodet og den nedre delen av bladet. Paa baaten gaar
+# roret opp langs akterspeilet som et smalt hode over akterdekket, med
+# rorkulten boltet paa toppen (nye (6), IMG_9391, verftets rortegning og
+# Enderlein 448-5). Under skroget stikker bladet fram under dodtreet, og
+# bunnen stiger forover og runder inn i forkanten (nye (4), kamera k1_F, som
+# har rorbunnen paa -1 009; nye (6): forkantens topp ca. 7 490 ved -440;
+# 448-5 viser samme form). Skroget er printet, saa roret tilpasses det:
+# tappene staar som foer, og hodet har et hakk for fenderlisten, som paa
+# baaten er avbrutt ved roret.
+RUDDER_TE_X = 8175.0        # V12: bakkanten (nye (4) k1_F 8 174-8 179, loddrett); foer 8 150
+RUDDER_HEAD_Z = 1200.0      # toppen av rorhodet (nye (6) ca. 1 200-1 240, 448-5 ca. 1 150): ca. 115 over
+                            # akterdekket (1 084) og 240 over akterspeilets overkant midt paa (ca. 960)
+RUDDER_HEAD_R = 60.0        # avrundet hjoerne oeverst akter, maks 45 grader overheng i print
+RUDDER_STEP_Z = -432.0      # oversiden av den nedre delen, 14-22 mm under skrogets bunn (-410..-421)
+RUDDER_LOW_LE_X = 7490.0    # forkanten der, og den heller akterover nedover:
+RUDDER_LOW_LE_SLOPE = 0.32  # dx per mm nedover (nye (4): 7 508 ved -487, 7 584 ved -726, 7 622 ved -846)
+RUDDER_LOW_T = 100.0        # tykkelsen oeverst i den nedre delen (hodets profil ligger inni)
+RUDDER_BOT_T = 65.0         # tykkelsen nederst (som foer)
+RUDDER_BOT_AFT_CHAMFER = 15.0   # fas paa hjoernet nederst akter
+# bunnens omriss forfra og akterover (x, z): tangerer forkanten ved ca. -860 og er flat
+# fra ca. 8 000 (nye (4) k1_F, forskjoevet til bunnen -1 015)
+RUDDER_BOT_PROFILE = [
+    (7630.0, -860.0), (7660.0, -910.0), (7690.0, -936.0), (7720.0, -954.0),
+    (7760.0, -971.0), (7800.0, -985.0), (7840.0, -996.0), (7880.0, -1004.0),
+    (7920.0, -1010.0), (7960.0, -1013.5), (8000.0, -1015.0),
+]
+# hakk i hodets forkant for fenderlisten tvers over akterspeilet (sjekket
+# mot den printede 01_skrog.stl, se tools/ror_klaring.py)
+# Listen paa skroget: z 817-874, inntil 26 mm ut fra akterspeilet (roret staar 15 fra det).
+RUDDER_NOTCH_Z = (805.0, 888.0)
+RUDDER_NOTCH_DEPTH = 25.0   # fra forkanten og akterover: 14 mm klaring til listen
 
 # ------------------------------------------------------- ruff-tak (lokk)
 # Ruffen er et avtakbart lokk (cabin.py) over kahytten. Skjoeten er et plan

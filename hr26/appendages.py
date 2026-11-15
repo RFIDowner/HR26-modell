@@ -256,17 +256,137 @@ def rudder_pins(extra: float = 0.0) -> cq.Workplane:
     return out
 
 
+def rudder_le_upper(z: float) -> float:
+    """Forkanten langs akterspeilet (samme linje som tappene staar paa)."""
+    return P.TRANSOM_WL_X + P.TRANSOM_RAKE * z + P.RUDDER_GAP
+
+
+def rudder_le_lower(z: float) -> float:
+    """Forkanten paa den nedre delen, som stikker fram under skroget."""
+    return P.RUDDER_LOW_LE_X + P.RUDDER_LOW_LE_SLOPE * (P.RUDDER_STEP_Z - z)
+
+
+def _xz_prism(pts, tangents=None, half_y: float = 400.0) -> cq.Workplane:
+    """Et prisme gjennom hele roret (y +-half_y) med omrisset pts i (x, z).
+    pts er en liste av ('L', (x, z)) for rette linjer og ('S', [(x, z), ...],
+    (t0, t1)) for en spline med tangenter; den lukkes tilbake til start."""
+    edges = []
+    cur = None
+    start = None
+    for item in pts:
+        kind = item[0]
+        if kind == "L":
+            p = cq.Vector(item[1][0], 0.0, item[1][1])
+            if cur is None:
+                start = p
+            else:
+                edges.append(cq.Edge.makeLine(cur, p))
+            cur = p
+        else:
+            vs = [cq.Vector(x, 0.0, z) for x, z in item[1]]
+            t0, t1 = item[2]
+            if cur is None:
+                start = vs[0]
+            elif (cur - vs[0]).Length > 1e-6:
+                edges.append(cq.Edge.makeLine(cur, vs[0]))
+            edges.append(cq.Edge.makeSpline(
+                vs, tangents=[cq.Vector(t0[0], 0.0, t0[1]), cq.Vector(t1[0], 0.0, t1[1])]))
+            cur = vs[-1]
+    edges.append(cq.Edge.makeLine(cur, start))
+    face = cq.Face.makeFromWires(cq.Wire.assembleEdges(edges))
+    solid = cq.Solid.extrudeLinear(face, cq.Vector(0.0, 2.0 * half_y, 0.0))
+    return cq.Workplane("XY").newObject([solid.translate(cq.Vector(0.0, -half_y, 0.0))])
+
+
+def _rudder_bottom_cutter() -> cq.Workplane:
+    """Alt under bunnens omriss: bunnen stiger forover og runder inn i forkanten."""
+    te, zb, c = P.RUDDER_TE_X, P.RUDDER_BOT_Z, P.RUDDER_BOT_AFT_CHAMFER
+    prof = list(P.RUDDER_BOT_PROFILE)
+    z0 = prof[0][1]
+    prof[0] = (rudder_le_lower(z0), z0)                 # starter paa forkanten
+    s = P.RUDDER_LOW_LE_SLOPE
+    return _xz_prism([
+        ("L", (prof[0][0] - 400.0, z0)),
+        ("S", prof, ((s, -1.0), (1.0, 0.0))),
+        ("L", (te - c, zb)),
+        ("L", (te, zb + c)),
+        ("L", (te + 300.0, zb + c)),
+        ("L", (te + 300.0, zb - 400.0)),
+        ("L", (prof[0][0] - 400.0, zb - 400.0)),
+    ])
+
+
+def _rudder_head_cutter() -> cq.Workplane:
+    """Alt over rorhodet. Hjoernet oeverst akter er en bue ned til 45 grader
+    og saa en rett 45-graders fas til bakkanten: roret printes liggende paa
+    bakkanten, og da blir overhenget aldri mer enn 45 grader."""
+    te, zt, r = P.RUDDER_TE_X, P.RUDDER_HEAD_Z, P.RUDDER_HEAD_R
+    cx, cz = te - r, zt - r
+    a45 = math.radians(45.0)
+    p45 = (cx + r * math.cos(a45), cz + r * math.sin(a45))
+    z_te = p45[1] - (te - p45[0])
+    arc = [(cx + r * math.cos(a), cz + r * math.sin(a))
+           for a in np.linspace(math.pi / 2.0, a45, 7)]
+    x_fwd = rudder_le_upper(zt) - 300.0
+    return _xz_prism([
+        ("L", (x_fwd, zt)),
+        ("S", arc, ((1.0, 0.0), (1.0, -1.0))),
+        ("L", (te, z_te)),
+        ("L", (te + 300.0, z_te)),
+        ("L", (te + 300.0, zt + 400.0)),
+        ("L", (x_fwd, zt + 400.0)),
+    ])
+
+
+def _rudder_notch() -> cq.Workplane | None:
+    """Hakk i hodets forkant der fenderlisten gaar tvers over akterspeilet."""
+    if not P.RUDDER_NOTCH_DEPTH:
+        return None
+    z0, z1 = P.RUDDER_NOTCH_Z
+    d = P.RUDDER_NOTCH_DEPTH
+    return _xz_prism([
+        ("L", (rudder_le_upper(z0) - 200.0, z0)),
+        ("L", (rudder_le_upper(z0) + d, z0)),
+        ("L", (rudder_le_upper(z1) + d, z1)),
+        ("L", (rudder_le_upper(z1) - 200.0, z1)),
+    ])
+
+
 def rudder() -> cq.Workplane:
-    """Akterhengt ror. Forkanten foelger akterspeilets helning (RUDDER_RAKE
-    er negativ: forover nedover), med RUDDER_GAP klaring til akterspeilet."""
-    wires = []
-    steps = 5
-    for i in range(steps + 1):
-        t = i / steps
-        z = P.RUDDER_TOP_Z + (P.RUDDER_BOT_Z - P.RUDDER_TOP_Z) * t
-        le = P.RUDDER_X + P.RUDDER_RAKE * t
-        ch = P.RUDDER_TE_X - le
-        th = P.RUDDER_T * (1.0 - 0.28 * t)
-        wires.append(_foil_wire(le, z, ch, th))
-    solid = cq.Solid.makeLoft(wires, ruled=False)
-    return cq.Workplane("XY").newObject([solid]).union(rudder_pins())
+    """Akterhengt ror (V12, 15.11.2026): hode over akterdekket, blad langs
+    akterspeilet og en nedre del som stikker fram under skroget.
+
+    Oevre del: forkanten foelger akterspeilet med RUDDER_GAP klaring, fra
+    RUDDER_STEP_Z og opp forbi hodet, med fast tykkelse. Nedre del: fra
+    RUDDER_STEP_Z og ned, forkanten fra RUDDER_LOW_LE_X og akterover nedover,
+    tynnere mot bunnen. Bakkanten er loddrett. Omrisset (bunnen, hodets
+    topp, hakket for fenderlisten) kappes etterpaa av prismer i x-z."""
+    te = P.RUDDER_TE_X
+    zs, zt, zb = P.RUDDER_STEP_Z, P.RUDDER_HEAD_Z, P.RUDDER_BOT_Z
+
+    def sec(le, z, th):
+        return _foil_wire(le, z, te - le, th)
+
+    def th_low(z):
+        return P.RUDDER_LOW_T + (P.RUDDER_BOT_T - P.RUDDER_LOW_T) * (z - zs) / (zb - zs)
+
+    # Ett rett (ruled) loft gjennom fire snitt. Mellom de to midterste (1 mm
+    # fra hverandre) blir flaten nesten vannrett: det er trinnet under
+    # skroget. To lofter slaatt sammen gir sammenfallende bakkanter, og da
+    # feiler OCC-unionen.
+    z_top, z_low = zt + 40.0, zb - 40.0
+    solid = cq.Solid.makeLoft([
+        sec(rudder_le_upper(z_top), z_top, P.RUDDER_T),
+        sec(rudder_le_upper(zs), zs, P.RUDDER_T),
+        sec(rudder_le_lower(zs - 1.0), zs - 1.0, P.RUDDER_LOW_T),
+        sec(rudder_le_lower(z_low), z_low, th_low(z_low)),
+    ], ruled=True)
+    w = cq.Workplane("XY").newObject([solid])
+    w = w.cut(_rudder_bottom_cutter()).cut(_rudder_head_cutter())
+    notch = _rudder_notch()
+    if notch is not None:
+        w = w.cut(notch)
+    w = w.union(rudder_pins())
+    if len(w.solids().vals()) != 1:
+        raise RuntimeError(f"roret bestaar av {len(w.solids().vals())} volumer")
+    return w
