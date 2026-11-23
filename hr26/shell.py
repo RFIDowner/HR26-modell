@@ -89,8 +89,13 @@ def compartments(wall: float | None = None, deck_t: float | None = None, per_bay
     half = 0.5 * P.RIB_THICK
 
     bounds = [P.VOID_FWD] + bulkhead_stations() + [P.LOA - P.VOID_AFT]
+    x_lo = getattr(P, "VOID_X0", -1e9)
+    x_hi = getattr(P, "VOID_X1", 1e9)
     out = []
     for i in range(len(bounds) - 1):
+        # kamre utenfor VOID_X0-VOID_X1 blir massive (flate tak, se params)
+        if bounds[i] < x_lo - 1.0 or bounds[i + 1] > x_hi + 1.0:
+            continue
         a = bounds[i] + (half if i else 0.0)
         b = bounds[i + 1] - (half if i + 1 < len(bounds) - 1 else 0.0)
         if b - a < 4.0 * P.SCALE:

@@ -282,9 +282,13 @@ av fyllet (se under). Én rull på 1 kg holder med god margin.
 * Ligger ferdig orientert: kjølen ned, rotert 45°, 206 × 206 mm av platen.
 * **Infill 15 % (gyroid eller grid).** Midt i skroget er kahytten med
   innredningen (V10): durk, køyer, sofaer, bysse, skott og skap er massivt
-  materiale som står på fyllet under seg. Forut og akter er skroget uthult med
-  2 mm vegg og innvendige spant hver 26 mm; der er hulrommene lukkede, så
-  slicerens fyll havner ikke i dem.
+  materiale som står på fyllet under seg. Mellom 1,4 og 5,3 m (under
+  fordekket og langs kahytten) er skroget uthult med 2 mm vegg og innvendige
+  spant hver 26 mm. Der er hulrommene lukkede, så slicerens fyll havner ikke
+  i dem, og takene deres skrår eller er smale broer. Helt forut og under hele
+  cockpiten er skroget massivt (V11c), og der står gulvet og fordekket på
+  fyllet. Før V11c var undersiden av cockpitgulvet et flatt tak på
+  60 × 25 mm over et lukket kammer, og printen fikk løse tråder der.
 * **Støtte bare fra platen** («kun på plate»). Da får skrogbunnen ved baug og
   hekk og det store hjørnet nederst på kjølens forkant støtte, men ingenting
   kommer inn i kahytten. Inne i kahytten heller alle tak 45° eller mindre.
@@ -503,8 +507,10 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 * Støtte: **bare fra platen**. I Bambu Studio: støttetype «tre (auto)» og
   «kun på plate» på. Kjølen står på platen; undersiden ved hekk og baug og
   kjølens nedre forkant trenger støtte, kahytten ikke.
-* Infill 15 %: innredningen i kahytten står på fyllet. Forut og akter er
-  skroget uthult med 2 mm vegg og spant hver 26 mm.
+* Infill 15 %: innredningen i kahytten og cockpitgulvet står på fyllet.
+  Mellom 1,4 og 5,3 m er skroget uthult med 2 mm vegg og spant hver 26 mm.
+  Helt forut og under cockpiten er det massivt, fordi taket i et lukket
+  kammer der ville vært flatt og måtte printes rett ut i lufta.
 * Støtte bare fra platen, så ingenting kommer inn i kahytten.
 * Dyse 0,4 mm og lag på 0,12 mm, eller variabel laghøyde (0,08–0,16). Det er
   laghøyden som gjør skroget glatt og kantene skarpe. En 0,2-dyse gir lite

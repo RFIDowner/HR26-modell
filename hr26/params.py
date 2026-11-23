@@ -645,6 +645,15 @@ VOID_AFT = 470.0            # og slutter saa langt fra hekken
 # blir tynnere enn HULL_WALL; innsiden av skroget er det ikke saa noeye med.
 VOID_MARGIN = 0.4 * SCALE       # overalt
 VOID_BOW_EXTRA = 1.5 * SCALE    # i tillegg i det fremste kammeret
+# Bare kamrene mellom disse to x-ene hules ut (V11c, 14.11.2026). Under
+# cockpiten (5 661-7 471) var kammertaket undersiden av cockpitkaret, et
+# flatt tak paa 60 x 13-25 mm (print) i et lukket rom, og i det fremste
+# kammeret (620-1 400) er taket under fordekket flatt over 25 x 26 mm. Slikt
+# maa printes som bro rett ut i lufta, og printen 14.11 fikk loese traader
+# under cockpitgulvet. Kamrene utenfor er massive, saa slicerens fyll baerer
+# taket, som i kahytten.
+VOID_X0 = 1400.0
+VOID_X1 = 5300.0
 
 # rortapper: to pinner paa rorets forkant som gaar inn i akterspeilet, begge
 # under vannlinjen der akterspeilet er massivt (bunnen ligger paa ca. -260)
