@@ -1,0 +1,15 @@
+lest og analysert 12s
+V9: 843846 tri, boks [7980.7 2680.6 3145. ] mm, stoerste bredde 2680.6, stoerste vannlinjebredde 2263 ved x=5938
+A1: 855478 tri, boks [7980.7 2679.9 3145. ] mm, stoerste bredde 2679.9, stoerste vannlinjebredde 2267 ved x=5902
+A2: 1282918 tri, boks [7980.7 2725.  3145. ] mm, stoerste bredde 2725.0, stoerste vannlinjebredde 2154 ved x=4948
+SILHUETTER (fullskala mm):
+  plan, halvbredde (med fenderlist)            A2-V9: min   -21.1  maks    54.2  (stoerst ved x=194)
+  profil, overkant                             A2-V9: min  -133.2  maks     4.2  (stoerst ved x=2222)
+  profil, senterlinje under, x 20-3300         A2-V9: min   -33.3  maks    26.9  (stoerst ved x=1562)
+  profil, senterlinje under, x 5900-7760       A2-V9: min    -6.2  maks     1.7  (stoerst ved x=7634)
+  vannlinjens halvbredde                       A2-V9: min  -318.2  maks   488.5  (stoerst ved x=3380)
+  plan, halvbredde (med fenderlist)            A2-A1: min   -21.7  maks    51.6  (stoerst ved x=7868)
+  profil, overkant                             A2-A1: min    -0.7  maks     0.1  (stoerst ved x=7868)
+  profil, senterlinje under, x 20-3300         A2-A1: min    -1.9  maks     4.9  (stoerst ved x=26)
+  profil, senterlinje under, x 5900-7760       A2-A1: min    -0.1  maks     0.0  (stoerst ved x=6836)
+  vannlinjens halvbredde                       A2-A1: min  -303.8  maks    80.0  (stoerst ved x=6932)

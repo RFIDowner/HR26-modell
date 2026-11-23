@@ -1,0 +1,216 @@
+{
+ "n5_gitter": [
+  {
+   "box": [
+    615,
+    790,
+    1370,
+    1445
+   ],
+   "a": [
+    -9,
+    -19
+   ],
+   "b": [
+    -24,
+    10
+   ],
+   "ratio": 0.804,
+   "delta_meas_deg": 53.5,
+   "delta_pred_deg": {
+    "540": 58.0,
+    "579": 55.4,
+    "650": 51.3,
+    "900": 40.3,
+    "1172": 32.4
+   }
+  },
+  {
+   "box": [
+    600,
+    720,
+    1455,
+    1525
+   ],
+   "a": [
+    -8,
+    -23
+   ],
+   "b": [
+    -27,
+    12
+   ],
+   "ratio": 0.81,
+   "delta_meas_deg": 54.1,
+   "delta_pred_deg": {
+    "540": 62.0,
+    "579": 59.5,
+    "650": 55.3,
+    "900": 43.9,
+    "1172": 35.5
+   }
+  }
+ ],
+ "n5_brodekk": {
+  "540": {
+   "D_median": 216,
+   "D_p10": 184,
+   "D_p90": 253,
+   "kamera_til_akterkant": 788,
+   "kamera_over_brodekk": 708
+  },
+  "579": {
+   "D_median": 239,
+   "D_p10": 204,
+   "D_p90": 278,
+   "kamera_til_akterkant": 886,
+   "kamera_over_brodekk": 731
+  },
+  "620": {
+   "D_median": 262,
+   "D_p10": 223,
+   "D_p90": 304,
+   "kamera_til_akterkant": 986,
+   "kamera_over_brodekk": 751
+  },
+  "650": {
+   "D_median": 278,
+   "D_p10": 237,
+   "D_p90": 322,
+   "kamera_til_akterkant": 1060,
+   "kamera_over_brodekk": 763
+  },
+  "900": {
+   "D_median": 411,
+   "D_p10": 351,
+   "D_p90": 476,
+   "kamera_til_akterkant": 1641,
+   "kamera_over_brodekk": 821
+  },
+  "1172": {
+   "D_median": 550,
+   "D_p10": 470,
+   "D_p90": 635,
+   "kamera_til_akterkant": 2245,
+   "kamera_over_brodekk": 847
+  }
+ },
+ "brosjyrefoto": {
+  "V_x_rad": -791.0,
+  "rader": {
+   "A": 263.0,
+   "B": 603.0,
+   "C": 684.0
+  },
+  "kryssforhold": {
+   "-791": {
+    "synlig_brodekk_per_L": 0.17,
+    "lokk_forkant": 0.05,
+    "lokk_akterkant": 0.677,
+    "veggfot_skift_per_L": 0.214
+   },
+   "-590": {
+    "synlig_brodekk_per_L": 0.16,
+    "lokk_forkant": 0.047,
+    "lokk_akterkant": 0.665,
+    "veggfot_skift_per_L": 0.223
+   },
+   "-1200": {
+    "synlig_brodekk_per_L": 0.185,
+    "lokk_forkant": 0.053,
+    "lokk_akterkant": 0.693,
+    "veggfot_skift_per_L": 0.202
+   },
+   "-1000000000": {
+    "synlig_brodekk_per_L": 0.238,
+    "lokk_forkant": 0.065,
+    "lokk_akterkant": 0.735,
+    "veggfot_skift_per_L": 0.171
+   }
+  },
+  "sjekk_lokk_brosjyreplan": {
+   "forkant": 0.052,
+   "akterkant": 0.692
+  },
+  "xB_modell": {
+   "r0.16_skjult20": 5903,
+   "r0.16_skjult60": 5938,
+   "r0.16_skjult100": 5972,
+   "r0.18_skjult20": 5927,
+   "r0.18_skjult60": 5961,
+   "r0.18_skjult100": 5995,
+   "r0.21_skjult20": 5961,
+   "r0.21_skjult60": 5994,
+   "r0.21_skjult100": 6027,
+   "r0.24_skjult20": 5994,
+   "r0.24_skjult60": 6026,
+   "r0.24_skjult100": 6058
+  }
+ },
+ "e448_5_liste": [
+  {
+   "x": 3000,
+   "448_5_linjer_780_940": [
+    904
+   ],
+   "modell_liste": 908,
+   "diff": -4
+  },
+  {
+   "x": 4000,
+   "448_5_linjer_780_940": [
+    919,
+    864,
+    781
+   ],
+   "modell_liste": 850,
+   "diff": 14
+  },
+  {
+   "x": 5000,
+   "448_5_linjer_780_940": [
+    815
+   ],
+   "modell_liste": 823,
+   "diff": -8
+  },
+  {
+   "x": 6200,
+   "448_5_linjer_780_940": [
+    898,
+    821
+   ],
+   "modell_liste": 808,
+   "diff": 13
+  },
+  {
+   "x": 6600,
+   "448_5_linjer_780_940": [
+    898,
+    853,
+    821
+   ],
+   "modell_liste": 806,
+   "diff": 15
+  },
+  {
+   "x": 7000,
+   "448_5_linjer_780_940": [
+    900,
+    825
+   ],
+   "modell_liste": 805,
+   "diff": 20
+  },
+  {
+   "x": 7400,
+   "448_5_linjer_780_940": [
+    904,
+    883,
+    830
+   ],
+   "modell_liste": 804,
+   "diff": 26
+  }
+ ]
+}

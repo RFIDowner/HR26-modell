@@ -16,12 +16,16 @@ import os
 import time
 
 import cadquery as cq
+import numpy as np
 
 from . import appendages as A
+from . import cabin as CB
 from . import curves as C
 from . import deckhouse as D
 from . import fittings as F
+from . import gangbord as G
 from . import hull as H
+from . import interior as I
 from . import params as P
 from . import plaque as PL
 from . import rig as R
@@ -35,13 +39,43 @@ STEP_DIR = os.path.join(ROOT, "export", "step")
 BED = 256.0           # Bambu Lab A1
 BED_MARGIN = 1.5      # sikkerhetsmargin i modell-mm
 
+# STL-eksport med ABSOLUTT toleranse (modell-mm og radianer). CadQuerys
+# standard er relativ toleranse, som gjorde den 263 mm lange dekkskanten til
+# 16 rette stykker med knekk i hvert punkt (V10-analysen).
+STL_TOL = 0.02
+STL_ANG = 0.12        # 0,02 mm / 0,12 rad (V10 trinn 4, foer 0,15): finere i de krumme
+                      # laaringene akter; ca. 23 MB for skroget
+
+# Faste delnumre, saa et delvis bygg (--only) ikke endrer nummereringen.
+PART_NO = {
+    "skrog": 1, "ror": 2, "mast-354mm-A1": 3, "mast-365mm-ikke-A1": 4,
+    "mastefot": 5, "masttopp": 6, "saling": 7, "bom": 8, "bom-med-seil": 9,
+    "rekkepaaler": 10, "boyemal": 11, "stativ-vugge1": 12, "stativ-vugge2": 13,
+    "stativ-bjelke": 14, "skilt": 15, "ruff-tak": 16,
+}
+
 
 # ------------------------------------------------- robuste boolske operasjoner
+DEBRIS_CM3 = 0.001     # 1 mm3 i 1:30: mindre loesrevne biter etter et kutt er fliser
 NUDGES = (0.0, 0.37, -0.37, 0.73, -0.73)   # smaa forskyvninger i x, fullskala-mm
 
 
 def _n_solids(wp) -> int:
     return len(wp.val().Solids())
+
+
+def _volume(wp) -> float:
+    """Volum med toleranse. OCCs vanlige Volume() kan bomme med titalls liter
+    paa trimmede B-spline-flater (glatte lofter som fenderlisten, kjolen og
+    det rundede akterspeilet) og gi falske avvisninger i robust_union. Den
+    presise beregningen tar flere titalls sekunder, saa den brukes bare
+    naar den raske sier nei."""
+    from OCP.BRepGProp import BRepGProp
+    from OCP.GProp import GProp_GProps
+
+    g = GProp_GProps()
+    BRepGProp.VolumeProperties_s(wp.val().wrapped, g, 1e-6, False)
+    return g.Mass()
 
 
 def robust_union(base, part, what: str):
@@ -56,16 +90,92 @@ def robust_union(base, part, what: str):
     before = _n_solids(base)
     for dx in NUDGES:
         cand = base.union(part.translate((dx, 0.0, 0.0)) if dx else part)
-        if _n_solids(cand) <= before and cand.val().Volume() > base.val().Volume() + 1.0:
+        if _n_solids(cand) <= before and (
+            cand.val().Volume() > base.val().Volume() + 1.0
+            or _volume(cand) > _volume(base) + 1.0       # treg, men presis
+        ):
             return cand
     raise RuntimeError(f"union av '{what}' ga ikke ett volum - delen ville falt bort")
 
 
-def robust_cut(base, cutter, what: str):
+def union_strake(w, log=print):
+    """Fenderlisten bit for bit (hull.rubbing_strake_pieces), med kontroll.
+
+    V10 trinn 5: union av hele listen som ett loft ga tilfeldig feil resultat
+    (listen falt bort, men volumet oekte litt, saa robust_union godtok det).
+    Hver bit maa nu oeke volumet med 0,6-2,5 x arealet utenfor skrogsiden
+    ganger bitens lengde. Feiler en bit, proeves smaa forskyvninger og saa to
+    halve biter; feiler ogsaa de, stopper byggingen."""
+    area = H.strake_area_out()
+    pieces = H.rubbing_strake_pieces()
+    for wires, x0, x1 in pieces:
+        w = _union_strake_piece(w, wires, area, f"fenderlist x {x0:.0f}-{x1:.0f}")
+    log(f"    fenderlist: {len(pieces)} biter")
+    return w
+
+
+def _union_strake_piece(w, wires, area, what, depth=0):
+    cs = np.array([[c.x, c.y, c.z] for c in (wi.Center() for wi in wires)])
+    length = float(np.linalg.norm(np.diff(cs, axis=0), axis=1).sum())
+    exp = area * length
+    piece = cq.Workplane("XY").newObject([H._loft3(wires)])
+    before, n0 = w.val().Volume(), _n_solids(w)
+    before_p = None
+    for dx in NUDGES:
+        cand = w.union(piece.translate((dx, 0.0, 0.0)) if dx else piece)
+        if _n_solids(cand) > n0:
+            continue
+        inc = cand.val().Volume() - before
+        if 0.6 * exp < inc < 2.5 * exp:
+            return cand
+        # V10 trinn 9: den raske Volume() paa hele skroget (18 m3) kan bomme
+        # med flere liter, mer enn bitens 0,3-0,7 liter. Da avgjoer den presise
+        # (ca. 1 s), som i robust_union.
+        if before_p is None:
+            before_p = _volume(w)
+        if 0.6 * exp < _volume(cand) - before_p < 2.5 * exp:
+            return cand
+    if len(wires) > 3 and depth < 3:
+        mid = len(wires) // 2
+        w = _union_strake_piece(w, wires[:mid + 1], area, what + " a", depth + 1)
+        return _union_strake_piece(w, wires[mid:], area, what + " b", depth + 1)
+    raise RuntimeError(f"union av '{what}' ga feil volum - listen ville falt bort")
+
+
+def robust_cut(base, cutter, what: str, strict: bool = False):
+    """Kutt som nekter aa feile i stillhet. OCC kan gi et tomt resultat
+    (0 solider) eller et ugyldig volum uten feilmelding; da stopper vi.
+    `strict` krever ogsaa et gyldig volum (brukes for kahytten)."""
     before = _n_solids(base)
     out = base.cut(cutter)
-    if _n_solids(out) > before:
-        raise RuntimeError(f"kutt '{what}' delte modellen i {_n_solids(out)} biter")
+    if strict and _n_solids(out) and not out.val().isValid():
+        # Som for unionene: en flate i kuttet som faller paa en soem i skroget
+        # kan gi et ugyldig volum. Smaa forskyvninger i x (under 0,03 mm i
+        # 1:30) proeves foer bygget stopper.
+        for dx in NUDGES[1:]:
+            cand = base.cut(cutter.translate((dx, 0.0, 0.0)))
+            if _n_solids(cand) and cand.val().isValid():
+                print(f"  kutt '{what}': gyldig med kuttet flyttet {dx:+.2f} mm i x")
+                out = cand
+                break
+    n = _n_solids(out)
+    if n == 0:
+        raise RuntimeError(f"kutt '{what}' ga et tomt resultat")
+    if n > before:
+        # Loesrevne fliser uten volum (flater som nesten faller sammen) kastes;
+        # alt med mer enn DEBRIS_CM3 volum er en ekte deling og stopper bygget.
+        sol = sorted(out.val().Solids(), key=lambda s: -s.Volume())
+        tiny = [s for s in sol[before:] if s.Volume() < DEBRIS_CM3 * 1000.0 * P.SCALE ** 3]
+        if len(tiny) == n - before:
+            print(f"  kutt '{what}': kastet {len(tiny)} loesreven(e) flis(er) uten volum "
+                  f"({sum(s.Volume() for s in tiny) / P.SCALE ** 3:.4f} mm3 i 1:30)")
+            out = cq.Workplane("XY").newObject(
+                [sol[0] if before == 1 else cq.Compound.makeCompound(sol[:before])])
+            n = before
+        else:
+            raise RuntimeError(f"kutt '{what}' delte modellen i {n} biter")
+    if strict and not out.val().isValid():
+        raise RuntimeError(f"kutt '{what}' ga et ugyldig volum")
     return out
 
 
@@ -82,45 +192,123 @@ def build_hull(hollow: bool = True, n_stations: int = 40, n_pts: int = 26, log=p
 
     w = robust_union(w, A.keel(), "kjol")
     step("kjol", w)
-    w = robust_union(w, H.rubbing_strake(), "fenderlist")
+    name = F.transom_name()
+    if name is not None:
+        # foer fenderlisten: etterpaa gir unionen et korrupt volum
+        w = robust_union(w, name, "navn paa akterspeilet")
+        step("navn", w)
+    w = union_strake(w, log)
     step("fenderlist", w)
-    w = robust_union(w, D.coachroof(), "ruff")
-    step("ruff", w)
-    w = robust_union(w, D.hatches(), "luker")
-    w = robust_union(w, D.vents(), "ventiler")
-    step("luker og ventiler", w)
-    w = robust_union(w, D.coaming_block(), "cockpitkarm")
-    w = robust_union(w, D.sprayhood(), "sprayhood")
-    step("karm og sprayhood", w)
+    w = H.round_transom_top(w)
+    step("akterspeilets overkant", w)
+    if P.CABIN:
+        # Ruffen er et eget lokk (16_ruff-tak, cabin.lid). Paa skroget staar
+        # bare kragen under skjoeten (ruff og sprayhood kappet ved
+        # skjoeteflaten) og kanten lokket tres over. (Aa unionere hele ruffen
+        # og saa skjaere bort lokket ga en kant med 93 mm toleranse ved
+        # x 5574, der sprayhood, ruff og karm moeter skjoeteflaten, og alle
+        # boolske operasjoner etterpaa feilet - kontroll 13.11.)
+        w = robust_union(w, D.coaming_block(), "cockpitkarm")
+        w = robust_union(w, CB.collar(), "krage og kant for lokket")
+        w = robust_union(w, D.vents(where_only="deck"), "ventil paa dekket")
+        step("krage, kant og karm", w)
+    else:
+        w = robust_union(w, D.coachroof(), "ruff")
+        step("ruff", w)
+        w = robust_union(w, D.hatches(), "luker")
+        w = robust_union(w, D.vents(), "ventiler")
+        step("luker og ventiler", w)
+        w = robust_union(w, D.coaming_block(), "cockpitkarm")
+        w = robust_union(w, D.sprayhood(), "sprayhood")
+        step("karm og sprayhood", w)
+    if getattr(P, "WALK", False):
+        # V11: flatt gangbord i knekkens hoeyde og en loddrett, rundet kant opp
+        # til karm og akterdekk (gangbord.py), etter karm og akterdekk, foer
+        # beslagene
+        gc = G.cutter()
+        expect = w.intersect(gc).val().Volume()
+        v0 = w.val().Volume()
+        w = robust_cut(w, gc, "gangbord og kant", strict=True)
+        # Et kutt med smaa kanter kan feile stille og levere skroget uroert
+        # (V11, foerste forsoek). Kontroller at det faktisk tok noe.
+        got = v0 - w.val().Volume()
+        if got < 0.7 * expect:
+            raise RuntimeError(f"gangbordkuttet tok {got / 1e6:.0f} liter, ventet {expect / 1e6:.0f}")
+        log(f"    gangbord: {got / 1e6:.0f} liter skaaret bort (ventet {expect / 1e6:.0f})")
+        step("gangbord og kant", w)
+    elif getattr(P, "KNUCKLE_Z", None):
+        # etter karm og akterdekk (skulderen gaar opp til dem), foer beslagene
+        w = robust_cut(w, H.shoulder_cutter(top_at=D.shoulder_top_z),
+                       "skulderen over knekken", strict=True)
+        step("knekk og skulder", w)
     w = robust_union(w, F.additions(), "dekksbeslag")
     step("dekksbeslag", w)
 
     w = robust_cut(w, D.cockpit_cut(), "cockpit")
+    if hasattr(P, "COCKPIT_SEAT_Z"):
+        w = robust_cut(w, D.footwell_cut(), "fotbronn")
     w = robust_cut(w, D.companionway_cut(), "nedgang")
     win_cut, win_keep = D.hull_windows()
     w = robust_cut(w, win_cut, "vinduer")
     step("cockpit, nedgang, vinduer", w)
     w = robust_cut(w, F.cuts(), "hull for rigg og rekke")
     step("hull for rigg og rekke", w)
+    if P.CABIN:
+        # aapningen i dekket innenfor kanten, som eget kutt foer uthulingen
+        w = robust_cut(w, I.opening_cut(), "aapning i dekket", strict=True)
+        # nedgangen i lokket ser ned i kahytten, ikke paa terskelen
+        w = robust_cut(w, CB.companion_slot(), "nedgang ned i kahytten", strict=True)
+        step("aapning i dekket", w)
     if _n_solids(w) != 1:
         raise RuntimeError(f"skroget bestaar av {_n_solids(w)} solider etter sammenstilling")
 
     if hollow:
         # spares fra uthulingen: cockpitkaret (gulv og vegger), veggen bak
-        # vinduene og soylen under masten
-        w = S.hollow(w, keep=[D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()])
+        # vinduene og soylen under masten - og med kahytt hele kahyttens
+        # omraade, som er massivt rundt hulrommet (interior.py)
+        keep = [D.cockpit_tub(P.HULL_WALL), win_keep, D.mast_post()]
+        if P.CABIN:
+            keep.append(I.keep_block())
+        if getattr(P, "WALK", False):
+            # gangbordet og veggen opp til karmen: samme tykkelse som skallet ellers
+            keep.append(G.cutter(shift=P.HULL_WALL + P.VOID_MARGIN))
+        elif getattr(P, "KNUCKLE_Z", None):
+            # veggen under skulderen: samme tykkelse som skallet ellers
+            keep.append(H.shoulder_cutter(shift=P.HULL_WALL + P.VOID_MARGIN, x0=5600.0, x1=7600.0,
+                                          top_at=D.shoulder_top_z))
+        w = S.hollow(w, keep=keep)
         step("uthult", w)
-        log(f"  plastforbruk (skall): {S.material_cm3(w):.0f} cm3")
+    if P.CABIN:
+        # kahytten med innredning, aapningen i dekket og doerene; saa
+        # vinduene som aapninger gjennom veggen (etter hulrommet, saa de
+        # bare gaar gjennom veggen)
+        if os.environ.get("HR26_DUMP"):
+            w.val().exportBrep(os.environ["HR26_DUMP"])       # feilsoeking: skroget foer kahyttkuttet
+        w = robust_cut(w, I.cabin_void(log=log, with_opening=False), "kahytt og innredning",
+                       strict=True)
+        step("kahytt", w)
+        w = robust_cut(w, I.window_holes(), "aapne vinduer", strict=True)
+        step("aapne vinduer", w)
+    if hollow or P.CABIN:
+        log(f"  plastforbruk (skall og innredning): {S.material_cm3(w):.0f} cm3")
     return w
 
 
-def build_parts(hollow: bool = True, **kw):
-    """Alle deler i fullskala, i byggekoordinater."""
-    parts = {"skrog": build_hull(hollow=hollow, **kw)}
-    parts["ror"] = A.rudder()
-    parts.update(R.parts())
-    parts.update(ST.parts())
-    parts.update(PL.parts())
+def build_parts(hollow: bool = True, only=None, **kw):
+    """Alle deler i fullskala, i byggekoordinater. `only` er et sett med
+    delnavn; da bygges bare de."""
+    def want(name):
+        return not only or name in only
+
+    parts = {}
+    if want("skrog"):
+        parts["skrog"] = build_hull(hollow=hollow, **kw)
+    if want("ror"):
+        parts["ror"] = A.rudder()
+    if P.CABIN and want("ruff-tak"):
+        parts["ruff-tak"] = CB.lid()
+    for src in (R.parts, ST.parts, PL.parts):
+        parts.update({k: v for k, v in src().items() if want(k)})
     return parts
 
 
@@ -162,12 +350,122 @@ def fits_bed(wp: cq.Workplane):
 
 
 # ----------------------------------------------------------------- export
-def export(parts: dict, log=print):
+def _part_no(name: str, fallback: int) -> int:
+    return PART_NO.get(name, fallback)
+
+
+def write_stl(wp: cq.Workplane, fn: str):
+    """Alle solidene i `wp` som en STL, med absolutt toleranse."""
+    shapes = [v for v in wp.vals() if isinstance(v, cq.Shape)]
+    shape = shapes[0] if len(shapes) == 1 else cq.Compound.makeCompound(shapes)
+    shape.exportStl(fn, STL_TOL, STL_ANG, False, False)
+    _drop_collapsed_triangles(fn)
+    n = _fill_triangle_holes(fn)
+    if n:
+        print(f"    {os.path.basename(fn)}: tettet {n} trekanthull i nettet")
+
+
+STL_WELD = 1e-4       # modell-mm (0,1 mikrometer): punkter naermere enn dette er samme punkt
+                      # (samme toleranse som tools/meshcheck.py)
+
+
+def _drop_collapsed_triangles(fn: str) -> int:
+    """Fjerner trekanter der to hjoerner er samme punkt (null areal).
+
+    OCC-trianguleringen lager av og til slike ved soemmer (f.eks. overkanten
+    av akterspeilet). De gjoer nettet ikke-manifold (kanten brukes tre-fire
+    ganger) uten aa ha noe volum. Punktene skrives sveiset (STL_WELD), saa
+    alle programmer ser de samme hjoernene. Returnerer antall fjernet."""
+    import numpy as np
+
+    with open(fn, "rb") as f:
+        head = f.read(84)
+        n = int.from_bytes(head[80:84], "little")
+        rec = np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])
+        a = np.frombuffer(f.read(n * 50), dtype=rec).copy()
+    q = np.round(a["v"].reshape(-1, 3).astype(np.float64) / STL_WELD).astype(np.int64)
+    _, inv = np.unique(q, axis=0, return_inverse=True)
+    t = inv.reshape(-1, 3)
+    keep = (t[:, 0] != t[:, 1]) & (t[:, 1] != t[:, 2]) & (t[:, 0] != t[:, 2])
+    a["v"] = (q * STL_WELD).reshape(-1, 3, 3).astype(np.float32)
+    a = a[keep]
+    with open(fn, "wb") as f:
+        f.write(head[:80] + int(len(a)).to_bytes(4, "little"))
+        f.write(a.tobytes())
+    return int((~keep).sum())
+
+
+def _fill_triangle_holes(fn: str) -> int:
+    """Tetter hull i nettet som er noeyaktig en trekant store.
+
+    OCC-trianguleringen hopper av og til over en flis-flate (V10 trinn 8: en
+    0,5 mm bred og 89 mm hoy flate i fullskala ved spissen av aapningen i
+    dekket, x 2 731): volumet er gyldig og lukket, men STL-en mangler en
+    trekant og faar tre aapne kanter. Tre aapne kanter som danner en lukket
+    ring er et slikt hull, og den manglende trekanten legges inn med
+    omloepsretningen motsatt av naboene. Stoerre hull roeres ikke; de skal
+    synes i tools/meshcheck.py og poengkortet. Returnerer antall tettet."""
+    import numpy as np
+
+    with open(fn, "rb") as f:
+        head = f.read(84)
+        n = int.from_bytes(head[80:84], "little")
+        rec = np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])
+        a = np.frombuffer(f.read(n * 50), dtype=rec).copy()
+    v = a["v"].reshape(-1, 3)
+    q = np.round(v.astype(np.float64) / STL_WELD).astype(np.int64)
+    uq, first, inv = np.unique(q, axis=0, return_index=True, return_inverse=True)
+    t = inv.reshape(-1, 3)
+    d = np.r_[t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]]          # rettede kanter
+    und = np.sort(d, axis=1)
+    key = und[:, 0] * (len(uq) + 1) + und[:, 1]
+    _, kinv, cnt = np.unique(key, return_inverse=True, return_counts=True)
+    open_e = d[cnt[kinv] == 1]
+    if len(open_e) == 0 or len(open_e) > 300:
+        return 0
+    nxt = {}
+    for p0, p1 in open_e:
+        nxt.setdefault(int(p0), []).append(int(p1))
+    new = []
+    seen = set()
+    for p0, outs in nxt.items():
+        if p0 in seen or len(outs) != 1:
+            continue
+        p1 = outs[0]
+        o1 = nxt.get(p1, [])
+        if len(o1) != 1:
+            continue
+        p2 = o1[0]
+        o2 = nxt.get(p2, [])
+        if len(o2) != 1 or o2[0] != p0 or len({p0, p1, p2}) != 3:
+            continue
+        seen.update((p0, p1, p2))
+        new.append((p0, p2, p1))                                  # motsatt retning av naboene
+    if not new:
+        return 0
+    pts = v[first].astype(np.float64)
+    add = np.zeros(len(new), dtype=rec)
+    for i, (i0, i1, i2) in enumerate(new):
+        tri = pts[[i0, i1, i2]]
+        nrm = np.cross(tri[1] - tri[0], tri[2] - tri[0])
+        ln = float(np.linalg.norm(nrm))
+        add["n"][i] = nrm / ln if ln > 0 else (0.0, 0.0, 0.0)
+        add["v"][i] = tri.astype(np.float32)
+    a = np.concatenate([a, add])
+    with open(fn, "wb") as f:
+        f.write(head[:80] + int(len(a)).to_bytes(4, "little"))
+        f.write(a.tobytes())
+    return len(new)
+
+
+def export(parts: dict, log=print, partial: bool = False):
     os.makedirs(STL_DIR, exist_ok=True)
     os.makedirs(STEP_DIR, exist_ok=True)
-    # rydd bort STL-er fra forrige bygg, ellers blir gammel nummerering staaende
+    # Rydd bort STL-er fra forrige bygg, ellers blir gammel nummerering
+    # staaende. Ved et delvis bygg ryddes bare de delene som bygges.
+    mine = {f"{_part_no(n, 0):02d}_{n}.stl" for n in parts}
     for f in os.listdir(STL_DIR):
-        if f.endswith(".stl"):
+        if f.endswith(".stl") and (not partial or f in mine):
             os.remove(os.path.join(STL_DIR, f))
 
     # rotasjoner som legger delen gunstig paa platen: liste av (akse, grader)
@@ -176,6 +474,8 @@ def export(parts: dict, log=print):
         "rekkepaaler": [("Y", 90.0)],
         "stativ-vugge1": [("Y", 90.0)],
         "stativ-vugge2": [("Y", 90.0)],
+        # lokket staar paa skjoeteplanet, som heller litt for-akter
+        "ruff-tak": [("Y", CB.print_tilt_deg())],
     }
     # mastene: lengden langs X, den brede 4 mm-siden ned, 3 mm hoy
     for name in parts:
@@ -185,6 +485,7 @@ def export(parts: dict, log=print):
 
     order = [
         "skrog",
+        "ruff-tak",
         "ror",
         *sorted(n for n in parts if n.startswith("mast-")),
         "mastefot",
@@ -202,7 +503,8 @@ def export(parts: dict, log=print):
     names = [n for n in order if n in parts] + [n for n in parts if n not in order]
 
     report = []
-    for i, name in enumerate(names, start=1):
+    for k, name in enumerate(names, start=1):
+        i = _part_no(name, 100 + k)
         wp = to_model(parts[name])
         for axis, deg in ROT.get(name, []):
             wp = wp.rotate((0, 0, 0), AXIS[axis], deg)
@@ -218,13 +520,16 @@ def export(parts: dict, log=print):
                 ang, flat, ok, dims = best, turned, ok2, dims2
         wp = flat
         fn = os.path.join(STL_DIR, f"{i:02d}_{name}.stl")
-        cq.exporters.export(wp, fn, tolerance=0.018, angularTolerance=0.12)
+        write_stl(wp, fn)
         report.append((name, dims, ang, ok, fn))
         log(
             f"  {name:<16s} {dims[0]:6.1f} x {dims[1]:6.1f} x {dims[2]:6.1f} mm"
             f"  rot {ang:4.0f} gr  {'OK' if ok else 'trenger storre plate enn A1'}"
+            f"  {os.path.getsize(fn) / 1e6:5.1f} MB"
         )
 
+    if partial:
+        return report
     asm = cq.Assembly()
     for name, wp in parts.items():
         asm.add(to_model(wp), name=name)
@@ -238,16 +543,19 @@ def main():
     ap.add_argument("--hull", action="store_true", help="bare skroget")
     ap.add_argument("--no-hollow", action="store_true", help="massivt skrog")
     ap.add_argument("--stations", type=int, default=40)
+    ap.add_argument("--only", default="",
+                    help="kommaliste med deler, f.eks. skrog,stativ-vugge1,stativ-vugge2;"
+                         " andre STL-er blir liggende")
     args = ap.parse_args()
 
     print(f"HR 26 i 1:{P.SCALE:.0f}  (LOA {P.LOA / P.SCALE:.1f} mm)")
     t = time.time()
+    only = {s.strip() for s in args.only.split(",") if s.strip()}
     if args.hull:
-        parts = {"skrog": build_hull(hollow=not args.no_hollow, n_stations=args.stations)}
-    else:
-        parts = build_parts(hollow=not args.no_hollow, n_stations=args.stations)
+        only = {"skrog"}
+    parts = build_parts(hollow=not args.no_hollow, only=only or None, n_stations=args.stations)
     print(f"Bygget paa {time.time() - t:.0f}s. Eksporterer:")
-    export(parts)
+    export(parts, partial=bool(only))
     print(
         f"Mast: {R.mast_length_model_mm():.0f} mm synlig, ovalt "
         f"{P.MAST_SECTION_X / P.SCALE:.1f} x {P.MAST_SECTION_Y / P.SCALE:.1f} mm "

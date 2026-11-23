@@ -66,7 +66,11 @@ def cradle(x: float, thickness: float | None = None) -> cq.Workplane:
         .fillet(5.0 * P.SCALE)
         .translate((x, 0.0, 0.0))
     )
-    block = block.cut(_hull_cutter(x, t, CLEAR))
+    # Skroget endrer bredde over vuggens tykkelse (opptil 0,55 mm i 1:30 ved
+    # vugge 1), saa vuggen freses etter spantene i begge flatene og midt
+    # imellom: omhyllingen gir klaring CLEAR mot skroget over hele tykkelsen.
+    for xc in (x - 0.5 * t, x, x + 0.5 * t):
+        block = block.cut(_hull_cutter(xc, t, CLEAR))
 
     # spor i bunnen som vuggen treas ned paa bjelketappen
     slot = (

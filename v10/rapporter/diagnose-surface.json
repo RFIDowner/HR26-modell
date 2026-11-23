@@ -1,0 +1,115 @@
+{
+ "summary": "Most of the \"robot\" look in 01_skrog.stl comes from the triangles, not from the hull shape. It also has one concrete code cause. build.py:221 calls cq.exporters.export(tolerance=0.018, angularTolerance=0.12). CadQuery then calls Shape.exportStl with relative=True (cadquery occ_impl/shapes.py:490; exporters/__init__.py:129), so 0.018 is a fraction of each edge's size, not 0.018 mm. angularTolerance has no effect on these B-spline faces: 0.12, 0.03 and 0.01 rad give the same 22,344 triangles for the bare loft.\n\nThe result is 15,980 hull triangles. Many are slivers (longest edge p95 11.7 mm, max 27 mm; 21% have aspect > 20). Between DWL and strake, single triangles span the whole topside height. Adjacent triangles meet at 5-12 deg (19% of edges > 5 deg, 4% > 10 deg), and the chordal error against the exact surface reaches 0.30 mm in the model. Under 1% of the creases lie on loft stations. Rendered with smooth vertex normals, the same STL looks smooth. The exact loft surface, tessellated finely, looks smooth even when flat-shaded.\n\nExporting with relative=False removes most of the faceting with zero geometry change: absolute 0.002 mm gives 0.74% of edges > 5 deg instead of 18.8%, at 251k triangles and 12.5 MB for the bare loft.\n\nThe geometry does have four smaller real defects that would also print:\n- (a) A curvature knuckle in every section just below the DWL (bend radius 88-170 mm full scale, 3-6 mm in the model), with nearly straight topsides above (radius about 4 m).\n- (b) Bulges between stations where the piecewise-linear WATERPLANE table kinks, up to 18 mm full scale (0.6 mm model) at x=7240 and 7-9 mm at x=1276/1544. The middle body is fair, under 0.26 mm model p-p.\n- (c) The rubbing strake is a polygon of 41 straight panels per side, with kinks of 1-4 deg along the side and 10-26 deg around the stern corner.\n- (d) Bow forefoot undulation of about ±10 mm full scale at x 700-1550.\n\nThe Bambu model reads smooth because its facets are tiny and evenly shaped (median edge 0.55 mm). At the micro level its surface is actually noisier than ours (median dihedral 4.9 deg). The hull STL lies on the plate rotated 45 deg, not 44 deg as assumed.\n\nScripts and data are in C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/surface. The bare-loft STLs and BREPs are in its loft/ subfolder; they were built from a copy of the code, and the repo was not touched.",
+ "findings": [
+  {
+   "id": "surface-1",
+   "title": "The robot look is mainly flat-shaded sliver triangles, not the surface",
+   "claim": "In 01_skrog.stl the hull is covered by few, large, skinny, flat triangles that meet at 5-12 deg. The zig-zag creases are tessellation diagonals, not station lines or ripples. With smooth normals the same mesh looks smooth, and the exact surface looks smooth even flat-shaded.",
+   "evidence": "Exact weld gives 71,381 vertices, all 214,245 edges manifold. The hull exterior (classified against the analytic sections) is 15,980 triangles over 29,670 mm2, or 0.54 tri/mm2.\n- Longest edge: p50 2.67, p95 11.65, max 27.06 mm.\n- Aspect (longest edge / altitude): over 10 for 39.6%, over 20 for 20.9%, over 50 for 10.4%.\n- Dihedral between adjacent hull triangles: p50 1.56, p90 7.46, p99 12.5 deg. Over 2 deg: 41.9%; over 5 deg: 19.1%; over 10 deg: 4.2% (of 22,325 edges).\n- Of the 4,267 creases over 5 deg, 0.5% lie in a loft-station plane, 61.7% are diagonals, 29.1% run along the girth and 9.2% run fore-and-aft.\n- Crease locations: 1,316 at x<500 (bow) and 842 at x 7000-8000.\n- Between the DWL and the strake (z 0-800 full scale), single triangles span the whole height with vertices almost only on the DWL and strake lines (fig1).\n- Chordal error of the shipped tessellation against the exact loft: p50 0.015, p95 0.067, max 0.30 mm (model).\n- Renders (fig2): row 1 flat vs smooth normals; row 3 exact loft (909k tri) flat-shaded looks smooth.\n- Bambu topsides: median edge 0.55 mm, aspect >20 for only 0.97%.",
+   "where": "export/stl/01_skrog.stl, whole hull exterior. Worst on the topsides between the DWL (z 0) and the strake (z ~800), at x<500 and at x 7000-7950 (full-scale mm).",
+   "visual_impact": "high",
+   "on_screen_only": false,
+   "fix": "Re-export with absolute deflection (see surface-2). For the best result, also see surface-3.",
+   "effort": "small",
+   "risk": "Larger STL files. The geometry is unchanged.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-2",
+   "title": "STL export tolerance is relative, not mm, and the angular tolerance does nothing",
+   "claim": "build.py:221 uses cq.exporters.export(wp, fn, tolerance=0.018, angularTolerance=0.12). CadQuery passes this to Shape.exportStl with relative=True, so 0.018 is a fraction of each edge's size. The angular tolerance does not refine B-spline faces. Switching to absolute deflection removes most of the facets without touching the geometry.",
+   "evidence": "cadquery occ_impl/shapes.py:484-509: exportStl(..., relative: bool = True) -> BRepMesh_IncrementalMesh(shape, tol, relative, ang). occ_impl/exporters/__init__.py:129 calls shape.exportStl(fname, tolerance, angularTolerance, useascii) without relative.\n\nBare loft hull_solid(40,26), rebuilt in a scratch copy, side faces, measured against a 909k-triangle reference:\n- Relative 0.018 (shipped): 22,344 tri, 1.1 MB. Over 5 deg: 18.8%; p99 11.9 deg. Chordal max 0.30 mm. Identical at 0.12, 0.03 and 0.01 rad.\n- Absolute 0.018 mm: 71,706 tri, 3.6 MB. Over 5 deg: 6.0%; p99 8.7 deg. Chordal p95 0.023, max 0.088 mm.\n- Absolute 0.005 mm: 84,856 tri, 4.2 MB. Almost the same as absolute 0.018.\n- Absolute 0.002 mm, 0.05 rad: 250,666 tri, 12.5 MB. Over 5 deg: 0.74%; p99 4.8 deg. Chordal p95 0.014 mm.\n- Relative 0.005: 407,762 tri, 20 MB. Over 5 deg: 0.12%. Has one visible sliver dent.\n\nfig3 shows A-D flat-shaded side by side.",
+   "where": "hr26/build.py:221 (export()). Applies to all parts, most visible on the hull.",
+   "visual_impact": "high",
+   "on_screen_only": false,
+   "fix": "Replace line 221 with wp.val().exportStl(fn, tolerance=0.002, angularTolerance=0.05, relative=False). Use 0.005-0.018 if the file gets too big. An optional refinement is to use the fine setting only for name == 'skrog'.",
+   "effort": "small",
+   "risk": "File size and slicing time grow. For the full assembled hull, size was not measured: the bare loft grows from 1.1 to 12.5 MB at 0.002, and the keel, deck and interior also refine. About 13-15% slivers (aspect > 20) remain at every setting, because of the mesher on this surface (surface-3).",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-3",
+   "title": "Loft surface has 1010 u-knots, so the mesher makes slivers at any tolerance",
+   "claim": "Each hull side face is a degree-3 B-spline with 1010 u-knots x 42 v-knots. Every section spline (GeomAPI_Interpolate, chord-length parameters) has its own knot vector, and ThruSections merges them all: 42 x 24 + 2 = 1010. This strongly uneven parametrization is why BRepMesh produces slivers at any setting. Giving all sections one index-uniform parameter list is not a fix on its own.",
+   "evidence": "Rebuilt bare loft, faces 0 and 1: udeg 3, vdeg 3, uknots 1010, vknots 42, poles 1012x44; the deck face has 254 u-knots. Aspect >20 among side triangles: 6.8% (relative 0.018), 13-15% (absolute 0.018-0.002).\n\nVariant with makeSpline(parameters=linspace) for every section:\n- u-knots drop to 26 (28x44 poles), and the build takes 0.1 s instead of 2 s.\n- But the mesh got worse: 50-52% aspect >20, median longest edge 0.04 mm (it piles up at the degenerate stem), 29% over 5 deg at relative 0.018.\n- The surface also moved: p95 14.6 mm and max 24 mm full scale at x 1000-2000, about 6 mm in the DWL band, and under 1 mm elsewhere.\n\nAll sections have 26 points. Bow sections (where bottom_z > -1, x below about 740) use 1 stem point + 25 topside points; the others use 16 underwater + 10 topside points.",
+   "where": "hr26/hull.py:21-40 (_section_wire, makeSpline without parameters), :76-77 (makeLoft ruled=False); hr26/curves.py:154-176 (point distribution).",
+   "visual_impact": "medium",
+   "on_screen_only": true,
+   "fix": "Not demonstrated. A likely route is to pass one common parameter list to makeSpline: the chord-length parameters averaged over all stations, not index-uniform. An alternative for print quality is to bypass BRepMesh for the hull skin and write a structured mesh from the exact surface. Verify the shape change first.",
+   "effort": "medium",
+   "risk": "Index-uniform parameters changed the forefoot by up to 24 mm full scale (0.8 mm model). Any reparametrization must be checked against the measured lines.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-4",
+   "title": "Real curvature knuckle in every section at the DWL, with straight topsides above",
+   "claim": "Each station spline has a tight curvature peak just below the waterline, and the topsides above are nearly straight. This is a hard line running along the whole DWL, a real geometric contributor to the boxy look. Both section branches have a curvature singularity at the DWL: the underwater superellipse uses fullness m < 2, and the topside uses t**1.45.",
+   "evidence": "Station spline (makeSpline through C.section(x,26)), curvature peak just below the DWL:\n\n| x | peak curvature | radius (full) | at z |\n|---|---|---|---|\n| 2500 | 11.3 /m | 88 mm | -23 |\n| 4000 | 5.9 /m | 170 mm | -34 |\n| 5500 | 7.1 /m | 141 mm | -33 |\n\nFor comparison: bilge (z -300..-100) 2.9-3.5 /m; topsides z 100-300 0.64-1.14 /m; z 300-700 0.22-0.27 /m (radius about 4 m).\n\nAnalytic section: 5.3-14.6 /m at z=-5 versus 2.1-2.7 /m at z=+5, so the curvature jumps at the DWL. Math: y = bw(1-(1-t)^m)^(1/m) with m = 1.6-1.95 has y'' proportional to s^(m-2), which goes to infinity. y = y0 + d*t^1.45 has y'' proportional to t^-0.55, which also goes to infinity.\n\nIn the STL, 20-23% of hull creases over 2 or 5 deg lie within ±50 mm of the DWL (fig1). The exact-loft reflection lines bend sharply along the DWL (fig2 row 3). At stations, z=+50 deviates 1.5-5.6 mm from the analytic curve (spline overshoot).",
+   "where": "hr26/curves.py:154-176 (section: superellipse under DWL, t**1.45 above); params.py:35-45 (SECTION_FULLNESS 1.1-1.95). The whole length at z ≈ -40..+20 mm full scale.",
+   "visual_impact": "medium",
+   "on_screen_only": false,
+   "fix": "Make the section C2 at the DWL. One option: use one curvature-continuous construction, such as a blend whose curvature just above the DWL equals the curvature just below. Another: clamp m >= 2 near the waterline and replace t**1.45 with a curve that has finite curvature at t=0, e.g. a cubic Hermite with a vertical tangent and matched curvature. Optionally spread the knuckle over a bilge radius of about 300-500 mm full scale. Keep bw (DWL half-breadth), bd, zs and zb unchanged. Re-run displaced_volume_m3.",
+   "effort": "medium",
+   "risk": "The displacement and the look of the topside flare change, and the sections are reconstructions anyway. Shell offsets (section_inner) follow automatically.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-5",
+   "title": "Bulges between stations at the breakpoints of the piecewise-linear WATERPLANE table",
+   "claim": "makeLoft passes exactly through every section and adds little ripple in the middle body. The analytic model, however, kinks at every WATERPLANE breakpoint (np.interp), and the cubic loft rounds those kinks into local bulges. Because the topside formula starts from the DWL half-breadth, the kinks carry up to the strake. They are largest near the stern quarter and the forefoot.",
+   "evidence": "Exact B-rep waterlines (BRepAlgoAPI_Section at fixed z) minus analytic C.section:\n- At stations: median 0.00 mm.\n- Midway between stations: median 0.5-1.1 mm, max 7-26 mm full scale.\n- Every dip over 1 mm sits within 1-3 mm of a WATERPLANE knot, while the nearest loft station is 24-141 mm away.\n- Dips: x=7240 (t=0.93) -14.0 to -17.7 mm; x=1545 -8.3 to -8.8; x=1280 -7.0; x=2685 -3.9 to -4.9; x=3355 -2.4 to -2.7; x=4025 -2.8 to -3.3; x=4690, 6035 and 6705 -1.2 to -2.1. The slope at the t=0.93 knot changes from -1.1 to -4.6 per unit t.\n\nRipple after removing wavelengths over 600 mm:\n- x 1500-7000: p-p 2.7-7.7 mm full scale (0.09-0.26 mm model), rms 0.4-1.1 mm.\n- x 700-1550: about ±10 mm full scale (0.35 mm model).\n- x 6700-7600: about ±5 mm full scale (0.17 mm model).\n\nThe strake inherits it: 6.0 deg plan kink at x=7252. Forefoot dip of -28 mm at x=1090, z=0, near LWL_FWD=1008, where the section generator switches mode. See fig4 (a)-(b).",
+   "where": "hr26/curves.py:122-123 (_table = np.interp), :134-140 (wl_half_breadth), :126-128 (fullness), plus np.interp at :85, :101, :106, :119; params.py:52-67 (WATERPLANE). Worst at x 1000-1600 and 7100-7400 full scale.",
+   "visual_impact": "medium",
+   "on_screen_only": false,
+   "fix": "Interpolate the tables with C2 curves through the same points instead of np.interp. Options: scipy CubicSpline, PCHIP (no overshoot), or make_smoothing_spline for the CSV columns. Apply to WATERPLANE, SECTION_FULLNESS, sheer_z, strake_z, deck_half_breadth and bottom_z. Also blend the bow mode switch at x ~740-1008.",
+   "effort": "small",
+   "risk": "Low. The curves still pass through every measured or table point, but PCHIP or a spline can shift values between points by a few mm. Check them against the 1:50 overlays.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-6",
+   "title": "Rubbing strake is a polygon of straight panels with kinks up to 26 deg at the stern",
+   "claim": "The strake is a ruled loft through 41 rectangles per side plus 12 across the transom. It is therefore a chain of flat or twisted straight panels up to 265 mm long full scale (8.8 mm model), kinked at every joint and sharply around the stern corner.",
+   "evidence": "Side path segment length: 20 to 266 mm, median 208.5.\n- Plan-view kink at joints: median 1.27, p90 3.93 deg.\n- Kinks over 3.5 deg at x=1027 (3.9), 7252 (6.0), 7635 (4.0), 7730 (16.0), 7809 (10.4) and 7841 (26.0, where it turns onto the transom).\n- 1.1 deg per joint across the transom.\n- Profile kinks: median 0.064, max 0.56 deg.\n\nIn the STL the starboard strake outer face is only 78 triangles (about 2 per panel). 69 of its 71 creases are panel diagonals, median 1.6 deg, p90 4.1 deg.\n\nfig4 (c).",
+   "where": "hr26/hull.py:104-140 (_strake_path: C.stations(48), 12 transom points), :143-174 (rubbing_strake, makeLoft(ruled=True) at :173). Worst at x 7200-7850 full scale.",
+   "visual_impact": "medium",
+   "on_screen_only": false,
+   "fix": "Use many more path points (for example 150, roughly evenly spaced). Round the side-to-transom corner with points that follow the ~290 mm deck-outline radius instead of a single 26 deg joint. Either keep ruled=True with the dense points or sweep a rectangle along a smooth spline through the path (cq.Solid.sweep with a fixed binormal or auxiliary spine).",
+   "effort": "small",
+   "risk": "A smooth loft or sweep of twisted rectangles can self-intersect at the corner. Check that robust_union still gives one solid.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-7",
+   "title": "Bambu looks smooth because of tiny, evenly shaped facets, not a fairer surface",
+   "claim": "The Bambu topsides use small, near-equilateral triangles, so no large flat panels form under flat shading. Its micro-surface is actually noisier than ours and its reflection lines are wavy too. Its smooth look is a tessellation effect plus a different overall shape; the shape side is outside this lens.",
+   "evidence": "Bambu topsides (scaled x0.3708, below max beam, outward-facing): 12,268 tri over 10,560 mm2 (1.2 tri/mm2).\n- Edge length: p50 0.55, p95 4.4, max 8.8 mm.\n- Aspect: p50 3.0; over 20 for 0.97%.\n- Dihedral: p50 4.94 deg; over 5 deg 49.7%; over 10 deg 32.8%.\n\nOurs: longest edge p95 11.65 mm, aspect >20 for 20.9%, dihedral p50 1.56 deg.\n\nfig2 row 4 vs row 1.",
+   "where": "C:/Users/stig/Downloads/Seilbåt fra Bambumotor.stl (topsides) vs 01_skrog.stl.",
+   "visual_impact": "low",
+   "on_screen_only": true,
+   "fix": "No action. This explains why surface-2 (finer, absolute tessellation) is the main lever for the on-screen impression.",
+   "effort": "small",
+   "risk": "None.",
+   "keeps_measured_lines": true
+  },
+  {
+   "id": "surface-8",
+   "title": "Hull STL is rotated 45 deg on the plate, not 44",
+   "claim": "Un-rotating by 44 deg leaves a 1 deg yaw. Comparisons that assumed 44 deg see a fake port/starboard asymmetry of up to ±1.7 mm model (±53 mm full scale) at the ends.",
+   "evidence": "Centreline from section cuts (z 50-75 mm model) at 15 x-positions:\n- At 44 deg: offsets from -1.77 to +1.71 mm.\n- At 45 deg: within ±0.1 mm. A fine search (0.05 deg steps) has its minimum at 45.0.\n\nWith 44 deg, the hull-vs-analytic half-breadth error was bimodal (±72 mm full scale at x≈500). With 45 deg it drops to a few mm.",
+   "where": "export/stl/01_skrog.stl placement (build.py best_bed_angle).",
+   "visual_impact": "low",
+   "on_screen_only": true,
+   "fix": "Use -45 deg when un-rotating 01_skrog.stl in analysis scripts, or fit the angle. Re-check any earlier overlay or half-breadth comparison that used 44.",
+   "effort": "small",
+   "risk": "None for the model; this concerns analysis only.",
+   "keeps_measured_lines": true
+  }
+ ],
+ "images": [
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/surface/fig2_render_sheet.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/surface/fig1_crease_map.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/surface/fig3_tessellation.png",
+  "C:/Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/surface/fig4_ripple_strake.png"
+ ]
+}

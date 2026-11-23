@@ -1,0 +1,23 @@
+  advarsel: rundede akterspeilhjoerner feilet (hjoernet ligger utenfor parkeringen ved z = -150); bruker skarpe
+  skrog loftet               1s
+  kjol                       1s
+Traceback (most recent call last):
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\work\integrate\build_brep.py", line 12, in <module>
+    w = B.build_hull(hollow=True, n_stations=nst)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users/stig/Documents/GitHub/HR26-modell-v10\hr26\build.py", line 102, in build_hull
+    w = robust_union(w, H.rubbing_strake(), "fenderlist")
+                        ^^^^^^^^^^^^^^^^^^
+  File "C:\Users/stig/Documents/GitHub/HR26-modell-v10\hr26\hull.py", line 288, in rubbing_strake
+    pts, nrm = _strake_path()
+               ^^^^^^^^^^^^^^
+  File "C:\Users/stig/Documents/GitHub/HR26-modell-v10\hr26\hull.py", line 194, in _strake_path
+    plan = _stern_plan(zs) if P.TRANSOM_CORNER_L > 0.0 else None
+           ^^^^^^^^^^^^^^^
+  File "C:\Users/stig/Documents/GitHub/HR26-modell-v10\hr26\hull.py", line 495, in _stern_plan
+    pl = np.array(_stern_plans())
+                  ^^^^^^^^^^^^^^
+  File "C:\Users/stig/Documents/GitHub/HR26-modell-v10\hr26\hull.py", line 479, in _stern_plans
+    raise RuntimeError("hjoernet ligger utenfor parkeringen ved z = %.0f" % z)
+RuntimeError: hjoernet ligger utenfor parkeringen ved z = -150
+exit 1

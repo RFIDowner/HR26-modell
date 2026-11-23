@@ -1,0 +1,14 @@
+loft built in 2.1s, volume 18.781 m3, faces 5, edges 9
+edge 0: x 4-7769, y sign +0, max|dy| 1340.4 max|dz| 1622.4, len 8422
+edge 2: x 4-7851, y sign +1, max|dy| 8.4 max|dz| 0.3, len 8151
+edge 4: x 4-7851, y sign -1, max|dy| 8.4 max|dz| 0.3, len 8151
+waterline z=-300.0: 1179 pts, x 2210-7549
+waterline z=-150.0: 1444 pts, x 1322-7784
+waterline z=150.0: 1578 pts, x 805-7828
+waterline z=400.0: 1632 pts, x 577-7864
+waterline z=700.0: 1692 pts, x 344-7908
+waterline z=900.0: 1736 pts, x 202-7937
+buttock y=300.0: 3320 pts
+buttock y=600.0: 2942 pts
+buttock y=900.0: 2433 pts
+done 143.1s

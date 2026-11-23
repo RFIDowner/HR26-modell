@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .venv/
 export/step/
+export/visning/
 
 # Bilder av den ekte baaten og alt som er laget av dem (utsnitt, overlegg,
 # poengkort med foto) ligger bare lokalt, aldri paa GitHub (14.11.2026).
@@ -97,3 +98,4 @@ v10/rapporter/13nov_nye/n1_overlay.png
 v10/rapporter/13nov_nye/n4_overlay_etter.png
 v10/rapporter/13nov_nye/n4_overlay_foer.png
 v10/rapporter/13nov_nye/n6_overlay.png
+v10/arbeid/v10/score/out/s13_massiv_score.png

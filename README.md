@@ -98,6 +98,37 @@ vinduet står full veggtykkelse igjen (`hull_windows` gir uthulingen et
 `keep`-volum). Tidligere versjoner hadde vinduet i en ruffside 450 mm inne på
 dekket; det var feil.
 
+**Merk om kanten (V10 trinn 8, 14.11.2026):** bildene av båten viser at
+dekkskanten ligger 36–44 mm høyere over vinduet enn brosjyreprofilen ble lest
+til (`DECK_EDGE_Z`). Vinduet står der det sto: fra 3 580 til 5 150 mm, med
+underkanten 50 mm over listens senter og overkanten 86 mm (forut) og 70 mm
+(akter) under dekkskanten. Aktenfor vinduet slutter skrogsiden i en knekk som
+faller fra dekkskanten til ca. 135 mm over listen (`KNUCKLE_Z`). Linjene lagt
+over to av bildene ligger i `v10/rapporter/13nov_kant/`.
+
+**Merk om gangbordet (V11, 14.11.2026):** V10 hadde en skrå skulder (40°) fra
+knekken opp til karmen og akterdekket, og rekkepålene akter sto i skråningen.
+Den finnes ikke på båten. Gangbordet er flatt i knekkens høyde, fra
+skrogsiden inn til en nesten loddrett kant (85°) med rundet overkant
+(R 40 mm) opp til karmen og akterdekket. Bak sprayhoodens bein er det ca.
+170 mm bredt; fra vinsjen og akterover bare 45–55 mm (V11b, eierens bilde),
+så vinsjen står på flat karmtopp. Gangbordet går rundt hjørnet og tvers over
+akterspeilet, der det er 110 mm dypt. Akterklampen henger loddrett på kantens
+utside, med 45° fas under (printes uten støtte). Langs ruffen og
+sprayhoodens bein går kanten bare opp til dekket, så lokket passer som før.
+Alt er ett kutt (`hr26/gangbord.py`). Bilder: `v10/rapporter/14nov_gangbord/`.
+
+**Merk om magen (V10 trinn 9, 14.11.2026):** på båten er buken under vann
+rund og full, «som en stor pølse» (IMG_9395, IMG_9389). Modellen smalnet inn
+fra vinduets forkant, med en midje i vannlinjene ved 4,7–6 m. Spantene
+mellom 3 578 og 6 996 mm har fått tillegg til bunnreisning, slag og utfall
+(`BELLY_*` i `params.py`), så vannlinjene er jevne uten midje. Buken er
+5–8 cm fyldigere under vann ved 4,7–5,0 m. Det største spantet og alt foran
+vinduet og aktenfor ca. 7 m er uendret. Halvbreddeplan og spantriss før og
+etter ligger i `v10/rapporter/14nov_mage/`. Før og etter som STL, med et
+snitt ved 4,85 m, lages med `v10/verktoy/foto/py/mage_stl_sammenlign.py`
+(filene havner i `export/visning/`).
+
 **Merk om fenderlisten:** listen er en list utenpå skrogsiden, 95 mm høy og
 55 mm utstikkende (`STRAKE_*`), bygget som en loft langs den målte senter-
 linjen (`strake_z_mm` i `data/hull_stations.csv`). Den ligger *under*
@@ -123,18 +154,40 @@ akterspeil 1 331 mm bredt med skarpe hjørner.
 **Merk om cockpitbrønnen:** brønnen følger dekkskanten 290 mm innenfor langs
 sidene (`COCKPIT_INSET`) og hekkens runding akterover etter den målte tabellen
 `COCKPIT_AFT`, fram til en nesten rett bakkant ved 7 735 mm — som i
-dekksplanen, der brønnen følger hekkens kurve hele veien rundt. Karmen
-(`COAMING_TOP_Z`) faller fra 1 190 mm over vannlinjen ved forkanten til den
-går i ett med dekket ved 6 800–6 900. Overlegget under viser modellens
+dekksplanen, der brønnen følger hekkens kurve hele veien rundt. Karmtoppen
+(`COAMING_TOP_Z`) faller fra 1 190 mm over vannlinjen ved forkanten til
+1 084 mm helt akter. Fra et trinn opp fra sidedekket ved 6 000 mm
+(`AFTDECK_X0`) går den ut til kanten over gangbordet og videre som akterdekk
+rundt brønnen (V11; i V10 trinn 8 skrånet den ned mot knekken og
+akterspeilet, og før det gikk karmen i ett med dekket ved 6 800–6 900). Overlegget under er fra før V10 og viser modellens
 dekksutlinje (rødt) og brønnen (blått, snitt 850 mm over vannlinjen) på
 dekksplanen 1:50.
 
 ![Modellens dekksutlinje og brønn lagt over dekksplanen 1:50](docs/images/overlegg-plan.jpg)
 
-**Merk om deplasementet:** modellen har et beregnet undervannsvolum på ca. 3,9 m³,
-mens brosjyren oppgir 2,5 tonn. Avviket kommer av at profiltegningen gir en
-forholdsvis dyp og flat kanobunn. For en utstillingsmodell betyr det ingenting —
-formen er hentet fra tegningen — men tallet skal ikke brukes til hydrostatikk.
+**Merk om formen under vann (V10, 13.11.2026):** bildene av båten går foran
+tegningene når de er uenige. Akterfra (IMG_9391) smalner bunnen inn som bunnen
+av et hjerte, med V-bunn og en hul overgang (dødtre) inn mot roret
+(`DEADWOOD_H`, `DEADWOOD_W`, `SECTION_DEADRISE`, `SECTION_N`). Formen er
+tilpasset bildene akterfra og forfra samtidig (`v10/verktoy/foto/py/opt_hjerte.py`).
+Kanobunnen har nå ca. 2,5 m³ under vannlinjen (før 3,7). Med kjøl og ror er
+modellen fortsatt noe fyldigere enn deplasementet på Enderleins tegning
+(2,36 m³), så tallet skal ikke brukes til hydrostatikk.
+
+Forstevnen er rett (ca. 51° mot vannlinjen, målt på IMG_9370), og
+fenderlisten buer 42 mm opp midt på akterspeilet (IMG_9391).
+
+Akterspeilet er en spiss V med skarpt hjørne mot låringene, slik eieren
+markerte det på IMG_9391 og et uavhengig kantsøk bekreftet: ca. 1,1 m bredt
+0,2 m over vannlinjen, ca. 0,4 m i vannlinjen og 8–14 cm ved roret
+(`v10/verktoy/foto/py/opt_hjorne.py`, `TRANSOM_CORNER_L` = 0). Kanobunnen har
+nå ca. 2,4 m³ under vannlinjen. Modellens vannlinje stemmer med vannflaten der
+båten flyter (IMG_9370), innen ±2 cm.
+
+Forkroppen under vann er målt i bildene fra siden og nedenfra (IMG_9374, 9387
+og 9395). Bunnlinjen faller jevnt fra forfoten ned i kjølen, 20–45 mm dypere
+enn tegningens spor fra 1,4 til 3 m bak baugen (`BOTTOM_PHOTO_DZ`), med en stor
+hulkil ved kjølens forkant. Det er ingen finne foran kjølen.
 
 ---
 
@@ -158,6 +211,20 @@ Alle mål ligger øverst i `hr26/params.py`. Vil du ha en annen målestokk er de
 nok å endre `SCALE` — alt annet følger med, inkludert veggtykkelser og hull­
 diametre, som er definert i modell-millimeter og ganget opp.
 
+### Se hele modellen satt sammen
+
+```
+python tools/memcap.py --gb 3 --lock -- python tools/sammensetning.py
+```
+
+lager `export/visning/hr26_sammensatt.stl`: skrog, ruff-tak, ror, mast med
+beslag, bom, rekkepåler, stativ og skilt i én fil i 1:30, stående på stativet
+(272 × 146 × 475 mm). Den er bare til å se på i en STL-viser eller sliceren,
+ikke til print. Skroget hentes fra `export/stl/01_skrog.stl`, så det tar et
+halvt minutt. `--uten-lokk` viser kahytten, `--uten-rigg` og `--uten-stativ`
+gir bare skroget, og `--seil` setter på bommen med surret seil. Pulpit,
+pushpit og livliner er ikke med. Fila sjekkes ikke inn.
+
 ### Moduler
 
 | Fil | Ansvar |
@@ -175,18 +242,21 @@ diametre, som er definert i modell-millimeter og ganget opp.
 | `build.py` | setter sammen, orienterer for print, eksporterer. Boolske operasjoner som ikke gir ett volum stopper bygget i stedet for å miste deler i stillhet |
 | `tools/render.py` | kontrollbilder av STL |
 | `tools/meshcheck.py` | sjekker at STL-ene er lukkede |
+| `tools/sammensetning.py` | én STL med alle delene satt sammen, bare til å se på |
 
 ---
 
 ## Delene
 
-Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
-1,24 g/cm³ — legg til litt for støtte og skjørt.
+Seksten filer i `export/stl/`. Materialtallene er reell geometri ganget med
+1,24 g/cm³ — legg til litt for støtte og skjørt. Skroget og ruff-taket har
+massive partier (innredningen og lokket) som printes med glissent fyll, så de
+bruker en god del mindre plast enn tallet sier; se slicerens anslag.
 
 | # | Fil | Mål (mm) | PLA |
 |---|---|---|---|
-| 01 | `01_skrog.stl` | 205,9 × 205,9 × 104,8 | 228 cm³ / 283 g |
-| 02 | `02_ror.stl` | 34,5 × 3,2 × 16,4 | 1,0 cm³ / 1 g |
+| 01 | `01_skrog.stl` | 205,5 × 205,5 × 89,2 | 317 cm³ geometri, mindre med fyll |
+| 02 | `02_ror.stl` | 73,8 × 3,5 × 23,0 | 2,1 cm³ / 3 g |
 | 03 | `03_mast-354mm-A1.stl` | 354,1 × 4,0 × 3,0 — ligger diagonalt, 253,2 × 253,2 | 3,3 cm³ / 4 g |
 | 04 | `04_mast-365mm-ikke-A1.stl` | 365,1 × 4,0 × 3,0 | 3,4 cm³ / 4 g |
 | 05 | `05_mastefot.stl` | 9,7 × 8,1 × 4,5 | 0,1 cm³ |
@@ -196,40 +266,83 @@ Femten filer i `export/stl/`. Materialtallene er reell geometri ganget med
 | 09 | `09_bom-med-seil.stl` | 100,0 × 10,0 × 8,6 | 3,6 cm³ / 4 g |
 | 10 | `10_rekkepaaler.stl` | 24,9 × 54,4 × 1,6 | 0,5 cm³ |
 | 11 | `11_boyemal.stl` | 46,0 × 34,0 × 9,0 | 4,8 cm³ / 6 g |
-| 12 | `12_stativ-vugge1.stl` | 79,7 × 94,6 × 6,0 | 36,0 cm³ / 45 g |
-| 13 | `13_stativ-vugge2.stl` | 77,1 × 106,4 × 6,0 | 37,0 cm³ / 46 g |
+| 12 | `12_stativ-vugge1.stl` | 80,1 × 95,6 × 6,0 | 36,1 cm³ / 45 g |
+| 13 | `13_stativ-vugge2.stl` | 77,2 × 106,8 × 6,0 | 38,0 cm³ / 47 g |
 | 14 | `14_stativ-bjelke.stl` | 140,7 × 70,0 × 14,0 | 56,9 cm³ / 71 g |
 | 15 | `15_skilt.stl` | 104,0 × 46,0 × 3,7 | 14,7 cm³ / 18 g |
+| 16 | `16_ruff-tak.stl` | 125,3 × 74,6 × 20,5 | 60,6 cm³ geometri, mindre med fyll |
 
 **03 og 04 er alternativer, og 08 og 09 er alternativer** — print én av hver.
-Til sammen blir det rundt **380 cm³, altså ca. 470 g PLA**: skroget 283 g,
-stativet 161 g, resten under 35 g. Én rull på 1 kg holder med god margin.
+Stativet er 163 g og de små delene under 35 g. Skroget og ruff-taket avhenger
+av fyllet (se under). Én rull på 1 kg holder med god margin.
 
 ### Slik printes hver del
 
 **01 Skrog** — den store jobben, 12–16 timer.
 * Ligger ferdig orientert: kjølen ned, rotert 45°, 206 × 206 mm av platen.
-* **Infill 0 %.** Skroget er uthult med minst 1,5 mm vegg (1,9 mm nominelt,
-  3,4 mm i baugkilen), og innvendige spant hver 26 mm bærer dekket. Setter du
-  infill blir det bare tyngre og tregere. Innsiden er skrogsnittet flyttet
-  innover langs normalen med litt margin, så veggen holder tykkelsen også der
-  skroget er en tynn kile — den gamle, skalerte innsiden ga 0,2–0,5 mm vegg i
-  baugen og et hull i stevnen ved vannlinjen.
-* Støtte på, bare under skroget ved baug og hekk. Ingen støtte trengs oppe:
-  dekket og cockpitgulvet spenner mellom spantene (26 mm), det broer PLA fint.
-* Lag 0,12–0,16 mm. Ingen brim — kjølen gir god vedheft, og det er plass til
-  brim om du vil ha det.
+* **Infill 15 % (gyroid eller grid).** Midt i skroget er kahytten med
+  innredningen (V10): durk, køyer, sofaer, bysse, skott og skap er massivt
+  materiale som står på fyllet under seg. Forut og akter er skroget uthult med
+  2 mm vegg og innvendige spant hver 26 mm; der er hulrommene lukkede, så
+  slicerens fyll havner ikke i dem.
+* **Støtte bare fra platen** («kun på plate»). Da får skrogbunnen ved baug og
+  hekk og det store hjørnet nederst på kjølens forkant støtte, men ingenting
+  kommer inn i kahytten. Inne i kahytten heller alle tak 45° eller mindre.
+  Det eneste som bygger bro er sidedekket over de åpne vinduene, ca. 42 mm.
+  Henger broen, sett `WIN_TIE = True` i `hr26/params.py` og bygg på nytt: da
+  får hvert vindu en tynn støtte midt i som skjæres bort etterpå.
+* Lag 0,12 mm gir renest skjøt mot ruff-taket (kragen under taket heller
+  1,9°). Ingen brim — kjølen gir god vedheft.
 * Vil du ha rødt bunnstoff: fargeskift på **46,7 mm**, som er vannlinjen.
+  Ferdig Bambu-prosjekt: `export/3mf/01_skrog_farger.3mf` (rødt fra kjølen,
+  sort stripe fra 46,76 mm, hvitt fra 50,6 mm; tre-støtte bare fra platen,
+  15 % fyll, 0,12 mm lag). Lag det på nytt etter et nytt skrog med
+  `python tools/lag_3mf.py`.
 
-**02 Ror** — printes liggende, 3 mm tykt. Støtte av. Forkanten følger
-akterspeilets helning, og de to tappene på den passer i hullene i akterspeilet
-rett under vannlinjen.
+**Prøvebiter først (V10).** `export/test/` har tre små biter skåret ut av de
+ferdige delene (lag dem på nytt med `python tools/proevebiter.py`):
+`test-vindusbro.stl` (62 × 15 × 15 mm, stående med brim) viser om
+sidedekket klarer broen over det åpne vinduet, og `test-lokk-skrog.stl` +
+`test-lokk-tak.stl` (23 × 60 × 5–6 mm) viser om taket glir ned over kanten. En
+times print før en på 16.
+
+**16 Ruff-tak** — taket på ruffen er et eget lokk (V10), med luker, ventil og
+sprayhood. Løftes det av, ser man ned i kahytten.
+* Ligger ferdig orientert på skjøteflaten, som er plan. **Ingen støtte.**
+* Infill 15 %. Lokket er massivt med et spor i undersiden som tres ned over
+  en 1,0 × 1,1 mm kant rundt åpningen i dekket, med 0,22–0,25 mm klaring.
+  Går det tregt, puss kanten lett. Lokket skal ikke limes.
+
+**02 Ror** — printes liggende på bakkanten, 3–3,5 mm tykt og 23 mm høyt.
+Støtte av, brim på (bakkanten er smal). Fra V12 (15.11.2026) går roret fra
+bunnen og opp langs akterspeilet til et rorhode ca. 4 mm over akterdekket,
+som på båten, og under skroget stikker den nedre delen ca. 9 mm fram under
+dødtreet. Bunnen stiger forover og runder inn i forkanten. Hjørnet øverst
+akter har høyst 45° overheng. Forkanten følger akterspeilets helning med
+0,5 mm klaring, og de to tappene passer i de samme hullene som før, rett
+under vannlinjen. Hodet har et hakk der fenderlisten går tvers over
+akterspeilet, så roret passer på skrog som alt er printet.
+
+Med farger printes roret stående, som på båten:
+`export/3mf/02_ror_farger.3mf` (`python tools/lag_3mf.py ror`).
+* Rødt fra bunnen, sort stripe fra 33,92 mm og hvitt fra 37,76 mm, i samme
+  høyde over vannlinjen som stripa på skroget.
+* Brim 8 mm. Bare ca. 7 × 2 mm av bunnen ligger på platen.
+* Tre-støtte bare fra platen, under bunnen som stiger forover.
+* Arachne-vegger og 0,12 mm lag.
+* Korden ligger langs platens bevegelse (y), så A1-en rister roret på den
+  stive leden.
+* Tappene og taket i hakket for listen printes uten støtte. Det er korte
+  utheng under 1,3 mm.
+* Roret er 74 mm høyt og bare 3,5 mm tykt. Følg med på de første
+  millimeterne og hodet, og senk hastigheten hvis det vipper.
 
 **03 Mast, 354 mm, for A1** — ligger allerede diagonalt og fyller
 253,2 × 253,2 mm av platen. Uten sokkel: den limes bare i mastefot-beslaget.
 Ingen plass til brim. Se «Masten».
 
-**04 Mast, 365 mm, ikke A1** — med 11 mm sokkel ned i ruffen. Trenger en
+**04 Mast, 365 mm, ikke A1** — med 11 mm sokkel gjennom ruff-taket og ned i
+mastestøtten i kahytten. Trenger en
 plate med minst 365 mm langs én akse eller 261 × 261 mm diagonalt. Se «Masten».
 
 **05–08 Riggbeslag** — små, flate, ligger rett på platen. Ingen støtte.
@@ -260,7 +373,7 @@ lettelseshull. 15 % infill holder. Tre vuggene ned på tappene.
 * **Livliner:** tynt tauverk eller tråd, opptil 0,4 mm. Tres gjennom øynene på
   rekkepålene — se under.
 
-Rekkepålene printes (del 08) og trenger ikke messingtråd.
+Rekkepålene printes (del 10) og trenger ikke messingtråd.
 
 ---
 
@@ -387,13 +500,21 @@ Hullene i dekket er 1,1 mm. Vil du heller bruke messingtråd til pålene, passer
 
 * Orientering: stående, kjølen ned — STL-en ligger allerede riktig.
 * Plassering: rotert 45°, opptar 206 × 206 mm av platen.
-* Støtte: **bare under skroget**. I Bambu Studio: støttetype «tre (auto)»,
-  «kun på plate» avslått er ikke nødvendig — kjølen står på platen, og det
-  eneste som trenger støtte er den lille undersiden ved hekk og baug.
-* Skroget er allerede uthult med minst 1,5 mm vegg og innvendige spant hver 26 mm.
-  **Sett infill til 0 %** — spantene bærer dekket.
-* Lag: 0,12–0,16 mm. Fin dyse (0,2 mm) gir tydeligere fenderlist og vinduer.
+* Støtte: **bare fra platen**. I Bambu Studio: støttetype «tre (auto)» og
+  «kun på plate» på. Kjølen står på platen; undersiden ved hekk og baug og
+  kjølens nedre forkant trenger støtte, kahytten ikke.
+* Infill 15 %: innredningen i kahytten står på fyllet. Forut og akter er
+  skroget uthult med 2 mm vegg og spant hver 26 mm.
+* Støtte bare fra platen, så ingenting kommer inn i kahytten.
+* Dyse 0,4 mm og lag på 0,12 mm, eller variabel laghøyde (0,08–0,16). Det er
+  laghøyden som gjør skroget glatt og kantene skarpe. En 0,2-dyse gir lite
+  mer på skroget og tar flere ganger så lang tid; bruk den eventuelt til
+  rekkepålene og de minste delene. 0,8 mister fenderlisten og gangbordkanten.
 * Ingen brim nødvendig; kjølen gir god vedheft. Vil du ha brim, er det plass.
+
+**Ruff-taket (16)**
+
+Ligger på skjøteflaten. Ingen støtte, 15 % infill.
 
 **De små delene**
 
@@ -433,13 +554,8 @@ Legger du inn et **fargeskift på 3,0 mm** i Bambu Studio, kommer teksten ut i
 en annen farge enn platen — svart tekst på hvit plate ser bra ut, og på A1
 er det bare å bytte rull manuelt når printeren stopper.
 
-Båtens navn står også **i relieff på akterspeilet**, 0,35 mm opphøyd, slik
-en Hallberg-Rassy bærer navnet sitt. Akterspeilet heller 8°, så bokstavene
-står med et lite utheng oppover — det printes fint uten støtte. Bokstavene
-følger akterspeilets bue, så relieffet er like høyt over hele navnet.
-
-Navnet ligger i `BOAT_NAME` i `hr26/params.py` og brukes begge steder. Sett
-det til `""` for å droppe det. Resten av skiltteksten ligger i
+Navnet står bare på skiltet, ikke på akterspeilet (eierens ønske i V10;
+`NAME_ON_TRANSOM = False`). Det ligger i `BOAT_NAME` i `hr26/params.py`. Resten av skiltteksten ligger i
 `hr26/plaque.py` som `TYPE_LINE`, `LINES` og `SCALE_LINE`.
 
 ---
@@ -447,43 +563,47 @@ det til `""` for å droppe det. Resten av skiltteksten ligger i
 ## Montering
 
 1. Rens hullene i dekket med et 1,6 mm bor for hånd.
-2. Klipp rekkepålene av sprua (del 08), puss tappen flat, og lim dem i hullene.
+2. Klipp rekkepålene av sprua (del 10), puss tappen flat, og lim dem i hullene.
    Sørg for at øynene peker for-akter, ellers går ikke livlinene gjennom.
 3. Bøy pulpit og pushpit av 1,0 mm messingtråd rundt tappene på bøyemalen
-   (del 09) og lim dem i.
-4. Lim mastefoten i utsparingen i ruffen.
+   (del 11) og lim dem i.
+4. Lim mastefoten i utsparingen på ruff-taket (del 16). Lokket tres ned over
+   kanten rundt åpningen i dekket og limes ikke, så det kan løftes av.
 5. Tre salingen på masten til ca. 213 mm over foten, og masttoppen i enden.
    Alle beslagene er ovale og kan bare tres på én vei — lang akse for-akter.
-6. Sett masten i foten. Stag og vant: tynn tråd fra masttoppen til
+6. Sett masten i foten. A1-masten står i mastefoten på lokket og følger med
+   når lokket løftes av; 365-masten går gjennom lokket og ned i mastestøtten. Stag og vant: tynn tråd fra masttoppen til
    rekkepåle­festene.
 7. Roret: tappene passer i de to hullene i akterspeilet, rett under
-   vannlinjen. Forkanten skal ligge parallelt med akterspeilet.
+   vannlinjen. Forkanten skal ligge parallelt med akterspeilet, og
+   fenderlisten går inn i hakket i rorhodet. Lim tappene, og eventuelt en
+   dråpe mellom hodet og akterspeilets overkant.
 8. Tre livlinene gjennom øynene, stram lett, og lim endene i pulpit og pushpit.
 
 ---
 
 ## Videre arbeid
 
-* Cockpiten er forenklet — brønnen har bunn og vegger og følger hekkens
-  runding, men ingen brodekk, benker eller luker.
-* Roret er bare bladet under vannlinjen. På originalen går rorhodet opp til
-  dekkshøyde, med rorkulten inn over akterdekket.
+* Cockpiten har seter, fotbrønn og brodekk (V10 trinn 7), men ingen luker i
+  setene. Dekkskanten ved vinduet, knekken, karmen og akterdekket («kanten»)
+  er lagt inn i V10 trinn 8, gangbordet og den loddrette kanten i V11.
+  Kanten opp til karmen er rundet; knekken (skrogsiden mot gangbordet) er
+  skarp, og på båten er den trolig litt rundet.
+* Rorkulten mangler. Rorhodet går opp over akterdekket (V12), og på båten er
+  kulten boltet på toppen av det og går forover over akterdekket.
 * Sprayhooden er massiv. En ekte kalesje er åpen bakover, men i 1:30 ville
   veggene blitt under en halv millimeter. Frontvinduet er utelatt av samme
   grunn — skjæres det dypt nok til å synes, blir det en tunnel tvers gjennom.
   Males heller inn.
-* Ruffens front er en rett 45°-flate. På originalen er den avrundet.
-* Rundt akterdekket har tegningen en lav kant — karmen fortsetter rundt
-  hekken, men under 50 mm høy etter profilen (under 2 mm i 1:30), med
-  pushpiten oppå. Den er utelatt; karmen slutter der den går i ett med dekket
-  (6 900 mm), og akterdekket ligger i dekkshøyde.
-* Ruffen er massiv over dekket; skroget er uthult bare under dekket. Det
-  koster noen gram plast, men gir en stiv og enkel print.
-* Ingen innredning. Skroget er uthult, så den kan legges til senere.
-* Skroget har 4 ikke-manifolde kanter av 214 000 — rester etter boolske
-  operasjoner rundt utsparingene. Bambu Studio reparerer dette automatisk ved
-  import. Alle øvrige deler er helt lukkede. Kjør
-  `python tools/meshcheck.py export/stl/*.stl` for å se status.
+* Gangbordets dybde over akterspeilet (110 mm) er et anslag fra kant.jpeg.
+  Et mål med målebånd fra akterspeilets overkant til kanten opp til
+  akterdekket gjør det sikkert (`WALK_W_AFT`).
+* Bildene øverst i denne fila og overleggene på tegningene er fra før V10.
+* Formen under vann akter følger bildene (V10, 13.11). Et mål med
+  målebånd ved båten kan bekrefte den; se `V10.md`.
+* Alle deler er lukkede nett; eksporten fjerner trekanter med null areal og
+  tetter hull på én trekant.
+  Kjør `python tools/meshcheck.py export/stl/*.stl` for å se status.
 
 ### Plass til større målestokk
 

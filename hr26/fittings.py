@@ -17,13 +17,30 @@ CLEAR = 0.10 * P.SCALE          # klaring paa hulldiameter (0,10 mm i modell)
 HOLE_DEPTH = 7.0 * P.SCALE      # 7 mm dypt i modellen
 
 
+def _surface_z(x: float, y: float) -> float:
+    """Flaten hullet gaar ned fra: gangbordet der det er (V11), ellers dekket."""
+    if getattr(P, "WALK", False):
+        from . import gangbord as G
+        return G.surface_z(x, y)
+    return D.deck_z(x, y)
+
+
+def _hole_y(x: float, inset: float, r: float) -> float:
+    """Hullets halvbredde: `inset` fra dekkskanten, eller (V11b) inne paa
+    akterdekket der gangbordet er for smalt til hullet."""
+    if getattr(P, "WALK", False):
+        from . import gangbord as G
+        return G.hole_y(x, inset, r)
+    return C.deck_half_breadth(x) - inset
+
+
 def _pin_hole(x: float, y: float, dia: float, depth: float = HOLE_DEPTH):
-    z = D.deck_z(x, y)
+    z = _surface_z(x, y)
     return (
         cq.Workplane("XY")
         .workplane(offset=z - depth)
         .circle(0.5 * dia)
-        .extrude(depth + 40.0)
+        .extrude(depth + 160.0)      # opp gjennom skulderen og akterdekket (V10 trinn 8), foer + 40
         .translate((x, y, 0.0))
     )
 
@@ -33,10 +50,15 @@ def stanchion_holes() -> cq.Workplane:
     out = None
     d = P.STANCHION_D + CLEAR
     for x in P.STANCHION_X:
-        hb = C.deck_half_breadth(x)
-        y = hb - P.STANCHION_INSET
+        y = _hole_y(x, P.STANCHION_INSET, 0.5 * d)
+        depth = HOLE_DEPTH
+        if getattr(P, "CABIN", False) and P.WIN_X0 - 60.0 <= x <= P.WIN_X1 + 60.0:
+            # over et aapent vindu (kahytt): blindhull i vindusoverkanten, som
+            # bare er dekkets tykkelse; et 7 mm hull ville gaatt ut i vinduet
+            depth = max(1.0 * P.SCALE,
+                        D.deck_z(x, y) - (C.sheer_z(x) - P.DECK_THICK) - 0.5 * P.SCALE)
         for sign in (1, -1):
-            h = _pin_hole(x, sign * y, d)
+            h = _pin_hole(x, sign * y, d, depth)
             out = h if out is None else out.union(h)
     return out
 
@@ -47,8 +69,7 @@ def pulpit_holes() -> cq.Workplane:
     d = P.STANCHION_D + CLEAR
     for xs in (P.PULPIT_X, P.PUSHPIT_X):
         for x in xs:
-            hb = C.deck_half_breadth(x)
-            y = max(hb - P.STANCHION_INSET, 60.0)
+            y = max(_hole_y(x, P.STANCHION_INSET, 0.5 * d), 60.0)
             for sign in (1, -1):
                 h = _pin_hole(x, sign * y, d)
                 out = h if out is None else out.union(h)
@@ -72,68 +93,163 @@ def mast_step() -> cq.Workplane:
     )
 
 
-def winch_pads() -> cq.Workplane:
-    """Sokler for selvhalende vinsjer paa cockpitkarmen."""
+def winches() -> cq.Workplane:
+    """Vinsjene midt paa cockpitkarmen: en lav sokkel og en trommel med
+    kuppel paa toppen, dreid som en virkelig vinsj. Smaa nok til aa staa
+    paa karmen uten aa bli skaaret av bronnen."""
     out = None
+    x = P.WINCH_X
+    z = D.coaming_top_z(x)
+    yi, yo = D.cockpit_half_width(x), D.coaming_half_width(x)
+    # 8 mm fra karmens kanter: med 2 mm sto sokkelen nesten tangent mot
+    # karmens innervegg, og OCC laget en sprekk der (aapent nett, 13.11.2026)
+    rb = min(0.5 * P.WINCH_BASE_D, 0.5 * (yo - yi) - 8.0)
+    rd = min(0.5 * P.WINCH_DRUM_D, rb - 8.0)
     for sign in (1, -1):
-        y = sign * (C.deck_half_breadth(P.WINCH_X) - P.WINCH_INSET)
-        z = D.coaming_top_z(P.WINCH_X)
-        pad = (
-            cq.Workplane("XY")
-            .workplane(offset=z - 160.0)
-            .circle(150.0)
-            .extrude(350.0)
-            .faces(">Z")
-            .chamfer(35.0)
-            .translate((P.WINCH_X, y, 0.0))
+        y = sign * 0.5 * (yi + yo)
+        base = (
+            cq.Workplane("XY").workplane(offset=z - 30.0)
+            .center(x, y).circle(rb).extrude(30.0 + 0.16 * P.WINCH_H)
         )
-        out = pad if out is None else out.union(pad)
+        base = _round_top(base, 0.4 * (0.16 * P.WINCH_H + 30.0))
+        drum = (
+            cq.Workplane("XY").workplane(offset=z - 10.0)
+            .center(x, y).circle(rd).extrude(10.0 + P.WINCH_H)
+        )
+        drum = _round_top(drum, 0.45 * rd)
+        w = base.union(drum)
+        out = w if out is None else out.union(w)
     return out
 
 
+
+def _round_top(wp: cq.Workplane, r: float) -> cq.Workplane:
+    """Fillet paa overkanten av en fri kloss; feiler den, beholdes kanten."""
+    try:
+        out = wp.faces(">Z").edges().fillet(r)
+        if out.val().isValid():
+            return out
+    except Exception:  # pragma: no cover
+        pass
+    return wp
+
+
+def _cleat(x: float, y: float) -> cq.Workplane:
+    """Hornklamp langs baaten: en lav fot og to horn med skraa underside
+    (printes uten stoette). Sideprofilen er en lukket spline; klampen loftes
+    gjennom profilen skalert ned mot sidene, saa alle kanter blir runde uten
+    fillet (fillet paa de korte kantene ga hull i STL-en)."""
+    L, W, H = P.CLEAT_L, P.CLEAT_W, P.CLEAT_H
+    z = min(D.top_z(x, y - 0.5 * W), D.top_z(x, y + 0.5 * W))
+    a = 0.5 * L
+    half = [(0.0, -25.0), (0.18 * L, -25.0), (0.22 * L, -10.0), (0.22 * L, 0.13 * H),
+            (0.29 * L, 0.3 * H), (0.39 * L, 0.45 * H), (0.48 * L, 0.6 * H), (a, 0.77 * H),
+            (0.49 * L, 0.93 * H), (0.42 * L, H), (0.22 * L, 1.01 * H), (0.0, 1.02 * H)]
+    prof = half + [(-px, pz) for (px, pz) in reversed(half[1:-1])]
+    r = min(9.0, 0.3 * W)                    # kantradius
+    cz, hx, hz = 0.5 * (H - 25.0), a, 0.5 * (H + 25.0)
+    e = 0.5 * W - r
+    wires = []
+    for yy in (-(e + 0.95 * r), -(e + 0.6 * r), -e, 0.0, e, e + 0.6 * r, e + 0.95 * r):
+        u = max(0.0, abs(yy) - e)
+        s = r - math.sqrt(max(r * r - u * u, 0.0))      # krymp mot sidene
+        sx, sz = (hx - s) / hx, (hz - s) / hz
+        sp = cq.Edge.makeSpline([cq.Vector(x + px * sx, y + yy, z + cz + (pz - cz) * sz)
+                                 for px, pz in prof], periodic=True)
+        wires.append(cq.Wire.assembleEdges([sp]))
+    return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=False)])
+
+
+def _cleat_on_wall(x: float, sign: int) -> cq.Workplane:
+    """V11b: akterklampen («fortoeyningssnurren») paa utsiden av veggen opp
+    til akterdekket, med lengden langs baaten og hornene utover. Hornprofilen
+    ligger i lagplanet; undersiden har en 45 graders fas ned mot veggen
+    (utstikket krymper like mye som snittet senkes), saa klampen printes uten
+    stoette. Oversiden er avrundet. Foten gaar 25 mm inn i veggen."""
+    from . import gangbord as G
+    L, H, W = P.CLEAT_L, P.CLEAT_WALL_OUT, P.CLEAT_WALL_W
+    yf, (tx, ty), (nx, ny), zl, zt = G.wall_frame(x)
+    a = 0.5 * L
+    half = [(0.0, -25.0), (0.18 * L, -25.0), (0.22 * L, -10.0), (0.22 * L, 0.13 * H),
+            (0.29 * L, 0.3 * H), (0.39 * L, 0.45 * H), (0.48 * L, 0.6 * H), (a, 0.77 * H),
+            (0.49 * L, 0.93 * H), (0.42 * L, H), (0.22 * L, 1.01 * H), (0.0, 1.02 * H)]
+    prof = half + [(-px, pq) for (px, pq) in reversed(half[1:-1])]
+    qmax = 1.02 * H
+    # plass paa veggen: fasen over gangbordet, toppen under avrundingen
+    room = (zt - P.WALK_EDGE_R - 5.0) - (zl + 6.0)
+    if room < W + qmax:
+        raise RuntimeError(f"akterklampen faar ikke plass paa veggen ved {x:.0f} ({room:.0f} mm)")
+    zb = zl + 6.0 + qmax + 0.5 * (room - W - qmax)          # klampens underkant (fasen under)
+    zm = zb + 0.5 * W
+    cot = 1.0 / math.tan(math.radians(P.WALK_WALL_ANGLE))
+    yface = yf - (zm - zl) * cot                            # veggflaten midt paa klampen
+    r = min(9.0, 0.3 * W)
+    e = 0.5 * W - r
+    # (hoeyde over klampens senter, skala langs, skala utover om foten q = -25)
+    secs = []
+    for c in (qmax + 12.0, 0.75 * qmax, 0.5 * qmax, 0.25 * qmax, 0.0):   # fasen, nedenfra
+        secs.append((-0.5 * W - c, 1.0, 1.0 - c / (qmax + 25.0)))
+    secs.append((0.0, 1.0, 1.0))
+    for ww in (e, e + 0.6 * r, e + 0.95 * r):                          # avrundet overkant
+        u = max(0.0, ww - e)
+        s = r - math.sqrt(max(r * r - u * u, 0.0))
+        secs.append((ww, (a - s) / a, (qmax + 25.0 - s) / (qmax + 25.0)))
+    wires = []
+    for ww, sp, sq in secs:
+        pts = []
+        for px, pq in prof:
+            p = px * sp
+            q = -25.0 + (pq + 25.0) * sq
+            pts.append(cq.Vector(x + p * tx + q * nx, sign * (yface + p * ty + q * ny), zm + ww))
+        wires.append(cq.Wire.assembleEdges([cq.Edge.makeSpline(pts, periodic=True)]))
+    solid = cq.Solid.makeLoft(wires, ruled=True)
+    if not solid.isValid():
+        raise RuntimeError("ugyldig akterklamp paa veggen")
+    return cq.Workplane("XY").newObject([solid])
+
+
 def cleats() -> cq.Workplane:
-    """Fortoyningsklamper: enkle klosser, gode nok i 1:30."""
+    """Fortoyningsklamper: smaa hornklamper, innenfor dekkskanten. V11b: den
+    aktre henger paa utsiden av veggen (CLEAT_AFT_ON_WALL)."""
     out = None
     for x in P.CLEAT_X:
         hb = C.deck_half_breadth(x)
+        aft = x >= getattr(P, "AFTDECK_X0", 1e9)
         for sign in (1, -1):
-            y = sign * (hb - 150.0)
-            z = D.deck_z(x, y)
-            c = (
-                cq.Workplane("XY")
-                .workplane(offset=z - 280.0)
-                .rect(260.0, 90.0)
-                .extrude(380.0)
-                .edges("|Z")
-                .fillet(40.0)
-                .translate((x, y, 0.0))
-            )
+            if aft and getattr(P, "CLEAT_AFT_ON_WALL", False) and getattr(P, "WALK", False):
+                c = _cleat_on_wall(x, sign)
+            else:
+                inset = P.CLEAT_INSET_AFT if aft else P.CLEAT_INSET
+                c = _cleat(x, sign * (hb - inset))
             out = c if out is None else out.union(c)
     return out
 
 
-def anchor_roller() -> cq.Workplane:
-    """Stevnbeslag med ankerrulle paa fordekket."""
-    x = 430.0
-    z = D.deck_z(x, 0.0)
-    return (
-        cq.Workplane("XY")
-        .workplane(offset=z - 420.0)
-        .rect(520.0, 170.0)
-        .extrude(560.0)
-        .edges("|Z")
-        .fillet(60.0)
-        .translate((x, 0.0, 0.0))
+def stemhead() -> cq.Workplane:
+    """Stevnbeslaget med ankerrullen: et lavt, avrundet beslag som staar paa
+    fordekket bak stevnen. Det gaar bare litt ned i dekket og holder seg
+    innenfor dekkskanten, saa ingenting stikker ut foran eller under stevnen."""
+    x0, x1 = P.STEMHEAD_X
+    w = P.STEMHEAD_W
+    xs = [x0, 0.5 * (x0 + x1), x1]
+    z_lo = min(D.deck_z(x, s * 0.5 * w) for x in xs for s in (0.0, 1.0)) - 15.0
+    z_hi = D.deck_z(0.5 * (x0 + x1), 0.0) + P.STEMHEAD_H
+    b = (
+        cq.Workplane("XY").workplane(offset=z_lo)
+        .center(0.5 * (x0 + x1), 0.0)
+        .slot2D(x1 - x0, w)
+        .extrude(z_hi - z_lo)
     )
+    return _round_top(b, 0.3 * w)
+
 
 
 def additions() -> cq.Workplane:
-    """Alt som skal unioneres inn i skroget."""
-    out = winch_pads().union(cleats()).union(anchor_roller())
-    name = transom_name()
-    if name is not None:
-        out = out.union(name)
-    return out
+    """Dekksbeslagene som skal unioneres inn i skroget. Navnet paa
+    akterspeilet (transom_name) unioneres for seg, tidlig i byggingen:
+    etter at fenderlisten er lagt tvers over akterspeilet gir unionen med
+    bokstavene et korrupt volum (V10, samlet bygg)."""
+    return winches().union(cleats()).union(stemhead())
 
 
 def rudder_pin_holes() -> cq.Workplane:
@@ -159,9 +275,9 @@ def transom_name() -> cq.Workplane:
     Bokstavene ekstruderes fra 40 mm inne i skroget og ut, dreid saa de
     staar vinkelrett paa det hellende akterspeilet, og kappes av akter-
     speilets flate flyttet NAME_RAISE akterover - saa relieffet er like
-    hoyt over hele den buede flaten. Sett P.BOAT_NAME til "" for aa droppe det.
+    hoyt over hele den buede flaten. Brukes bare naar P.NAME_ON_TRANSOM er sann.
     """
-    if not P.BOAT_NAME:
+    if not P.BOAT_NAME or not P.NAME_ON_TRANSOM:
         return None
     from . import hull as H
 

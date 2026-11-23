@@ -1,0 +1,474 @@
+{
+  "_om": "Cockpit-spesifikasjon for trinn 7 (V10), 13.11.2026. Byggeklar spesifikasjon, ikke CAD. Alle maal i fullskala mm i modellens ramme: x fra baugen (LOA 7 950), y halvbredde (+ styrbord), z over DWL. Verdier fra 448-5 er flyttet til modellens ramme der det staar. Maalingene kan kjoeres paa nytt med v10/verktoy/foto/py/ck_kilder.py (lager ogsaa ck_kilder.png).",
+  "kildeorden": "bilder av baaten > Enderlein 448-5 > brosjyre/katalog/spesifikasjon; Bambu bare stil",
+  "konklusjon": "Baaten har en U-formet cockpit: brodekk tvers over forenden i setehoeyde (storskjoetet paa skinne der), seter langs begge sider, en smal fotbroenn mellom dem og en aktre benk i setehoeyde som setene gaar rundt. Modellens bronn er ett flatt kar med gulv paa z 294. Forslag: behold bronnens omriss (COCKPIT_X0, COCKPIT_HALF_W, COCKPIT_AFT og karmen), fyll den opp til setehoeyde z 860 og skjaer fotbroennen x 5 935-7 300, y +-325 til +-300, ned til durken z 435. Lokket (16_ruff-tak) beroeres ikke. NB: repoet fikk i mellomtiden en cockpit (d10de5d) med 448-5s raa tall (sete 898, durk 470, fotbroenn 6 065-7 305 x +-330). Spesifikasjonen her er enig i formen, men anbefaler et grunnere brodekk (275 mm, forkant 5 935), sete og durk ca. 35 mm lavere og nedgangen ned til brodekket - se vs_repo_d10de5d.",
+  "spec": {
+    "cabin_relation": {
+      "COCKPIT_X0": {
+        "value": 5660,
+        "unit": "mm",
+        "change": "ingen",
+        "meaning": "bronnens forvegg = den nedre akterflaten paa ruffen (kompass og hoeyttaler sitter her i nye (5)), fra brodekket z 860 opp til karmen/skjoeten",
+        "source": "modellen (lokket, karmen, sprayhooden og cove() bruker COCKPIT_X0)",
+        "confidence": "middels",
+        "note": "448-5 har akterflaten i brodekkshoeyde paa x 5 776 (profil) / 5 803 (plan), brosjyreprofilen ca. 5 700 (+-56). Modellens ruff slutter paa 5 625 og bronnen paa 5 660, altsaa 40-140 mm lenger forut enn tegningene. Beholdes for at lokket skal passe; bildene kan ikke avgjoere det."
+      },
+      "COACH_X1": {
+        "value": 5625,
+        "change": "ingen"
+      },
+      "INT_AFT_X": {
+        "value": 5600,
+        "change": "ingen i denne runden (valgfritt senere: byssa inn under brodekket, 448-5 har den helt til skottet 6 048)"
+      }
+    },
+    "bridge_deck": {
+      "x_fwd": {
+        "value": 5660,
+        "source": "= COCKPIT_X0",
+        "confidence": "middels"
+      },
+      "x_aft_top": {
+        "value": 5935,
+        "tol": 40,
+        "source": "COCKPIT_X0 + brodekkets dybde 275",
+        "confidence": "middels-lav"
+      },
+      "depth_top": {
+        "value": 275,
+        "tol": 35,
+        "source": "448-5: 6 058 - 5 776/5 803 = 255-282; brosjyreprofilen 5 944 - 5 700 = 244; brosjyreplan/-profil blandet 312; brosjyrefotoet (fra ruffen, akterover): minst ca. 270",
+        "confidence": "middels"
+      },
+      "top_z": {
+        "value": 860,
+        "tol": 30,
+        "source": "samme flate som setene: nye (5) og brosjyrefotoet viser brodekket i ett med setene; 448-5 brodekk 896 / sete 898",
+        "confidence": "middels"
+      },
+      "aft_edge": "= toppkanten av fotbroennens forvegg; avrundes som setekanten (R 25). Storskjoetet staar paa en tverrskinne langs akterkanten (nye (5): skinne og vogn; spesifikasjonen: 'Roller track slider on X-track at bridge deck').",
+      "companionway_sill_z": {
+        "value": 900,
+        "tol": 25,
+        "source": "448-5: akterflaten gaar ned til brodekket (896); nye (5): treterskel ca. 40-60 mm paa brodekket, vaskebordene staar paa den",
+        "confidence": "middels-lav"
+      },
+      "companionway_notch": {
+        "x": [
+          5560,
+          5665
+        ],
+        "half_width": 302.5,
+        "z0": 900,
+        "z1": "split_z(x) + 100 (ca. 1 240)",
+        "meaning": "nedgangen gaar ned til brodekket: aapning i bronnens forvegg (x 5 600-5 660) fra terskelen og opp, like bred som companion_slot (COMPANION_W/2 - LID_CLEAR). Moeter companion_slot (x 5 497-5 572, z fra 845) og trinnet paa z 745 inne i kahytten.",
+        "source": "nye (5), nye (2)/IMG_9372, 448-5",
+        "confidence": "middels",
+        "lid": "under skjoeten og aktenfor LIP_X1 (5 400): lokket og kanten beroeres ikke"
+      },
+      "traveller_optional": {
+        "x": [
+          5890,
+          5930
+        ],
+        "half_length": 295,
+        "height": 20,
+        "note": "skinne paa brodekkets akterkant, 1,3 x 0,7 mm i 1:30. Lav prioritet."
+      }
+    },
+    "footwell": {
+      "x_fwd_top": {
+        "value": 5935,
+        "tol": 40,
+        "source": "se bridge_deck.x_aft_top",
+        "confidence": "middels-lav"
+      },
+      "x_aft_top": {
+        "value": 7300,
+        "tol": 15,
+        "source": "448-5 7 300-7 307 (profil og plan), brosjyreplanen 7 288, brosjyreprofilen 7 232 (+56 mot planen = 7 288); 650 foran akterspeilet i begge tegningene. Var ogsaa modellens bronn-bakkant foer trinn 5b.",
+        "confidence": "hoey"
+      },
+      "length_top": {
+        "value": 1365,
+        "note": "tegningene 1 221-1 288: modellens er ca. 110 mm lengre fordi ruffen/bronnen staar lenger forut enn i tegningene (se cabin_relation)"
+      },
+      "half_width_top": {
+        "value": [
+          325,
+          300
+        ],
+        "at_x": [
+          5935,
+          7300
+        ],
+        "tol": 20,
+        "shape": "rett avsmalning, sentrert",
+        "source": "448-5 +-336 ved 6 300 til +-317 ved 7 200 (strekmidte); brosjyreplanen +-307 til +-280; brosjyrefotoet: fotbroenn / ytterkant sidelokk = 0,43 (448-5 0,44, brosjyren 0,425) gir ca. +-320",
+        "confidence": "middels"
+      },
+      "plan_corner_r": {
+        "value": 50,
+        "source": "448-5 smaa avrundede hjoerner",
+        "confidence": "lav"
+      },
+      "walls": "loddrette (opptil 3 grader slipp, videst oppe, er ogsaa uten overheng); tykkelse = HULL_WALL 60",
+      "sole_z": {
+        "value": 435,
+        "tol": 25,
+        "source": "448-5 476 (overkant laminat) - 30 = 446; brosjyreprofilen 412-425 (strekmidte/overkant). Gitter av teak ligger oppaa (spesifikasjonen, nye (5), brosjyrefotoet) - ikke modellert.",
+        "confidence": "middels"
+      },
+      "depth_seat_to_sole": {
+        "value": 425,
+        "source": "448-5 898 - 476 = 422",
+        "confidence": "middels"
+      },
+      "sole_wall_fillet_r_optional": 30,
+      "scuppers": "to 1 1/2\" lensehull i akterkant av durken (spesifikasjonen) - ikke modellert"
+    },
+    "seats": {
+      "top_z": {
+        "value": 860,
+        "tol": 30,
+        "source": "448-5 898 (sete) - 30 (448-5 ligger ca. 30 mm hoeyere enn modellen ved fenderlisten 835/807 og ruffen +28..46); brosjyrens durk 425 + 448-5s dybde 422 = 847. Brosjyreprofilen tegner ikke setet (bronnen er en hvit boks opp til fenderlisten, z 761-823).",
+        "confidence": "middels"
+      },
+      "inner_edge_half_width": {
+        "value": [
+          325,
+          300
+        ],
+        "note": "= fotbroennens overkant (setenes forkant mot broennen)",
+        "confidence": "middels"
+      },
+      "front_edge_r": {
+        "value": 25,
+        "fallback": "45 graders fas 20 mm",
+        "source": "bildene viser runde kanter (teaklist i nye (5)); ikke maalbart",
+        "confidence": "lav"
+      },
+      "outer_edge": {
+        "value": "uendret: modellens bronnomriss (850 / dekk - 290 / COCKPIT_AFT)",
+        "source": "brosjyreplanen: seteryggens fot 782, karmens innerkant 847; 448-5 ca. 770-785 ved setet",
+        "confidence": "middels",
+        "seat_back_slope_optional": "seteryggen kan skraas fra 850 i dekkshoeyde til ca. 785 ved setet (ca. 12 grader), som brosjyreplanen viser. Valgfritt; uten overheng."
+      },
+      "seat_back_height": "karmtopp - 860: 264 ved 6 500, ca. 115-190 bakerst (modellens karm gaar ned i dekket ved 6 900; 448-5 har karmen ca. 100 mm hoeyere)",
+      "locker_lids_optional": {
+        "side": {
+          "x": [
+            6005,
+            6725
+          ],
+          "y": [
+            345,
+            745
+          ],
+          "source": "448-5 6 141-6 806 x 340-766; brosjyreplanen 6 130-6 912 x 302-723; begge starter 60-80 mm aktenfor fotbroennens forkant",
+          "confidence": "middels"
+        },
+        "aft": {
+          "x": [
+            7310,
+            7690
+          ],
+          "y": [
+            -285,
+            285
+          ],
+          "source": "448-5 7 307-7 731 x +-300; brosjyreplanen 7 288-7 672 x +-280; brosjyrefotoet: teaklokk aktenfor broennen",
+          "confidence": "middels"
+        },
+        "how": "riller 0,4 mm dype og 1 mm brede (12 x 30 mm fullskala), lav prioritet. Spesifikasjonen: 'Three big sail lockers. Locker lids in teak.'"
+      }
+    },
+    "aft_end": {
+      "description": "Setene gaar rundt: aktenfor fotbroennen (7 300) er en aktre benk i setehoeyde z 860 fram til bronnens bakre omriss (COCKPIT_AFT: 7 735 paa senterlinjen, 7 716 ved y 300), med teaklokk (lasarett). Aktenfor er akterdekket til akterspeilet som i dag.",
+      "bench_depth_cl": {
+        "value": 435,
+        "source": "448-5 7 307-7 731 (424), brosjyreplanen 7 288-7 733 (445)",
+        "confidence": "hoey"
+      },
+      "aft_deck": "uendret (7 735-7 950)",
+      "photos": "brosjyrefotoet viser benken og teaklokket; nye (2)/IMG_9372 viser teak aktenfor broennen (uskarpt)"
+    }
+  },
+  "model_today": {
+    "foer_trinn_7": {
+      "COCKPIT_FLOOR_Z": 294,
+      "well": "ett flatt kar 5 660-7 735 x +-850, ca. 780-900 mm dypt; ingen seter, brodekk eller kister"
+    },
+    "repo_d10de5d": {
+      "note": "Bygget og pushet mens denne spesifikasjonen ble laget (commit d10de5d, 13.11 kl. 17:41).",
+      "COCKPIT_SEAT_Z": 898,
+      "COCKPIT_FLOOR_Z": 470,
+      "FOOTWELL_X0": 6065,
+      "FOOTWELL_X1": 7305,
+      "FOOTWELL_HALF_W": 330,
+      "FOOTWELL_RAD": 80,
+      "bridge_deck_depth": 405,
+      "under_seats": "massivt (cockpit_tub fra durken 470 - 60)",
+      "companionway_sill": "uendret: dekk + 60 = ca. 1 176, dvs. 278 mm over brodekket",
+      "seat_edge": "skarp"
+    }
+  },
+  "sources_measured": {
+    "enderlein_448_5": {
+      "calibration": "S 4,2591 mm/px, x = (2240,1 - u) S, profil z = (541,8 - v) S, plan y = (1333,2 - v) S",
+      "profile": {
+        "seat_line_z": 898,
+        "bridge_deck_z": [
+          896,
+          881
+        ],
+        "aft_bench_z": [
+          904,
+          883
+        ],
+        "sole_z": [
+          476,
+          461
+        ],
+        "footwell_fwd_wall_x": [
+          6048,
+          6068
+        ],
+        "footwell_aft_wall_x": [
+          7298,
+          7320
+        ],
+        "cabin_aft_face_x": {
+          "z950": 5776,
+          "z1540": 5700
+        },
+        "coaming_top_z": {
+          "6500": 1191,
+          "7300": 1139
+        },
+        "strake_z": 835
+      },
+      "plan": {
+        "footwell_x": [
+          6053,
+          7307
+        ],
+        "footwell_half_width": {
+          "6300": 336,
+          "6700": 328,
+          "7100": 320,
+          "7300": 316
+        },
+        "bulkhead_x": 6048,
+        "bridge_deck_fwd_x": 5803,
+        "side_lids": {
+          "x": [
+            6141,
+            6806
+          ],
+          "y": [
+            340,
+            766
+          ]
+        },
+        "aft_rect": {
+          "x": [
+            7307,
+            7731
+          ],
+          "y": 300
+        },
+        "seat_outline_y": {
+          "6900": 785,
+          "7100": 767,
+          "7300": 744
+        },
+        "seat_outline_aft_x": 7731
+      }
+    },
+    "brochure_plan_1_50": {
+      "calibration": "side 6 gjengitt i 400 dpi: S 3,2555 mm/px fra LOA (stevn 2 887, akterspeil 445 px), bredde 823 px = 2 679 mm",
+      "footwell_x": [
+        6067,
+        7288
+      ],
+      "traveller_x": [
+        6067,
+        6137
+      ],
+      "footwell_half_width": {
+        "6300": 308,
+        "6700": 296,
+        "7100": 283
+      },
+      "bulkhead_x": 5997,
+      "side_lids": {
+        "x": [
+          6130,
+          6912
+        ],
+        "y": [
+          302,
+          723
+        ]
+      },
+      "aft_lid": {
+        "x": [
+          7288,
+          7672
+        ],
+        "y": 280
+      },
+      "seat_back_foot_y": 782,
+      "coaming_inner_y": 847,
+      "coaming_outer_y": 995,
+      "seat_outline_aft_x": 7733
+    },
+    "brochure_profile_1_50": {
+      "calibration": "S 3,275, x0 u 2 875, DWL v 624,4 (tilpasset data/profile_top_silhouette.csv, median 1 mm); x ligger ca. 56 mm forut for planen",
+      "footwell_fwd_wall_x": [
+        5931,
+        5962
+      ],
+      "footwell_aft_wall_x": [
+        7221,
+        7243
+      ],
+      "sole_z": 412,
+      "cabin_aft_face_x": {
+        "z900": 5700,
+        "z1400": 5666
+      },
+      "seat": "ikke tegnet (fenderlisten z 761-823 dekker broennens overkant)"
+    },
+    "spec_text": "HR26StandardSpecEng: 'Roller track slider on X-track at bridge deck', 'Big comfortable cockpit. Three big sail lockers. Locker lids in teak. Teakgrating on the cockpit floor', 'Two 1 1/2\" scuppers from the watertight and self draining cockpit', 'Stainless fuel tank, 40 litres, under the cockpit floor'."
+  },
+  "photos": {
+    "nye (5)": "fra rorkulten forover (folk: ikke kopiert). Viser brodekket i setehoeyde med tverrskinne og storskjoetblokk paa akterkanten, en loddrett forvegg ned til teakgitteret, styrbord sete med teaklokk i samme hoeyde som brodekket, babord sete, smal fotbroenn mellom bena, og vaskebord/instrumentbrett paa en treterskel paa brodekket. Bare topologi: mine grove maal av dybden spriker fra 70 til 600 mm etter hvilke antakelser om kamera som brukes, og er ikke brukt.",
+    "nye (2) / IMG_9372": "ovenfra, akter-styrbord (uskarp). Hvitt brodekk under nedgangen med storskjoetet festet paa, teak paa setene, bord i broennen, smalt akterdekk med livboeyen.",
+    "IMG_9304": "fra forut-babord: cockpitkarm med vinsj, rorkult, nedgangen med instrumenter; broennen er skjult av folk og flagg. Ingen maal.",
+    "brosjyrefotoet (HR26brochure.pdf side 7)": "en HR 26 fra verftet, tatt fra ruffen akterover: brodekket med skinne, fotbroenn med gitter, sidelokk som begynner ved brodekkets akterkant, aktre benk med teaklokk, setene gaar rundt. Gir forholdet fotbroenn / sidelokk 0,43 og brodekk minst ca. 270 mm."
+  },
+  "disagreements": [
+    {
+      "what": "fotbroennens forkant (absolutt x)",
+      "values": {
+        "448-5": 6058,
+        "brosjyreplan": 6067,
+        "brosjyreprofil": "5 944 (ca. 6 000 rettet mot planen)"
+      },
+      "chosen": 5935,
+      "why": "Brodekkets dybde (244-312, bildene minst ca. 270) maales fra bronnens forvegg i modellen (5 660), fordi modellens ruff staar 40-140 mm lenger forut enn i tegningene og lokket ikke skal endres. Konsekvens: fotbroennen blir 1 365 mm lang mot 1 221-1 288 i tegningene. Alternativ 6 060 gir et brodekk paa 400 mm, dypere enn noen kilde."
+    },
+    {
+      "what": "hoeyder",
+      "values": {
+        "448-5": "sete 898, durk 476",
+        "brosjyre": "durk 412-425, sete ikke tegnet"
+      },
+      "chosen": "sete 860, durk 435",
+      "why": "448-5 ligger ca. 30 mm hoeyere enn modellen ved fenderlisten og ruffen (og ca. 100 mm ved karmen); dybden 422 fra 448-5 beholdes."
+    },
+    {
+      "what": "fotbroennens bredde",
+      "values": {
+        "448-5": "+-336 til +-317",
+        "brosjyre": "+-307 til +-280"
+      },
+      "chosen": "+-325 til +-300",
+      "why": "snittet; brosjyrefotoets forhold 0,43 gir ca. +-320"
+    },
+    {
+      "what": "setenes ytterkant",
+      "values": {
+        "448-5": "ca. 770-785",
+        "brosjyre": "782 (seteryggens fot) / 847 (karmens innerkant)",
+        "modellen": "850 loddrett"
+      },
+      "chosen": "modellens omriss uendret, valgfri skraa seterygg",
+      "why": "karmen og lokket bygger paa omrisset"
+    },
+    {
+      "what": "brosjyrens plan mot profil",
+      "values": "fotbroennens forkant 6 067 mot 5 944 (+56 = 6 000)",
+      "chosen": "ingen av dem alene",
+      "why": "intern uenighet paa 70-120 mm i brosjyren"
+    }
+  ],
+  "not_determined": [
+    "Brodekkets dybde og fotbroennens lengde paa eierens baat (tegningene er innbyrdes enige om dybden, men ikke om absolutt x; nye (5) kan ikke maales uten et loest kamera).",
+    "Setehoeyden over durken og over dekkskanten i absolutte mm (bare 448-5 viser setet).",
+    "Om ruffens akterflate staar paa 5 625/5 660 (modellen) eller 5 700-5 800 (tegningene).",
+    "Seteryggens helning, setekantens radius og lokkenes stoerrelse paa eierens baat."
+  ],
+  "owner_questions": [
+    "Maal med baand: (1) fra nedgangens terskel (der vaskebordet staar) til brodekkets akterkant ved skinna, (2) fotbroennens lengde langs durken, (3) fotbroennens bredde oeverst, forut og akter, (4) fra gitteret opp til setet, (5) fra setet opp til karmtoppen ved vinsjen."
+  ],
+  "implementation_plan": [
+    "Deltaer mot repoet etter d10de5d (params og kode finnes allerede for seter og fotbroenn):",
+    "1. params.py: COCKPIT_SEAT_Z 898 -> 860; COCKPIT_FLOOR_Z 470 -> 435; FOOTWELL_X0 6065 -> 5935 (vent paa eierens maal 1 hvis ruffen heller skal flyttes); FOOTWELL_X1 7305 -> 7300 (likegyldig); FOOTWELL_HALF_W 330 -> (325, 300) forut/akter; nye COMPANION_SILL_Z 900, COMPANION_NOTCH_X0 5560, SEAT_EDGE_R 25. COCKPIT_X0, COCKPIT_HALF_W, COCKPIT_INSET, COCKPIT_AFT, COCKPIT_RAD, COACH_X1, COMPANION_W og alle COAMING_* uendret.",
+    "2. deckhouse.footwell_cut(): avsmalnende omriss (polyline/spline med hjoerneradius i skissen, ikke edges().fillet paa et rect), fra COCKPIT_FLOOR_Z til COCKPIT_SEAT_Z + 60; setekantens runding bygd inn som ruled loft gjennom 5 utvidede omriss (z = sete - R + R sin t, utvidelse R (1 - cos t), t 0-90 grader). Reserve: 45 graders fas 20 mm (loft av 2 omriss). Ikke OCC-fillet paa skroget.",
+    "3. deckhouse.companion_notch(): boks x COMPANION_NOTCH_X0 til COCKPIT_X0 + 5, |y| <= COMPANION_W/2 - LID_CLEAR (302,5), z COMPANION_SILL_Z til cabin.split_z(x) + 100. Loddrette sider, flat terskel, aapen topp.",
+    "4. build.py: i P.CABIN-blokken etter companion_slot: robust_cut(w, D.companion_notch(), 'nedgang ned til brodekket', strict=True). cockpit_cut/footwell_cut som i dag. keep-lista uendret (massivt under setene beholdes).",
+    "5. Kontroll (proever som cabin._checked_cut): massivt i (6500, 600, 840), (5800, 0, 840), (6500, 0, 410), (7500, 0, 840); tomt i (6500, 0, 600), (5800, 0, 880), (7500, 0, 880), (5630, 0, 950).",
+    "6. Print uten support (kjoelen ned): alle nye flater er loddrette eller vender opp; runding/fas paa setekanten er konveks; hakket har loddrette sider og flat bunn; gods >= 60 mm (fotbroennens vegger og durk staar i massivt). Ingen overheng over 45 grader.",
+    "7. Lokket: COCKPIT_X0, COAMING_*, COACH_X1, SPRAY_*, COMPANION_W og skjoeteplanet er uendret, saa 16_ruff-tak.stl, cove(), companion_slot() og kanten er uendret. Hakket ligger aktenfor LIP_X1 (5 400) og under skjoeten. Ruff-taket eksporteres ikke paa nytt.",
+    "8. Bygg: python tools/memcap.py --gb 5 --lock -- python -m hr26.build --only skrog; tools/meshcheck.py; poengkortet (s8a_cockpit-varianten); bilde ovenfra mot nye (2)/IMG_9372 og brosjyrefotoet.",
+    "9. Dokumentasjon: README og V10.md spoersmaal 6; kommentarene ved COCKPIT_SEAT_Z/FOOTWELL_X0 om hvorfor verdiene er flyttet fra 448-5s raa tall.",
+    "10. Valgfritt senere: byssa inn under brodekket (448-5: vask og isboks til skottet 6 048) med tak paa minst 45 grader; skraa seterygg (850 -> 785 ved setet); skinne paa brodekket; lokkriller."
+  ],
+  "vs_repo_d10de5d": [
+    {
+      "what": "brodekkets dybde / fotbroennens forkant",
+      "repo": "6 065 (brodekk 405 mm)",
+      "spec": "5 935 (brodekk 275 mm)",
+      "delta": -130,
+      "why": "Alle kildene har 244-312 mm fra ruffens akterflate til brodekkets akterkant. 6 065 er 448-5s absolutte x, men modellens akterflate staar paa 5 625/5 660, ca. 110 mm forut for 448-5s (5 776-5 803). Med 6 065 blir brodekket ca. 130 mm dypere enn i noen kilde.",
+      "confidence": "middels-lav: eierens maal (spoersmaal 1) avgjoer. Er modellens ruff for kort, er 6 065 riktig og ruffens akterflate boer flyttes akterover i stedet (lokket endres)."
+    },
+    {
+      "what": "setehoeyde",
+      "repo": 898,
+      "spec": 860,
+      "delta": -38,
+      "why": "448-5 ligger ca. 30 mm hoeyere enn modellen ved fenderlisten (835/807) og ruffen (+28..46). 898 er tegningens raa verdi. Med 898 blir seteryggen bakerst bare 130 mm (dekkskant 1 027 ved 7 300).",
+      "confidence": "middels"
+    },
+    {
+      "what": "durken",
+      "repo": 470,
+      "spec": 435,
+      "delta": -35,
+      "why": "brosjyreprofilen i modellens egen kalibrering gir 412-425; 448-5 gir 476 - 30 = 446. Dybden (ca. 425) er lik i begge.",
+      "confidence": "middels"
+    },
+    {
+      "what": "fotbroennens bredde",
+      "repo": "+-330 hele veien",
+      "spec": "+-325 forut, +-300 akter",
+      "delta": "0 til -30",
+      "why": "448-5 smalner 336 -> 316, brosjyren 307 -> 280",
+      "confidence": "middels, lav prioritet"
+    },
+    {
+      "what": "nedgangens terskel",
+      "repo": "ca. 1 176 (dekk + 60)",
+      "spec": "900 (brodekket + 40) med hakk i bronnens forvegg (companion_notch)",
+      "why": "nye (5): vaskebordene staar paa en treterskel rett paa brodekket; 448-5: akterflaten gaar ned til brodekket. I dag staar terskelen 278 mm over brodekket.",
+      "confidence": "middels"
+    },
+    {
+      "what": "setekanten",
+      "repo": "skarp",
+      "spec": "R 25 (eller 45 grader x 20)",
+      "confidence": "lav, lav prioritet"
+    },
+    {
+      "what": "under setene",
+      "repo": "massivt",
+      "spec": "2 mm skall og hulrom (som dekket), eller massivt",
+      "why": "begge printes uten support; massivt er enklest og allerede bygget",
+      "confidence": "-"
+    }
+  ]
+}

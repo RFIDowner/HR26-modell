@@ -8,18 +8,24 @@ pusser og reparerer den.
 
 - Målestokk 1:30. Lengde 265 mm, bredde 89 mm, mast 354 mm over ruffen
   (12 m i virkeligheten).
-- Materiale: PLA. Hele modellen veier ca. 470 g, og skroget alene ca. 280 g.
-- Skroget er hult og tar rundt ett døgn å printe.
+- Materiale: PLA. Skroget og ruff-taket printes med glissent fyll (15 %), så
+  vekten avhenger av innstillingene. Stativet veier ca. 160 g.
+- Skroget er hult forut og akter, har kahytt med innredning midt i, og tar
+  rundt ett døgn å printe.
 
 ## Delene
 
-- **Skrog:** hele skroget i ett stykke, med ruff, cockpit, kjøl, vinduer og
-  fenderliste. Hekken er rundet, med et lett hellende akterspeil som har navnet
-  HUGO i relieff.
+- **Skrog:** hele skroget i ett stykke, med dekk, cockpit, kjøl og
+  fenderliste. Midt i er kahytten med innredningen fra konstruktørens tegning:
+  toalettrom, salong med sofaer og bord, bysse, skap og nedgang. Vinduene i
+  skrogsiden er åpne, så man ser inn. Hekken er rundet, med et lett hellende
+  akterspeil. Navnet står bare på skiltet.
+- **Ruff-tak:** taket på ruffen med luker, ventil og sprayhood, som et eget
+  lokk. Løftes det av, ser man ned i kahytten.
 - **Ror:** henger bak på akterspeilet. To små tapper sitter i hull under
   vannlinjen.
 - **Mast:** en rett stav, 354 mm lang og 4 × 3 mm i tverrsnitt.
-- **Mastefot:** lite beslag som limes i hullet i ruffen.
+- **Mastefot:** lite beslag som limes i hullet på ruff-taket.
 - **Masttopp:** hetten øverst på masten.
 - **Saling:** to armer som peker bakover og sitter på midten av masten.
 - **Bom:** enten bar eller med surret storseil. Ringen i enden går rundt masten.
@@ -40,10 +46,12 @@ Skroget er printet med støtte (support) under og rundt seg. Den skal fjernes
    så støtteveggene ikke lenger henger sammen i bunnen.
 2. **Løsne deretter støtteveggene én og én**, litt og litt. Bruk fingrene og en
    liten flat tang, og vipp støtten bort fra skroget.
-3. **Ikke riv eller trekk i store biter.** Skrogveggen er bare 1,5 mm tykk.
+3. **Ikke riv eller trekk i store biter.** Skrogveggen er bare 2 mm tykk.
 4. **Rester nærmest skroget** skjæres bort med en skarp kniv, utover og bort fra
    veggen, aldri inn mot den. Til slutt pusses det lett, se «Pusse og
    reparere».
+
+Inne i kahytten er det ingen støtte, og ruff-taket printes uten støtte.
 
 ## Slik henger det sammen
 
@@ -54,11 +62,13 @@ Alt limes med superlim (cyanoakrylat). Epoxy fungerer også.
    bores opp**, se «Rekkepåler og livliner».
 2. Pulpit (foran) og pushpit (bak) bøyes av 1,0 mm messingtråd rundt tappene på
    bøyemalen og limes i hullene.
-3. Mastefoten limes i ruffen. Saling og masttopp tres på masten, og masten
-   settes i foten.
-4. Beslagene på masten er ovale og passer bare på én måte, lang side fore-akter.
-5. Roret limes på akterspeilet med tappene i hullene.
-6. Livlinene (tynn tråd) tres gjennom øynene på pålene og limes ved pulpit og
+3. Mastefoten limes på ruff-taket. Saling og masttopp tres på masten, og masten
+   settes i foten. Masten følger med når taket løftes av.
+4. Ruff-taket legges ned over den lave kanten rundt åpningen i dekket. Det
+   skal ikke limes. Går det tregt, puss kanten lett med våtpapir.
+5. Beslagene på masten er ovale og passer bare på én måte, lang side fore-akter.
+6. Roret limes på akterspeilet med tappene i hullene.
+7. Livlinene (tynn tråd) tres gjennom øynene på pålene og limes ved pulpit og
    pushpit.
 
 ## Rekkepåler og livliner
@@ -105,23 +115,20 @@ modellbygging (f.eks. Vallejo eller Tamiya).
 Ideer til maling:
 
 - **Fenderlisten** langs skrogsiden i sort.
-- **Vinduene** i skrogsiden i mørk grå eller sort.
+- **Vinduene** i skrogsiden er åpne. Vil du ha «glass», lim tynn, tonet
+  plastfolie på innsiden før taket settes på.
+- **Innredningen** kan males før taket settes på, for eksempel trefarge på
+  durk, køyer og bord.
 - **Sprayhooden** over nedgangen i blått, som på originalen.
-- **Navnet HUGO** med fin pensel.
 - **Kanten i vuggene**, der skroget ligger, kan tegnes sort med tusj, så ser den
   ut som gummilist.
 
 ## Pusse og reparere
 
-- **Skrogveggen er tynn:** 1,5 mm som minst. Slip aldri mer enn ca. 0,3 mm,
-  ellers kommer du gjennom.
-- **Klampene og ankerrullen i baugen stikker gjennom skroget.** De er laget som
-  klosser som går ned under dekket, og i den smale baugen kommer de ut gjennom
-  skrogsiden og stevnen (se bildet i Innsikt-kapitlet). De kan files ned til
-  skrogflaten: legg maskeringstape rundt, fil flatt mot skroget, og stopp når
-  flaten er jevn. Gå ikke dypere. Veggen bak er minst 1,3 mm tykk, så det blir
-  ikke hull. Skulle det likevel komme et lite hull, lapper du det med superlim og
-  natron eller epoxyspartel, og pusser med 240 og 400.
+- **Skrogveggen er tynn:** 2 mm. Slip aldri mer enn ca. 0,3 mm, ellers kommer
+  du gjennom.
+- **Broen over vinduene:** sidedekket over de åpne vinduene spenner ca. 42 mm.
+  Henger den litt, kan undersiden files rett gjennom vindusåpningen.
 - **Støttemerker** under skroget: fil først, så våtpapir 240 og 400.
 - **Laglinjer:** grunning og tynne lag spartel, så våtpapir 400 til 600.
 - **Små mangler:** superlim blandet med natron (bakepulver) gir rask fyll som kan
@@ -144,11 +151,13 @@ til livliner, pinvise med 0,5 mm bor (øyene på pålene) og et 1,2 mm bor
 
 - Cockpiten er forenklet, uten benker eller brodekk, og karmen går ikke rundt
   hekken.
-- Klampene og ankerrullen i baugen stikker gjennom skroget og kan pusses ned,
-  se «Pusse og reparere».
+- Kahytten slutter ved 5,6 m, der cockpiten begynner i modellen. Vask, isboks
+  og motorkasse akterst i kahytten er ikke med.
+- Skrogformen under vann akter er ikke endelig. Tegningen, deplasementet og
+  bildene er ikke enige, og et mål fra båten skal avgjøre det.
 - Roret er bare bladet under vannlinjen, uten rorhode.
 - Mastens tykkelse er et anslag og ikke et målt mål.
-- Vinduet i skrogsiden er litt for langt akterover, ca. 2 mm i modellen.
+- Vinduets forkant er skrå som på tegningene; på bildene ser den avrundet ut.
 
 # Innsikt: slik ble modellen til
 
@@ -173,14 +182,13 @@ Målene stemte godt over kors. Den målte bredden ble 0,7 % fra oppgitt, og dypg
 
 **2. Dekkskanten sto for lavt.** Først ble dekkskanten lagt på fenderlisten, fordi det så ut som den øverste linjen. Det ga et for lavt skrog, og vinduet havnet oppe i ruffen. Tegningen og bilder viser at skrogsiden fortsetter 130 til 280 mm over listen, opp til en tynn linje der rekka står. Vi flyttet dekkskanten dit, og listen ble en list utenpå skroget.
 
-**3. Vinduet.** Langvinduet sitter i skrogsiden, i en fortsettelse av siden, ikke trukket inn i ruffen. Det er 1 200 mm langt og ligger mellom listen og dekkskanten. Underkant og overkant følger de to linjene, så vinduet skråner med båten. Det er forsenket 15 mm, altså en halv millimeter i 1:30.
+**3. Vinduet.** Langvinduet sitter i skrogsiden, i en fortsettelse av siden, ikke trukket inn i ruffen. Det ligger mellom listen og dekkskanten, så det skråner med båten. Først var det 1 200 mm langt og forsenket en halv millimeter. I versjon 10 er det en åpning inn til kahytten, 1 680 mm lang og skrå i begge ender, slik Enderleins tegning, seilplanen og katalogen fra 1981 viser.
 
 **4. Hekken.** Sporingen leste hjørnene i dekksplanen som en spiss. Men hekken er rundet i plan, og akterspeilet heller 8,3° med toppen lengst akter. Vi rettet det: skroget er rundet, akterspeilet hellende og svakt buet, og cockpitbrønnen følger hekkens kurve helt bak. Roret henger nå riktig på akterspeilet. Før bommet tappene.
 
 ![Dekksplanen med modellens dekksutlinje (rødt) og cockpitbrønn (blått). Brønnen følger hekkens kurve.](docs/images/eier-hekk-plan.jpg)
-![Akterspeilet sett skrått bakfra, med navnet i relieff.](docs/images/akterspeil.jpg)
 
-**5. Et hull i stevnen.** Skroget er hult, og i den smale baugkilen ble innsiden først laget som en forminsket kopi av ytterformen. Veggen ble da bare 0,2 til 0,5 mm tykk, og hulrommet gikk gjennom stevnen ved vannlinjen. Innsiden er nå ekte forskjøvet innover langs normalen, med en liten margin. Veggen er minst 1,5 mm overalt, og 3,4 mm i baugen.
+**5. Et hull i stevnen.** Skroget er hult, og i den smale baugkilen ble innsiden først laget som en forminsket kopi av ytterformen. Veggen ble da bare 0,2 til 0,5 mm tykk, og hulrommet gikk gjennom stevnen ved vannlinjen. Innsiden er nå ekte forskjøvet innover langs normalen, med en liten margin. I versjon 10 er veggen 2 mm.
 
 **6. Et hult skrog som bærer seg selv.** Skroget er hult for å spare plast og vekt. Innvendige spant hver 26 mm bærer dekket, som spenner mellom dem som en bro. Cockpitgulv, mastesokkel og vindusvegg er spart som massive partier.
 
@@ -188,17 +196,23 @@ Målene stemte godt over kors. Den målte bredden ble 0,7 % fra oppgitt, og dypg
 
 **8. Feil som ble funnet underveis.** Salingen hadde armene 90° feil mot hullet, og passet ikke på masten. Stativbjelkens klosser hang over en utsparing uten feste. Begge ble oppdaget ved montering og rettet.
 
-**9. Beslagene i baugen stikker ut.** Ankerrullen og de to fortøyningsklampene i baugen er laget som klosser som går ned i skroget under dekket. I den smale baugen kommer de ut gjennom skrogsiden og stevnen: en kloss på hver side (A) og en foran i stevnen (B). Dette ble oppdaget etter at modellen var ferdig, og er ikke rettet. De kan pusses ned til skrogflaten. Ved kontroll er veggen bak minst 1,3 mm tykk, så det blir ikke hull. Se «Pusse og reparere».
+**9. Beslagene i baugen stikker ut.** Ankerrullen og de to fortøyningsklampene i baugen er laget som klosser som går ned i skroget under dekket. I den smale baugen kommer de ut gjennom skrogsiden og stevnen: en kloss på hver side (A) og en foran i stevnen (B). Dette ble oppdaget etter at modellen var ferdig. I versjon 10 er beslagene laget på nytt: hornklampene og stevnbeslaget med ankerrullen står på dekket og holder seg innenfor dekkskanten.
 
 ![Baugen sett fra siden. A: en fortøyningsklampe, B: klossen under ankerrullen. Begge stikker ned under dekkskanten og ut gjennom skroget.](docs/images/eier-baug.jpg)
 
-**10. Deplasementet stemmer ikke.** Modellen har et beregnet undervannsvolum på 3,9 m³, mens brosjyren oppgir 2,5 tonn. Avviket skyldes den forholdsvis flate kanobunnen i tegningen. Formen er hentet fra tegningen, så tallet er ikke egnet til hydrostatikk.
+**10. Deplasementet stemmer ikke.** Modellen har et beregnet undervannsvolum på rundt 3,4 m³, mens Enderleins tegning oppgir 2,36 m³ med en jernkjøl på 1 100 kg. Skrogformen under vann er tolket, og et bilde akterfra tyder også på at den er for fyldig akter. En strekprikket linje på tegningen, trolig en vannlinje ved durken, passer derimot med dagens form. Et mål fra båten skal avgjøre det.
 
 **11. Farger.** Vannlinjen er et vannrett plan, så bunnstoffet og den lyse stripen kan legges inn som farger i lagene. Fenderlisten og dekkskanten stiger mot baugen og følger ikke noe plan, så de lar seg ikke farge slik og må males.
 
 **12. Skiltet.** Skriften på skiltet måtte være tykk nok. Tynne streker kan ikke lages i en så liten målestokk, så vi valgte en fet skrifttype og færre linjer.
 
 ![Skiltet til stativet: type, navn, konstruktør, sted og år, og skala.](docs/images/skilt.jpg)
+
+**13. Versjon 10: konstruktørens egen tegning.** Etter hvert fant vi Enderleins tegning 448-5 i 1:15 fra 1977, med profil og plan med innredning. Den viste at kjølen var mye større enn i modellen: forkanten står 400–650 mm lenger forut, bakkanten er nesten loddrett, og bunnen er flat med et stort rundet hjørne foran. Kjølen er nå tegnet etter hans linjer og gjort 240 mm tykk, slik bildene viser.
+
+**14. Et avtakbart tak og en kahytt.** Taket på ruffen ble et eget lokk, så kahytten kan vises. Innredningen er hentet fra tegningen og printes i skroget uten støtte: alle tak inne i kahytten heller 45°, og durk, køyer og skap står på fyllet under seg. Lokket står på en plan skjøt litt over dekket og printes flatt på den, også uten støtte. Et spor i undersiden går ned over en lav kant rundt åpningen i dekket.
+
+**15. Glattere linjer.** Dekkskanten var 16 rette stykker, og kurvene hadde knekk i hvert målepunkt. I versjon 10 er linjene glatte kurver, eksporten har fast toleranse, fenderlisten er slankere og hjørnene på akterspeilet er avrundet. Andelen knekker over 5° i skrogflaten gikk fra 17 % til under 1 %.
 
 ## Verftet, konstruktøren og båten
 
@@ -225,4 +239,4 @@ Modellen er laget i en lang dialog med en AI (Claude fra Anthropic), som skrev p
 
 ## Det modellen ikke er
 
-Den er en utstillingsmodell, ikke en nøyaktig kopi. Skrogformen mellom målepunktene er tolket. Cockpiten er forenklet, og roret er bare bladet under vannlinjen. Vinduet er ca. 2 mm for langt akterover i modellen.
+Den er en utstillingsmodell, ikke en nøyaktig kopi. Skrogformen mellom målepunktene er tolket. Cockpiten er forenklet, og roret er bare bladet under vannlinjen.

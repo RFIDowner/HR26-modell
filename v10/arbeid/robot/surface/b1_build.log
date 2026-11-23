@@ -1,0 +1,13 @@
+using C:\Users/stig/AppData/Local/Temp/claude/12681ed4fad82730/bbd7b4f2-5285-465a-8464-b20ca4b41c67/scratchpad/robot/surface/repo_copy\hr26\__init__.py
+built 2.0s
+face 0: BSPLINE    area(full)     15833248  udeg 3 vdeg 3  uknots 1010 vknots 42  poles 1012x44  U[1] range 0.000..1.000 V 0.000..1.000
+face 1: BSPLINE    area(full)     15832677  udeg 3 vdeg 3  uknots 1010 vknots 42  poles 1012x44  U[1] range 2.000..3.000 V 0.000..1.000
+face 2: CYLINDER   area(full)      1383469
+face 3: BSPLINE    area(full)     15530637  udeg 3 vdeg 3  uknots 254 vknots 42  poles 256x44  U[1] range 1.000..2.000 V 0.000..1.000
+face 4: PLANE      area(full)          780
+export tol 0.018 ang 0.12: 22344 triangles, 1.1 MB, 0.2s
+export tol 0.018 ang 0.03: 22344 triangles, 1.1 MB, 0.0s
+export tol 0.018 ang 0.01: 22344 triangles, 1.1 MB, 0.0s
+export tol 0.005 ang 0.03: 407762 triangles, 20.4 MB, 8.3s
+export tol 0.002 ang 0.02: 908590 triangles, 45.4 MB, 35.1s
+done

@@ -1,0 +1,22 @@
+  skrog loftet               0s
+  kjol                       0s
+  fenderlist                 4s
+  ruff                       6s
+  luker og ventiler         10s
+  karm og sprayhood         14s
+  dekksbeslag               18s
+  cockpit, nedgang, vinduer    21s
+  hull for rigg og rekke    22s
+  uthult                    36s
+  plastforbruk (skall): 231 cm3
+bygget 37s
+eksportert a2_v2.stl 65.1 MB  49s
+exit=0
+a2_v2.stl: 1302490 trekanter, 1953475 kanter, 253 ikke-manifolde
+  volum 230.5 cm3   bbox [266.1  90.8 104.8]
+a2_v2.stl bad 253 count hist {np.int64(4): np.int64(246), np.int64(6): np.int64(7)}
+  degenererte trekanter (areal < 1e-10): 283  samme indeks to ganger: 258
+  x-histogram: {-100: 196, 5500: 57}
+  z-histogram: {-1500: 37, -700: 8, 1100: 196, 1300: 12}
+  |y|-histogram: {0: 241, 1000: 12}
+done

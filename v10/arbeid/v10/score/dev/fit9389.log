@@ -1,0 +1,46 @@
+Traceback (most recent call last):
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\score\dev\fit9389.py", line 8, in <module>
+    p, e = fit("IMG_9389", 2000, 1500, pts, p0, fix_f=1505.0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\score\dev\chamfer.py", line 38, in fit
+    r = minimize(obj, q0, method="Powell", options=dict(maxfev=iters, xtol=1e-2, ftol=1e-3))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_minimize.py", line 775, in minimize
+    res = _minimize_powell(fun, x0, args, callback, bounds, **options)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 3567, in _minimize_powell
+    fval, x, direc1 = _linesearch_powell(func, x, direc1,
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 3243, in _linesearch_powell
+    res = _recover_from_bracket_error(_minimize_scalar_brent,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 3136, in _recover_from_bracket_error
+    res = solver(fun, bracket, args, **options)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 2735, in _minimize_scalar_brent
+    brent.optimize()
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 2500, in optimize
+    xa, xb, xc, fa, fb, fc, funcalls = self.get_bracket_info()
+                                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 2467, in get_bracket_info
+    xa, xb, xc, fa, fb, fc, funcalls = bracket(func, args=args)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 3071, in bracket
+    fw = func(*((w,) + args))
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 3236, in myfunc
+    return func(p + alpha*xi)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Programs\Python\Python312\Lib\site-packages\scipy\optimize\_optimize.py", line 561, in function_wrapper
+    fx = function(np.copy(x), *(wrapper_args + args))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\score\dev\chamfer.py", line 23, in obj
+    d = sil_dist(p, W, H, k)
+        ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\score\dev\chamfer.py", line 12, in sil_dist
+    fid, _ = S.raster(c, Vs, Fs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stig\AppData\Local\Temp\claude\12681ed4fad82730\bbd7b4f2-5285-465a-8464-b20ca4b41c67\scratchpad\v10\score\dev\..\score.py", line 1875, in raster
+    l2 = 1.0 - l0 - l1
+         ~~~~~~~~~^~~~
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 20.3 MiB for an array with shape (170, 15616) and data type float64

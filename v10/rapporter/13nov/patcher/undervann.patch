@@ -1,0 +1,129 @@
+diff --git a/hr26/curves.py b/hr26/curves.py
+index 560cdf2..7e77a43 100644
+--- a/hr26/curves.py
++++ b/hr26/curves.py
+@@ -359,6 +359,7 @@ def _pchip(pairs):
+ _FLARE = _pchip(P.SECTION_FLARE)
+ _NEXP = _pchip(P.SECTION_N)
+ _DEADRISE = _pchip(P.SECTION_DEADRISE)
++_DEADWOOD = _pchip(getattr(P, "DEADWOOD_H", [(0.0, 0.0), (1.0, 0.0)]))
+ 
+ 
+ def _smin(a: float, b: float, p: float = 6.0) -> float:
+@@ -398,7 +399,12 @@ def _section_geom(x: float) -> dict:
+         return g
+     t = x / P.LOA
+     k = _nose(x)
+-    zb = bottom_z(x)
++    # Senterlinjen (profilen) er zp. Akter bygges den konvekse kanobunnen paa
++    # et kjolpunkt DEADWOOD_H hoeyere, og bunnen trekkes ned til senterlinjen
++    # etterpaa (doedtre med hul overgang, se params.DEADWOOD_H).
++    zp = bottom_z(x)
++    dwh = max(_DEADWOOD(x), 0.0)
++    zb = zp + dwh
+     zs = sheer_z(x)
+     hb = max(deck_half_breadth(x) * k, 1e-3)
+     cam = deck_camber(x) * k
+@@ -456,6 +462,10 @@ def _section_geom(x: float) -> dict:
+         foot = F + rs * np.c_[np.cos(ang), np.sin(ang)]
+         foot[0] = (0.0, zb)
+         pts = np.vstack([foot[:-1], pts[keep]])
++    if dwh > 0.5:
++        tt = np.clip(pts[:, 0] / P.DEADWOOD_W, 0.0, 1.0)
++        pts[:, 1] -= dwh * (1.0 - tt * tt) ** 2
++        pts[0] = (0.0, zp)
+     seg = np.hypot(np.diff(pts[:, 0]), np.diff(pts[:, 1]))
+     s = np.r_[0.0, np.cumsum(seg)]
+ 
+@@ -478,7 +488,7 @@ def _section_geom(x: float) -> dict:
+     t2 /= np.linalg.norm(t2)
+     ca = float(np.clip((T1 - P1) @ (T2 - P1) / (np.linalg.norm(T1 - P1) * np.linalg.norm(T2 - P1)), -1, 1))
+     w = math.sin(0.5 * math.acos(ca))
+-    g = dict(x=x, pts=pts, s=s, K=np.array([0.0, zb]), D=D, T1=T1, t1=t1, P1=P1,
++    g = dict(x=x, pts=pts, s=s, K=np.array([0.0, zp]), D=D, T1=T1, t1=t1, P1=P1,
+              T2=T2, t2=t2, w=w, R=R, L=L, hb=hb, bd=bd, zs=zs, zb=zb, cam=cam,
+              phi=phi, beta=beta, n=n, rs=rs, a=a, c=c)
+     if len(_GEOM) > 50000:
+diff --git a/hr26/params.py b/hr26/params.py
+index 04ea7e0..0408c4c 100644
+--- a/hr26/params.py
++++ b/hr26/params.py
+@@ -43,14 +43,34 @@ SECTION_FLARE = [            # utfall ved dekkskanten, grader fra loddrett
+     (0.00, 24.0), (0.10, 19.0), (0.20, 13.5), (0.30, 11.0), (0.45, 9.5),
+     (0.60, 9.0), (0.75, 9.0), (0.90, 10.0), (1.00, 10.5),
+ ]
++# V10 (undervann, 13.11.2026): bunnen er V-formet midtskips og akter, med
++# fast slag. Kilder: bildet akterfra (IMG_9391, kamera loest bare fra faste
++# trekk: akterspeilets vannlinjestriper, fenderlisten, skrogsiden, roret)
++# viser et smalt underskrog som loeper sammen mot roret; foer var modellen
++# 100-240 px (300-700 mm) for bred der nede. Deplasementet (2,5 t) gir
++# 2,3-2,9 m3 kanobunn under DWL; foer 3,67 m3, naa ca. 2,6. Tabellene er
++# tilpasset bildet og volumet (minste kvadrater, glattet og avrundet);
++# over fenderlisten flytter spantene seg under 2 mm.
+ SECTION_N = [                # superellipsens eksponent: 2 = ellipse,
+-    (0.00, 2.4), (0.15, 3.1), (0.35, 3.4),       # hoyere = fastere slag
+-    (0.60, 3.5), (0.80, 3.3), (1.00, 3.1),
++    (0.00, 2.4), (0.15, 3.1), (0.30, 3.4),       # hoyere = fastere slag
++    (0.45, 4.0), (0.80, 4.0), (1.00, 3.8),
+ ]
+ SECTION_DEADRISE = [         # bunnreisning ved kjolen, grader: V forut,
+-    (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # flat kanobunn akter
+-    (0.27, 0.0), (1.00, 0.0),
++    (0.00, 45.0), (0.127, 15.0), (0.20, 4.0),     # nesten flat foran kjolen,
++    (0.30, 4.0), (0.45, 6.0), (0.60, 16.0),       # V midtskips og akter,
++    (0.75, 26.0), (0.90, 15.0), (1.00, 3.0),      # akterst baerer doedtreet kjollinjen
+ ]
++# Doedtre akter (vinglass-spant): senterlinjen (curves.bottom_z, begge
++# tegningene) gaar dypt helt til akterspeilet, men akterfra er skroget smalt
++# der nede - det dype partiet skjules bak roret (IMG_9391), og fra siden ses
++# en lys, nesten loddrett flate under slaget (IMG_9387). Spantets konvekse
++# kanobunn bygges paa et kjolpunkt DEADWOOD_H over senterlinjen, og bunnen
++# trekkes ned til senterlinjen med (1 - (y/DEADWOOD_W)^2)^2: en hul overgang.
++DEADWOOD_H = [               # (x fra baugen, hoeyde over senterlinjen), mm
++    (5600.0, 0.0), (5900.0, 0.0), (6800.0, 100.0), (7400.0, 170.0),
++    (7800.0, 210.0), (8000.0, 210.0),
++]
++DEADWOOD_W = 180.0           # halvbredden der overgangen er ferdig (6 mm i 1:30)
+ DECK_EDGE_R = 25.0           # avrundet dekkskant, bygget inn i spantene
+                              # (0,83 mm i 1:30; OCC-fillet feiler her)
+ STEM_R = 20.0                # stevnens radius i vannlinjene (0,67 mm i 1:30)
+@@ -95,21 +115,25 @@ KEEL_TE_ROOT = 5800.0
+ KEEL_LE_TIP = 4430.0    # omtrent der den flate bunnen begynner; IKKE brukt av modellen
+ KEEL_TE_TIP = 5725.0    # bakkantlinjen ved bunnen; IKKE brukt av modellen (foelger ikke KEEL_*_LINE)
+ 
+-# Kanobunnen paa senterlinjen der profiltegningen ikke viser den: bak kjolen,
+-# og akter der propellen og roret dekker den (det sporede omrisset der er
+-# propell og ror, ikke bunnen). Verdiene er V9-kurven; de holder kjolroten
+-# (bottom_z midt paa roten) og akterspeilets underkant (ca. -250) der de var.
+-# Fra 7 650 fortsetter de V9-kurvens jevne stigning: V9 knakk ved 7 800, en
+-# endeeffekt av glattingen (de to siste tabellpunktene ble ikke glattet).
+-# curves.bottom_z legger en glatt spline gjennom disse, forstevnen og den
+-# sporede forfoten. (x fra baugen, z over DWL)
++# Kanobunnen paa senterlinjen der profiltegningen 1:50 ikke viser den
++# (curves.bottom_z legger en glatt spline gjennom disse, forstevnen og den
++# sporede forfoten; x fra baugen, z over DWL).
++# V10 (undervann, 13.11.2026): aktenfor kjolen er linjen maalt paa begge
++# tegningene. Brosjyren og Enderlein 448-5 viser en nesten rett, dyp
++# senterlinje helt til akterspeilet (brosjyren -437 til -449, Enderlein
++# omregnet -449 ved 6 000 og -410 ved akterspeilets fot); V9-kurven steg til
++# -251 og hadde ingen kilde (sporet ved 6 100-6 300 er saildriven, ikke
++# bunnen). Verdiene her er Enderleins linje regnet over i modellens ramme
++# (z_modell = (z_E - 25,5) / 0,968, se V10.md), innen 10 mm av brosjyren
++# til x = 7 000 og 23 mm akter. Under kjolen (skjult paa begge) en jevn bue
++# til ca. -465.
+ CANOE_BOTTOM_HIDDEN = [
+-    (3250.0, -455.3), (3500.0, -480.0), (3750.0, -496.5), (4000.0, -504.1),
+-    (4250.0, -505.6), (4500.0, -503.0), (4590.0, -501.4), (4750.0, -498.6),
+-    (5000.0, -494.7), (5250.0, -492.4), (5500.0, -492.2), (5750.0, -492.5),
+-    (6000.0, -491.3), (6250.0, -485.0), (6500.0, -471.5), (6750.0, -448.8),
+-    (7000.0, -414.2), (7250.0, -368.7), (7500.0, -314.6), (7650.0, -279.5),
+-    (7800.0, -240.6), (7950.0, -199.1),
++    (3250.0, -455.3), (3500.0, -470.0), (3750.0, -465.0), (4000.0, -465.0),
++    (4250.0, -465.0), (4500.0, -465.0), (4590.0, -465.0), (4750.0, -465.0),
++    (5000.0, -463.0), (5250.0, -460.0), (5500.0, -453.4), (5750.0, -450.1),
++    (6000.0, -446.8), (6250.0, -445.2), (6500.0, -439.7), (6750.0, -437.4),
++    (7000.0, -433.1), (7250.0, -424.4), (7500.0, -415.5), (7650.0, -410.7),
++    (7800.0, -409.6), (7950.0, -408.5),
+ ]
+ 
+ # ------------------------------------------------------------ hekk/akterspeil

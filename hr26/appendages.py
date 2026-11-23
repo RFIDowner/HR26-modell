@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 
 import cadquery as cq
+import numpy as np
 
 from . import curves as C
 from . import params as P
@@ -48,20 +49,189 @@ def _foil_wire(x_le: float, z: float, chord: float, thick: float) -> cq.Wire:
     )
 
 
+def _offset_foil_wire(x_le: float, z: float, chord: float, thick: float, off: float) -> cq.Wire:
+    """Profilet forskjoevet `off` utover langs normalen i snittplanet. Mot for-
+    og bakkanten avtar forskyvningen til null (sin-vekt), saa hulkilen mot
+    skroget ikke gjoer kjolen lengre enn omrisset i profil."""
+    pts = np.array(_foil(chord, thick))
+    if off > 0.0:
+        d = np.roll(pts, -1, axis=0) - np.roll(pts, 1, axis=0)
+        d /= np.linalg.norm(d, axis=1, keepdims=True)
+        w = np.sin(np.pi * np.clip(pts[:, 0] / chord, 0.0, 1.0)) ** 0.5
+        pts = pts + (off * w)[:, None] * np.c_[-d[:, 1], d[:, 0]]   # utover: profilet gaar med klokka
+    v = [cq.Vector(x_le + px, py, z) for (px, py) in pts]
+    return cq.Wire.assembleEdges([cq.Edge.makeSpline(v + [v[0]])])
+
+
+def _keel_fillet_offset(d: float) -> float:
+    """Kjolens utvidelse mot skroget, d mm under overgangen (negativ: inne i
+    skroget). Ved overgangen er den 0,75 x KEEL_FILLET og flaten heller 30
+    grader mot bunnen (et tydelig snitt, ikke tangerende, saa unionen er
+    robust); KEEL_FILLET lenger ned gaar den tangentielt over i kjolsiden."""
+    r = P.KEEL_FILLET
+    a = 0.75 * r
+    slope = 1.0 / math.tan(math.radians(30.0))
+    if d <= 0.0:
+        return a + slope * (-d)
+    if d >= r:
+        return 0.0
+    k = slope * r / a
+    return a * (1.0 - d / r) ** k
+
+
+# ------------------------------------------------------- kjolens omriss
+# Omrisset i senterplanet bygges som en polylinje: kanobunnen (curves.bottom_z)
+# -> hulkil -> rett forkant -> rundet hjoerne -> flat bunn -> rundet hjoerne ->
+# rett bakkant -> hulkil -> kanobunnen. Hjoernene er eksakte sirkelbuer.
+# Hulkilenes sentrum ligger KEEL_*_FILLET_R fra kantlinjen og fra den sampel-
+# tatte kanobunnen, saa roten foelger kanobunnen uansett hvordan den endres.
+def _arc(c, p0, p1, n: int = 16):
+    a0 = math.atan2(p0[1] - c[1], p0[0] - c[0])
+    a1 = math.atan2(p1[1] - c[1], p1[0] - c[0])
+    da = (a1 - a0 + math.pi) % (2.0 * math.pi) - math.pi      # korteste vei
+    r = math.hypot(p0[0] - c[0], p0[1] - c[1])
+    return [(c[0] + r * math.cos(a0 + da * i / n), c[1] + r * math.sin(a0 + da * i / n)) for i in range(n + 1)]
+
+
+class _KeelProfile:
+    def __init__(self):
+        zb = P.KEEL_TIP_Z
+        self.zb = zb
+        fwd = self._edge_chain(P.KEEL_LE_LINE, P.KEEL_LE_TIP_R, P.KEEL_LE_FILLET_R, -1.0)
+        aft = self._edge_chain(P.KEEL_TE_LINE, P.KEEL_TE_TIP_R, P.KEEL_TE_FILLET_R, +1.0)
+        self.fwd = np.array(fwd)          # fra kanobunnen ned til bunnen
+        self.aft = np.array(aft)
+        self.x_fwd, self.x_aft = self.fwd[0, 0], self.aft[0, 0]
+
+    @staticmethod
+    def _edge_chain(line, r_tip, r_fil, side):
+        """En kant (side -1 forkant, +1 bakkant) fra kanobunnen til bunnen."""
+        (xa, za), (xb, zb_) = line
+        d = np.array([xb - xa, zb_ - za], float)
+        d /= np.linalg.norm(d)
+        if d[1] > 0.0:
+            d = -d                                        # nedover
+        p = np.array([xa, za], float)
+        zb = P.KEEL_TIP_Z
+        # hjoernet mot bunnen: bunnen gaar innover (-side) fra kanten
+        q = p + d * (zb - p[1]) / d[1]
+        bdir = np.array([-side, 0.0])
+        th = math.acos(float(np.clip(d @ bdir, -1.0, 1.0)))
+        t = r_tip * math.tan(0.5 * th)
+        t1, t2 = q - t * d, q + t * bdir
+        corner = _arc(t2 + np.array([0.0, r_tip]), t1, t2)
+        # hulkilen: sentrum paa linjen parallelt med kanten, r_fil utenfor
+        n_out = np.array([-d[1], d[0]])
+        if n_out[0] * side < 0.0:
+            n_out = -n_out
+        # Hulkilen regnes mot kanobunnen loftet KEEL_FILLET_LIFT opp, saa den
+        # krysser den ekte kanobunnen med en liten vinkel (ca. 12-14 grader) i
+        # stedet for aa tangere den: et tydelig snitt gir en robust union.
+        lift = P.KEEL_FILLET_LIFT
+        xs = np.arange(max(q[0] - 3000.0, 300.0), min(q[0] + 3000.0, P.LOA - 100.0), 5.0)
+        cb = np.c_[xs, [C.bottom_z(float(x)) + lift for x in xs]]
+
+        def gap(s):
+            c = p + s * d + r_fil * n_out
+            dist = np.hypot(cb[:, 0] - c[0], cb[:, 1] - c[1])
+            i = int(np.argmin(dist))
+            below = c[1] < C.bottom_z(float(c[0])) + lift
+            return (dist[i] - r_fil) if below else -dist[i] - r_fil, cb[i], c
+        lo, hi = -3000.0, float(np.dot(q - p, d))         # hi: ved bunnen, langt fra kanobunnen
+        for _ in range(60):
+            m = 0.5 * (lo + hi)
+            if gap(m)[0] > 0.0:
+                hi = m
+            else:
+                lo = m
+        _, tb, c = gap(hi)
+        te = p + hi * d                                   # tangentpunktet paa kanten
+        fillet = _arc(c, tb, te)
+        line_pts = [tuple(te), tuple(t1)]
+        return [tuple(v) for v in fillet] + line_pts[1:] + corner[1:]
+
+    def edges(self, z):
+        """(forkant, bakkant) i hoyden z. Over hulkilenes ytterpunkter (inne
+        i skroget) staar de fast der."""
+        def at(chain):
+            if z >= chain[0, 1]:
+                return float(chain[0, 0])
+            if z <= chain[-1, 1]:
+                return float(chain[-1, 0])
+            return float(np.interp(-z, -chain[:, 1], chain[:, 0]))
+        return at(self.fwd), at(self.aft)
+
+
+def keel_outline():
+    """Kjolens omriss i senterplanet som (x, z)-liste fra kanobunnen foran,
+    ned forkanten, langs bunnen og opp bakkanten. Til kontroll og overlegg."""
+    k = _KeelProfile()
+    return [tuple(map(float, v)) for v in k.fwd] + [tuple(map(float, v)) for v in k.aft[::-1]]
+
+
 def keel() -> cq.Workplane:
-    """Finnekjol, loftet mellom rot og bunn. Stikker opp i skroget for union."""
-    root_z = C.bottom_z(0.5 * (P.KEEL_LE_ROOT + P.KEEL_TE_ROOT)) + 260.0
-    wires = []
-    steps = 7
-    for i in range(steps + 1):
-        t = i / steps
-        le = P.KEEL_LE_ROOT + (P.KEEL_LE_TIP - P.KEEL_LE_ROOT) * (t ** 0.85)
-        te = P.KEEL_TE_ROOT + (P.KEEL_TE_TIP - P.KEEL_TE_ROOT) * (t ** 1.30)
-        z = root_z + (P.KEEL_TIP_Z - root_z) * t
+    """Finnekjol, loftet gjennom vannrette snitt fra et stykke inne i skroget
+    ned til bunnen. Omrisset (for- og bakkant i hver hoyde) kommer fra
+    _KeelProfile, med hulkiler i profil mot curves.bottom_z.
+
+    Mot skroget utvides tverrsnittet i tillegg (KEEL_FILLET), saa overgangen
+    blir en hulkil ogsaa sett forfra. Bunnkanten fases 45 grader i tverrsnitt
+    (KEEL_BOT_CHAMFER): fasen er printbar uten stoette, og en flat stripe
+    staar igjen som kjolen staar paa ved print. Det store hjoernet mellom
+    forkant og bunn (KEEL_LE_TIP_R) heller mer enn 45 grader de nederste
+    ca. 170 mm og trenger stoette ved platen.
+    """
+    k = _KeelProfile()
+    xs = np.linspace(k.x_fwd, k.x_aft, 80)
+    z_cb = [C.bottom_z(float(x)) for x in xs]
+    z_top = max(z_cb) + P.KEEL_ROOT_UP
+    z_root = float(np.mean(z_cb))
+    cf = P.KEEL_BOT_CHAMFER
+
+    def thick(z):
+        t = min(max((z_root - z) / (z_root - k.zb), 0.0), 1.0)
         th = P.KEEL_ROOT_T + (P.KEEL_TIP_T - P.KEEL_ROOT_T) * t
-        wires.append(_foil_wire(le, z, te - le, th))
-    solid = cq.Solid.makeLoft(wires, ruled=False)
-    return cq.Workplane("XY").newObject([solid])
+        e = z - k.zb
+        if e < cf:                                   # 45 graders fas paa bunnkanten
+            th -= 2.0 * (cf - e)
+        return th
+
+    # overgangen: kanobunnens hoyde der kjolsiden moeter den, midlet langs roten
+    le0, te0 = k.edges(z_root - 120.0)
+    th0 = thick(z_root - 120.0)
+    z_j = []
+    for x in np.linspace(le0 + 0.1 * (te0 - le0), le0 + 0.9 * (te0 - le0), 9):
+        sec = np.asarray(C.section(float(x), 60), dtype=float)
+        z_j.append(float(np.interp(0.5 * th0, sec[:, 0], sec[:, 1])))
+    zj = float(np.mean(z_j))
+    r = P.KEEL_FILLET
+
+    # hoyder: ett snitt inne i skroget, saa jevnt hver KEEL_DZ fra toppen av
+    # hulkilen mot skroget ned til bunnen. Jevn avstand er viktig: loften
+    # svinger ut mellom tett og glissent plasserte snitt.
+    z1 = zj + 0.7 * r
+    n = max(int(math.ceil((z1 - k.zb) / P.KEEL_DZ)), 2)
+    zs = [z1 - (z1 - k.zb) * i / n for i in range(n + 1)]
+    if cf > 0.0:                                     # et snitt noyaktig der fasen slutter
+        zs = sorted([z for z in zs if abs(z - (k.zb + cf)) > 0.25 * P.KEEL_DZ] + [k.zb + cf], reverse=True)
+
+    # inne i skroget: snitt med samme avstand opp til z_top, der utvidelsen
+    # trappes ned til null (rent profil oeverst)
+    m = max(int(math.ceil((z_top - z1) / P.KEEL_DZ)), 1)
+    off1 = _keel_fillet_offset(zj - z1) if r > 0.0 else 0.0
+    wires = []
+    for i in range(m):
+        z = z_top - (z_top - z1) * i / m
+        le, te = k.edges(z)
+        wires.append(_offset_foil_wire(le, z, te - le, thick(z1), off1 * i / m))
+    for z in zs:
+        le, te = k.edges(z)
+        off = _keel_fillet_offset(zj - z) if r > 0.0 else 0.0
+        wires.append(_offset_foil_wire(le, z, te - le, thick(z), off))
+    # Rett (ruled) loft: snittene staar saa tett (KEEL_DZ) at kantene mellom
+    # dem ikke synes (buehoeyde under 0,01 mm i 1:30 i hulkilene), og den
+    # glatte loften svinger ut gjennom saa mange snitt.
+    return cq.Workplane("XY").newObject([cq.Solid.makeLoft(wires, ruled=True)])
 
 
 def _pin_positions():
@@ -86,17 +256,137 @@ def rudder_pins(extra: float = 0.0) -> cq.Workplane:
     return out
 
 
+def rudder_le_upper(z: float) -> float:
+    """Forkanten langs akterspeilet (samme linje som tappene staar paa)."""
+    return P.TRANSOM_WL_X + P.TRANSOM_RAKE * z + P.RUDDER_GAP
+
+
+def rudder_le_lower(z: float) -> float:
+    """Forkanten paa den nedre delen, som stikker fram under skroget."""
+    return P.RUDDER_LOW_LE_X + P.RUDDER_LOW_LE_SLOPE * (P.RUDDER_STEP_Z - z)
+
+
+def _xz_prism(pts, tangents=None, half_y: float = 400.0) -> cq.Workplane:
+    """Et prisme gjennom hele roret (y +-half_y) med omrisset pts i (x, z).
+    pts er en liste av ('L', (x, z)) for rette linjer og ('S', [(x, z), ...],
+    (t0, t1)) for en spline med tangenter; den lukkes tilbake til start."""
+    edges = []
+    cur = None
+    start = None
+    for item in pts:
+        kind = item[0]
+        if kind == "L":
+            p = cq.Vector(item[1][0], 0.0, item[1][1])
+            if cur is None:
+                start = p
+            else:
+                edges.append(cq.Edge.makeLine(cur, p))
+            cur = p
+        else:
+            vs = [cq.Vector(x, 0.0, z) for x, z in item[1]]
+            t0, t1 = item[2]
+            if cur is None:
+                start = vs[0]
+            elif (cur - vs[0]).Length > 1e-6:
+                edges.append(cq.Edge.makeLine(cur, vs[0]))
+            edges.append(cq.Edge.makeSpline(
+                vs, tangents=[cq.Vector(t0[0], 0.0, t0[1]), cq.Vector(t1[0], 0.0, t1[1])]))
+            cur = vs[-1]
+    edges.append(cq.Edge.makeLine(cur, start))
+    face = cq.Face.makeFromWires(cq.Wire.assembleEdges(edges))
+    solid = cq.Solid.extrudeLinear(face, cq.Vector(0.0, 2.0 * half_y, 0.0))
+    return cq.Workplane("XY").newObject([solid.translate(cq.Vector(0.0, -half_y, 0.0))])
+
+
+def _rudder_bottom_cutter() -> cq.Workplane:
+    """Alt under bunnens omriss: bunnen stiger forover og runder inn i forkanten."""
+    te, zb, c = P.RUDDER_TE_X, P.RUDDER_BOT_Z, P.RUDDER_BOT_AFT_CHAMFER
+    prof = list(P.RUDDER_BOT_PROFILE)
+    z0 = prof[0][1]
+    prof[0] = (rudder_le_lower(z0), z0)                 # starter paa forkanten
+    s = P.RUDDER_LOW_LE_SLOPE
+    return _xz_prism([
+        ("L", (prof[0][0] - 400.0, z0)),
+        ("S", prof, ((s, -1.0), (1.0, 0.0))),
+        ("L", (te - c, zb)),
+        ("L", (te, zb + c)),
+        ("L", (te + 300.0, zb + c)),
+        ("L", (te + 300.0, zb - 400.0)),
+        ("L", (prof[0][0] - 400.0, zb - 400.0)),
+    ])
+
+
+def _rudder_head_cutter() -> cq.Workplane:
+    """Alt over rorhodet. Hjoernet oeverst akter er en bue ned til 45 grader
+    og saa en rett 45-graders fas til bakkanten: roret printes liggende paa
+    bakkanten, og da blir overhenget aldri mer enn 45 grader."""
+    te, zt, r = P.RUDDER_TE_X, P.RUDDER_HEAD_Z, P.RUDDER_HEAD_R
+    cx, cz = te - r, zt - r
+    a45 = math.radians(45.0)
+    p45 = (cx + r * math.cos(a45), cz + r * math.sin(a45))
+    z_te = p45[1] - (te - p45[0])
+    arc = [(cx + r * math.cos(a), cz + r * math.sin(a))
+           for a in np.linspace(math.pi / 2.0, a45, 7)]
+    x_fwd = rudder_le_upper(zt) - 300.0
+    return _xz_prism([
+        ("L", (x_fwd, zt)),
+        ("S", arc, ((1.0, 0.0), (1.0, -1.0))),
+        ("L", (te, z_te)),
+        ("L", (te + 300.0, z_te)),
+        ("L", (te + 300.0, zt + 400.0)),
+        ("L", (x_fwd, zt + 400.0)),
+    ])
+
+
+def _rudder_notch() -> cq.Workplane | None:
+    """Hakk i hodets forkant der fenderlisten gaar tvers over akterspeilet."""
+    if not P.RUDDER_NOTCH_DEPTH:
+        return None
+    z0, z1 = P.RUDDER_NOTCH_Z
+    d = P.RUDDER_NOTCH_DEPTH
+    return _xz_prism([
+        ("L", (rudder_le_upper(z0) - 200.0, z0)),
+        ("L", (rudder_le_upper(z0) + d, z0)),
+        ("L", (rudder_le_upper(z1) + d, z1)),
+        ("L", (rudder_le_upper(z1) - 200.0, z1)),
+    ])
+
+
 def rudder() -> cq.Workplane:
-    """Akterhengt ror. Forkanten foelger akterspeilets helning (RUDDER_RAKE
-    er negativ: forover nedover), med RUDDER_GAP klaring til akterspeilet."""
-    wires = []
-    steps = 5
-    for i in range(steps + 1):
-        t = i / steps
-        z = P.RUDDER_TOP_Z + (P.RUDDER_BOT_Z - P.RUDDER_TOP_Z) * t
-        le = P.RUDDER_X + P.RUDDER_RAKE * t
-        ch = P.RUDDER_TE_X - le
-        th = P.RUDDER_T * (1.0 - 0.28 * t)
-        wires.append(_foil_wire(le, z, ch, th))
-    solid = cq.Solid.makeLoft(wires, ruled=False)
-    return cq.Workplane("XY").newObject([solid]).union(rudder_pins())
+    """Akterhengt ror (V12, 15.11.2026): hode over akterdekket, blad langs
+    akterspeilet og en nedre del som stikker fram under skroget.
+
+    Oevre del: forkanten foelger akterspeilet med RUDDER_GAP klaring, fra
+    RUDDER_STEP_Z og opp forbi hodet, med fast tykkelse. Nedre del: fra
+    RUDDER_STEP_Z og ned, forkanten fra RUDDER_LOW_LE_X og akterover nedover,
+    tynnere mot bunnen. Bakkanten er loddrett. Omrisset (bunnen, hodets
+    topp, hakket for fenderlisten) kappes etterpaa av prismer i x-z."""
+    te = P.RUDDER_TE_X
+    zs, zt, zb = P.RUDDER_STEP_Z, P.RUDDER_HEAD_Z, P.RUDDER_BOT_Z
+
+    def sec(le, z, th):
+        return _foil_wire(le, z, te - le, th)
+
+    def th_low(z):
+        return P.RUDDER_LOW_T + (P.RUDDER_BOT_T - P.RUDDER_LOW_T) * (z - zs) / (zb - zs)
+
+    # Ett rett (ruled) loft gjennom fire snitt. Mellom de to midterste (1 mm
+    # fra hverandre) blir flaten nesten vannrett: det er trinnet under
+    # skroget. To lofter slaatt sammen gir sammenfallende bakkanter, og da
+    # feiler OCC-unionen.
+    z_top, z_low = zt + 40.0, zb - 40.0
+    solid = cq.Solid.makeLoft([
+        sec(rudder_le_upper(z_top), z_top, P.RUDDER_T),
+        sec(rudder_le_upper(zs), zs, P.RUDDER_T),
+        sec(rudder_le_lower(zs - 1.0), zs - 1.0, P.RUDDER_LOW_T),
+        sec(rudder_le_lower(z_low), z_low, th_low(z_low)),
+    ], ruled=True)
+    w = cq.Workplane("XY").newObject([solid])
+    w = w.cut(_rudder_bottom_cutter()).cut(_rudder_head_cutter())
+    notch = _rudder_notch()
+    if notch is not None:
+        w = w.cut(notch)
+    w = w.union(rudder_pins())
+    if len(w.solids().vals()) != 1:
+        raise RuntimeError(f"roret bestaar av {len(w.solids().vals())} volumer")
+    return w
